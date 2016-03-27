@@ -1,0 +1,31 @@
+/**
+  @def VERSION_MAJOR
+  Мажорная версия
+*/
+#define VERSION_MAJOR @chva_VERSION_MAJOR@
+/**
+  @def VERSION_MINOR
+  Минорная версия
+*/
+#define VERSION_MINOR @chva_VERSION_MINOR@
+/**
+  @def VERSION_PATCH
+  Версия патча
+*/
+#define VERSION_PATCH @chva_VERSION_PATCH@
+/**
+  @def VERSION_BUILD
+  Версии сборки
+*/
+#define VERSION_BUILD @chva_VERSION_BUILD@
+/**
+ @def SVN_REVISION
+ Svn ревизия
+*/
+#define SVN_REVISION @chva_SVN_REVISION@
+
+/**
+  @def BUILD_TYPE
+  Тип сборки - Debug/Release
+*/
+#define BUILD_TYPE @CMAKE_BUILD_TYPE@

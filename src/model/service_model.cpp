@@ -1,0 +1,37 @@
+
+#include <model/service_item.h>
+#include <model/service_fetcher.h>
+
+#include "service_model.h"
+
+ServiceModel::ServiceModel() : ItemModel(new ServiceFetcher)
+{
+
+}
+
+ServiceModel::~ServiceModel()
+{
+
+}
+
+QVariant ServiceModel::data(const QModelIndex &index, int role) const
+{
+	QVariant res;
+	if (!index.isValid())
+	{
+		return res;
+	}
+
+	if (role == Qt::EditRole
+			|| role == Qt::DisplayRole
+			|| role == SortRole
+			|| role == SearchRole)
+	{
+		ServiceItem* item = (ServiceItem*)items.value(index.row());
+		if (item != NULL)
+		{
+			res = item->get().name;
+		}
+	}
+	return res;
+}
