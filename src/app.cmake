@@ -1,4 +1,4 @@
-set(app_SOURCES
+set(app_SOURCES 
 		main.cpp)
 
 set(app_HEADERS
