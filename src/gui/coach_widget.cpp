@@ -55,3 +55,15 @@ void CoachWidget::cancel()
 {
 	nameEdit->clear();
 }
+
+bool CoachWidget::checkSave() const
+{
+	bool res = true;
+
+	if (nameEdit->text().isEmpty())
+	{
+		res = false;
+	}
+
+	return res;
+}

@@ -13,6 +13,7 @@ public:
 	HallWidget();
 	virtual void apply();
 	virtual void cancel();
+	virtual bool checkSave() const;
 	virtual void set(Item* item);
 
 private:

@@ -13,6 +13,7 @@ public:
 	virtual void set(Item* item);
 	virtual void apply() = 0;
 	virtual void cancel() = 0;
+	virtual bool checkSave() const = 0;
 	virtual void save();
 
 protected:

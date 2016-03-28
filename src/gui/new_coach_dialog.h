@@ -6,6 +6,8 @@
 
 #include <QDialog>
 
+#include <gui/new_item_dialog.h>
+
 class CoachModel;
 class QLineEdit;
 class QListView;
@@ -13,7 +15,7 @@ class CoachWidget;
 class CoachItem;
 class QSortFilterProxyModel;
 
-class NewCoachDialog : public QDialog
+class NewCoachDialog : public NewItemDialog
 {
 	Q_OBJECT
 public:
@@ -21,8 +23,8 @@ public:
 
 private Q_SLOTS:
 	virtual void save();
-	virtual void cancel();
-	virtual void create();
+	virtual void exit();
+	virtual void add();
 	void currentChanged(QModelIndex ind);
 
 private:

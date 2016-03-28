@@ -23,6 +23,7 @@ public:
 	void apply();
 	void save();
 	void cancel();
+	bool checkSave() const;
 	void edit(bool flag);
 
 private:

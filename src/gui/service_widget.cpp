@@ -152,3 +152,34 @@ void ServiceWidget::cancel()
 {
 	set(item);
 }
+
+bool ServiceWidget::checkSave() const
+{
+	bool res = true;
+
+	if (nameWidget->text().isEmpty())
+	{
+		res = false;
+	}
+	else if (limitDaysWidget == 0 && limitTypeWidget->currentIndex() == 1)
+	{
+		res = false;
+	}
+	else if (limitValueWidget->value() == 0
+			 && limitTypeWidget->currentIndex() == 2)
+	{
+		res = false;
+	}
+	else if (
+				(
+					(limitValueWidget->value() == 0)
+					|| (limitDaysWidget->value() == 0)
+				)
+			&& (limitTypeWidget->currentIndex() == 0)
+			)
+	{
+		res = false;
+	}
+
+	return res;
+}

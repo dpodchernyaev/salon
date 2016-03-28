@@ -14,51 +14,15 @@
 
 #include "new_coach_dialog.h"
 
-NewCoachDialog::NewCoachDialog(CoachModel* model) : model(model)
+NewCoachDialog::NewCoachDialog(CoachModel* model) : NewItemDialog(model)
 {
 	item = NULL;
 
 	setWindowTitle("Новый тренер");
 
 	widget = new CoachWidget;
-
-	pmodel = new QSortFilterProxyModel;
-	pmodel->setSourceModel(model);
-	pmodel->setDynamicSortFilter(true);
-	pmodel->sort(0);
-
-	view = new QListView;
-	view->setModel(pmodel);
-	view->setMaximumWidth(200);
-
-	saveBtn = new QPushButton("Сохранить");
-	cancelBtn = new QPushButton("Отмена");
-	newBtn = new QPushButton("Создать");
-
-	QHBoxLayout* btnBox = new QHBoxLayout;
-	QHBoxLayout* hbox = new QHBoxLayout;
-	QVBoxLayout* vbox = new QVBoxLayout;
-
-	btnBox->addStretch(1);
-	btnBox->addWidget(newBtn);
-	btnBox->addWidget(cancelBtn);
-	btnBox->addWidget(saveBtn);
-
-	vbox->addWidget(widget);
-	vbox->addStretch(1);
-	vbox->addLayout(btnBox);
-
-	hbox->addWidget(view);
-	hbox->addLayout(vbox);
-
-	setLayout(hbox);
-
-	QItemSelectionModel* smodel = view->selectionModel();
-	connect(smodel, SIGNAL(currentChanged(QModelIndex, QModelIndex)),
-			this, SLOT(currentChanged(QModelIndex)));
-	connect(newBtn, SIGNAL(clicked(bool)), this, SLOT(create()));
-	connect(cancelBtn, SIGNAL(clicked(bool)), this, SLOT(cancel()));
-	connect(saveBtn, SIGNAL(clicked(bool)), this, SLOT(save()));
+	rightBox->addWidget(widget);
+	rightBox->addStretch(1);
 }
 
 void NewCoachDialog::currentChanged(QModelIndex ind)
@@ -72,6 +36,7 @@ void NewCoachDialog::currentChanged(QModelIndex ind)
 
 void NewCoachDialog::save()
 {
+	NewItemDialog::save();
 	widget->apply();
 	widget->save();
 	close();
@@ -89,16 +54,16 @@ void NewCoachDialog::free()
 	}
 }
 
-void NewCoachDialog::cancel()
+void NewCoachDialog::exit()
 {
+	NewItemDialog::exit();
 	widget->cancel();
 	close();
 }
 
-void NewCoachDialog::create()
+void NewCoachDialog::add()
 {
-	newBtn->setEnabled(false);
-	view->setEnabled(false);
+	NewItemDialog::add();
 
 	free();
 	item = new CoachItem;

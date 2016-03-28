@@ -24,6 +24,7 @@ public:
 	void set(Item* item);
 	void apply();
 	void cancel();
+	bool checkSave() const;
 
 private Q_SLOTS:
 	void typeChanged(int);

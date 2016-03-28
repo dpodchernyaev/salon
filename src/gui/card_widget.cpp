@@ -68,3 +68,15 @@ void CardWidget::cancel()
 	nameEdit->clear();
 	discWidget->clear();
 }
+
+bool CardWidget::checkSave() const
+{
+	bool res = true;
+
+	if (nameEdit->text().isEmpty())
+	{
+		res = false;
+	}
+
+	return res;
+}

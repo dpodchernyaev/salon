@@ -68,3 +68,19 @@ void HallWidget::cancel()
 	nameEdit->clear();
 	cntWidget->clear();
 }
+
+bool HallWidget::checkSave() const
+{
+	bool res = true;
+
+	if (nameEdit->text().isEmpty())
+	{
+		res = false;
+	}
+	else if (cntWidget->value() == 0)
+	{
+		res = false;
+	}
+
+	return res;
+}

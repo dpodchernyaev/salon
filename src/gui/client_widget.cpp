@@ -48,6 +48,7 @@ ClientWidget::ClientWidget()
 	birthdayWidget = new QDateEdit;
 	birthdayWidgetEmpty = new QLineEdit;
 	birthdayWidget->setCalendarPopup(true);
+	birthdayWidget->setDate(MIN_DATE);
 	grid->addWidget(label, row, 0);
 	grid->addWidget(birthdayWidgetEmpty, row, 1);
 	grid->addWidget(birthdayWidget, row++, 1);
@@ -93,6 +94,25 @@ ClientWidget::ClientWidget()
 	setLayout(hbox);
 
 	birthdayWidgetEmpty->setVisible(false);
+}
+
+bool ClientWidget::checkSave() const
+{
+	bool res = true;
+	if (nameWidget->text().isEmpty())
+	{
+		res = false;
+	}
+	else if (surnameWidget->text().isEmpty())
+	{
+		res = false;
+	}
+	else if (birthdayWidget->date() == MIN_DATE)
+	{
+		res = false;
+	}
+
+	return res;
 }
 
 void ClientWidget::set(Item* item)

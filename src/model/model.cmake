@@ -30,9 +30,4 @@ set(app_HEADERS ${app_HEADERS}
 		${current_PROJECT_DIR}/hall_model.h
 		${current_PROJECT_DIR}/card_model.h
 
-		${current_PROJECT_DIR}/hall_fetcher.h
-		${current_PROJECT_DIR}/card_fetcher.h
-		${current_PROJECT_DIR}/client_fetcher.h
-		${current_PROJECT_DIR}/coach_fetcher.h
-		${current_PROJECT_DIR}/service_fetcher.h
 		${current_PROJECT_DIR}/fetcher.h)
