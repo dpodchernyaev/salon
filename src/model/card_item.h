@@ -11,7 +11,7 @@ public:
 
 	QString getName() const;
 	double getDiscont() const;
-	int getId() const;
+	virtual int getId() const;
 
 	void setDiscont(int discont);
 	void setName(const QString &value);

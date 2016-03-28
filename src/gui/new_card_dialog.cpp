@@ -25,19 +25,24 @@ NewCardDialog::NewCardDialog(CardModel* model) : NewItemDialog(model)
 	rightBox->addStretch(1);
 }
 
-void NewCardDialog::save()
+bool NewCardDialog::save()
 {
+	bool res = false;
 	if (widget->checkSave())
 	{
-		widget->apply();
-		widget->save();
-		widget->clear();
-		NewItemDialog::save();
+		res = NewItemDialog::save();
+		if (res == true)
+		{
+			widget->apply();
+			widget->save();
+			widget->clear();
+		}
 	}
 	else
 	{
 		QMessageBox::warning(NULL, "Предупреждение", "Не все поля введены верно");
 	}
+	return res;
 }
 
 Item* NewCardDialog::createItem()

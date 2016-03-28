@@ -10,6 +10,7 @@ public:
 	virtual ~CoachFetcher() {}
 
 protected:
+	virtual void deleteSlot(int);
 	virtual void fetchSlot();
 	virtual void saveSlot(Item* item);
 };

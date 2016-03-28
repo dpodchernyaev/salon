@@ -21,16 +21,21 @@ QVariant HallModel::data(const QModelIndex &index, int role) const
 		return res;
 	}
 
+	HallItem* item = (HallItem*)items.value(index.row());
 	if (role == Qt::EditRole
 			|| role == Qt::DisplayRole
 			|| role == SortRole
 			|| role == SearchRole)
 	{
-		HallItem* item = (HallItem*)items.value(index.row());
 		if (item != NULL)
 		{
 			res = item->getName();
 		}
 	}
+	else if (role == KeyRole)
+	{
+		return item->getId();
+	}
+
 	return res;
 }

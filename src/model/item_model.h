@@ -25,7 +25,7 @@ public:
 
 	void fetch();
 	void save(Item* item);
-	void removeItem(Item* item);
+	void deleteItem(Item* item);
 
 	QModelIndex getIndex(Item* item) const;
 
@@ -34,6 +34,7 @@ public:
 protected Q_SLOTS:
 	virtual void fetched(QList<Item*> newItems);
 	virtual void saved(bool);
+	virtual void deleted(bool);
 
 Q_SIGNALS:
 	void lock(bool);

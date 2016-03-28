@@ -22,16 +22,21 @@ QVariant ServiceModel::data(const QModelIndex &index, int role) const
 		return res;
 	}
 
+	ServiceItem* item = (ServiceItem*)items.value(index.row());
 	if (role == Qt::EditRole
 			|| role == Qt::DisplayRole
 			|| role == SortRole
 			|| role == SearchRole)
 	{
-		ServiceItem* item = (ServiceItem*)items.value(index.row());
 		if (item != NULL)
 		{
 			res = item->get().name;
 		}
 	}
+	else if (role == KeyRole)
+	{
+		res = item->getId();
+	}
+
 	return res;
 }

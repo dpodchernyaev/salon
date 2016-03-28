@@ -13,6 +13,7 @@ Fetcher::Fetcher()
 
 	connect(this, SIGNAL(fetchSignal()), SLOT(fetchSlot()));
 	connect(this, SIGNAL(saveSignal(Item*)), SLOT(saveSlot(Item*)));
+	connect(this, SIGNAL(deleteSignal(int)), SLOT(deleteSlot(int)));
 }
 
 Fetcher::~Fetcher()
@@ -28,4 +29,9 @@ void Fetcher::fetch()
 void Fetcher::save(Item* item)
 {
 	Q_EMIT saveSignal(item);
+}
+
+void Fetcher::deleteItem(int id)
+{
+	Q_EMIT deleteSignal(id);
 }

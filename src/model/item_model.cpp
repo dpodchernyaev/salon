@@ -12,6 +12,8 @@ ItemModel::ItemModel(Fetcher* fetcher) : fetcher(fetcher)
 			this, SLOT(fetched(QList<Item*>)));
 	connect(fetcher, SIGNAL(saved(bool)),
 			this, SLOT(saved(bool)));
+	connect(fetcher, SIGNAL(deleted(bool)),
+			this, SLOT(deleted(bool)));
 }
 
 
@@ -56,15 +58,23 @@ void ItemModel::save(Item* item)
 	fetcher->save(forSave);
 }
 
-void ItemModel::removeItem(Item* item)
+void ItemModel::deleteItem(Item* item)
 {
 	int row = items.indexOf(item);
+
 	if (row != -1)
 	{
+		int id = item->getModelId();
 		beginRemoveRows(QModelIndex(), row, row);
 		items.removeAll(item);
 		endRemoveRows();
+
+		if (id > 0)
+		{
+			fetcher->deleteItem(id);
+		}
 	}
+	delete item;
 }
 
 QModelIndex ItemModel::getIndex(Item* item) const
@@ -93,6 +103,20 @@ void ItemModel::fetched(QList<Item*> newItems)
 
 	Q_EMIT lock(false);
 	Q_EMIT modelRestored();
+}
+
+void ItemModel::deleted(bool f)
+{
+	if (f == false)
+	{
+		QMessageBox::critical(NULL, "Ошибка", "Ошибка удаления");
+	}
+	else
+	{
+		QMessageBox::information(NULL, "Удалено",
+							"Удаление выполнено успешно", QMessageBox::Ok);
+	}
+	Q_EMIT lock(false);
 }
 
 void ItemModel::saved(bool f)

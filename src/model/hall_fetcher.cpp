@@ -18,7 +18,8 @@ void HallFetcher::fetchSlot()
 				" hall.id"
 				", hall.name"
 				", hall.cnt"
-			" FROM hall";
+			" FROM hall"
+			" WHERE id <> 0";
 	DBConn* conn = DBService::getInstance()->getConnection();
 	if (!conn->isConnected())
 	{
@@ -38,6 +39,53 @@ void HallFetcher::fetchSlot()
 		items.append(item);
 	}
 	Q_EMIT fetched(items);
+}
+
+void HallFetcher::deleteSlot(int id)
+{
+	DBConn* conn = DBService::getInstance()->getConnection();
+	if (!conn->isConnected())
+	{
+		qCritical() << Q_FUNC_INFO << "Ошибка подключания к БД";
+		Q_EMIT deleted(false);
+		return;
+	}
+
+	if (id <= 0)
+	{
+		qCritical() << Q_FUNC_INFO << "Неверный идентификатор";
+		Q_EMIT deleted(false);
+		return;
+	}
+
+	conn->beginTransaction();
+	QString sql = "UPDATE shedule SET hall_id = 0"
+				  " WHERE hall_id = " + QString::number(id);
+
+
+	bool res = false;
+	QSqlQuery q = conn->executeQuery(sql);
+	if (q.isActive())
+	{
+		sql = "DELETE FROM hall WHERE id = " + QString::number(id);
+		q = conn->executeQuery(sql);
+		if (q.isActive())
+		{
+			res = true;
+		}
+	}
+
+	if (res == true)
+	{
+		conn->commit();
+	}
+	else
+	{
+		conn->rollback();
+	}
+
+	Q_EMIT deleted(res);
+
 }
 
 void HallFetcher::saveSlot(Item* item)

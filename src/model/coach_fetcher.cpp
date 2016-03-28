@@ -17,7 +17,8 @@ void CoachFetcher::fetchSlot()
 			"SELECT"
 				" coach.id"
 				", coach.name"
-			" FROM coach";
+			" FROM coach"
+			" WHERE id <> 0";
 	DBConn* conn = DBService::getInstance()->getConnection();
 	if (!conn->isConnected())
 	{
@@ -95,4 +96,50 @@ void CoachFetcher::saveSlot(Item* item)
 	conn->commit();
 
 	Q_EMIT saved(res);
+}
+
+void CoachFetcher::deleteSlot(int id)
+{
+	DBConn* conn = DBService::getInstance()->getConnection();
+	if (!conn->isConnected())
+	{
+		qCritical() << Q_FUNC_INFO << "Ошибка подключания к БД";
+		Q_EMIT deleted(false);
+		return;
+	}
+
+	if (id <= 0)
+	{
+		qCritical() << Q_FUNC_INFO << "Неверный идентификатор";
+		Q_EMIT deleted(false);
+		return;
+	}
+
+	conn->beginTransaction();
+	QString sql = "UPDATE shedule SET coach_id = 0"
+				  " WHERE coach_id = " + QString::number(id);
+
+
+	bool res = false;
+	QSqlQuery q = conn->executeQuery(sql);
+	if (q.isActive())
+	{
+		sql = "DELETE FROM coach WHERE id = " + QString::number(id);
+		q = conn->executeQuery(sql);
+		if (q.isActive())
+		{
+			res = true;
+		}
+	}
+
+	if (res == true)
+	{
+		conn->commit();
+	}
+	else
+	{
+		conn->rollback();
+	}
+
+	Q_EMIT deleted(res);
 }

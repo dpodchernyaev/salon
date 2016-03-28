@@ -19,7 +19,7 @@ protected:
 	virtual void clear();
 	virtual Item* createItem();
 	virtual void setItem(Item *i);
-	virtual void save();
+	virtual bool save();
 
 private:
 	void free();

@@ -40,6 +40,30 @@ void CardFetcher::fetchSlot()
 	Q_EMIT fetched(items);
 }
 
+void CardFetcher::deleteSlot(int id)
+{
+	DBConn* conn = DBService::getInstance()->getConnection();
+	if (!conn->isConnected())
+	{
+		qCritical() << Q_FUNC_INFO << "Ошибка подключания к БД";
+		Q_EMIT deleted(false);
+		return;
+	}
+
+	if (id <= 0)
+	{
+		qCritical() << Q_FUNC_INFO << "Неверный идентификатор записи";
+		Q_EMIT deleted(false);
+		return;
+	}
+
+	QString sql = "DELETE FROM card WHERE id = " + QString::number(id);
+	QSqlQuery q = conn->executeQuery(sql);
+
+	bool res = q.isActive();
+	Q_EMIT deleted(res);
+}
+
 void CardFetcher::saveSlot(Item* item)
 {
 	CardItem* cItem = (CardItem*)item;

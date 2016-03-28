@@ -15,6 +15,7 @@ public:
 private:
 	void fetchSlot();
 	void saveSlot(Item *item);
+	void deleteSlot(int id);
 
 	bool saveCard(Item *item, DBConn *conn);
 

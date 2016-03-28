@@ -1,3 +1,6 @@
+
+#include <QDebug>
+
 #include "coach_item.h"
 
 CoachItem::CoachItem()

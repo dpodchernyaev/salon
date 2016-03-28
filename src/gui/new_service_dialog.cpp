@@ -24,17 +24,19 @@ NewServiceDialog::NewServiceDialog(ServiceModel* model) : NewItemDialog(model)
 	rightBox->addStretch(1);
 }
 
-void NewServiceDialog::save()
+bool NewServiceDialog::save()
 {
 	if (widget->checkSave())
 	{
 		widget->apply();
 		widget->save();
 		NewItemDialog::save();
+		return true;
 	}
 	else
 	{
 		QMessageBox::warning(NULL, "Предупреждение", "Не все поля введены верно");
+		return false;
 	}
 }
 

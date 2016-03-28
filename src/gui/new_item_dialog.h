@@ -25,6 +25,9 @@ protected:
 	virtual Item* createItem() = 0;
 	virtual void setItem(Item* i);
 
+private:
+	void deleteItem();
+
 protected Q_SLOTS:
 	void selectionChanged(const QItemSelection &selected,
 						  const QItemSelection &deselected);
@@ -33,7 +36,7 @@ protected Q_SLOTS:
 	virtual void del();
 	virtual void exit();
 	virtual void edit();
-	virtual void save();
+	virtual bool save();
 	virtual void cancel();
 
 	virtual void modelLocked(bool);

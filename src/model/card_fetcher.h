@@ -11,5 +11,6 @@ public:
 
 protected:
 	virtual void fetchSlot();
+	virtual void deleteSlot(int id);
 	virtual void saveSlot(Item* item);
 };

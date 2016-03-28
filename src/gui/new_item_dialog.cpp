@@ -85,6 +85,14 @@ NewItemDialog::NewItemDialog(ItemModel *model) : model(model)
 	connect(cancelBtn, SIGNAL(clicked(bool)), this, SLOT(cancel()));
 
 	connect(model, SIGNAL(lock(bool)), this, SLOT(modelLocked(bool)));
+
+	editBtn->setEnabled(false);
+	saveBtn->setEnabled(false);
+	addBtn->setEnabled(true);
+	delBtn->setEnabled(false);
+	exitBtn->setEnabled(true);
+	cancelBtn->setEnabled(false);
+	rightWidget->setEnabled(false);
 }
 
 void NewItemDialog::modelLocked(bool locked)
@@ -165,9 +173,23 @@ void NewItemDialog::del()
 	rightWidget->setEnabled(false);
 	view->setEnabled(true);
 
-	delete item;
-	item = NULL;
-	clear();
+	deleteItem();
+}
+
+void NewItemDialog::deleteItem()
+{
+	if (Item::getItem(item->hash()) == NULL)
+	{
+		delete item;
+		item = NULL;
+		view->getView()->clearSelection();
+	}
+	else
+	{
+		Item* i = item;
+		item = NULL;
+		model->deleteItem(i);
+	}
 }
 
 void NewItemDialog::exit()
@@ -188,7 +210,7 @@ void NewItemDialog::edit()
 	view->setEnabled(false);
 }
 
-void NewItemDialog::save()
+bool NewItemDialog::save()
 {
 	editBtn->setEnabled(true);
 	saveBtn->setEnabled(false);
@@ -203,6 +225,7 @@ void NewItemDialog::save()
 	QModelIndex pind = view->getView()->getProxyModel()->mapFromSource(ind);
 	view->setCurrentIndex(ind);
 	view->getView()->scrollTo(pind);
+	return true;
 }
 
 void NewItemDialog::cancel()
@@ -218,7 +241,7 @@ void NewItemDialog::cancel()
 
 	if (item != NULL)
 	{
-		if (item->getId() == 0)
+		if (item->getModelId() == 0)
 		{
 			editBtn->setEnabled(false);
 			del();

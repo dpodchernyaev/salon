@@ -31,23 +31,30 @@ NewClientDialog::NewClientDialog(ClientModel* model) : NewItemDialog(model)
 	rightBox->addStretch(1);
 }
 
-void NewClientDialog::save()
+bool NewClientDialog::save()
 {
 	if (widget->checkSave())
 	{
 		widget->apply();
 		widget->save();
 		NewItemDialog::save();
+		return true;
 	}
 	else
 	{
 		QMessageBox::warning(NULL, "Предупреждение", "Не все поля введены верно");
+		return false;
 	}
 }
 
 Item* NewClientDialog::createItem()
 {
-	return new ClientItem;
+	ClientItem* i = new ClientItem;
+	ClientParam p = i->get();
+	p.birthday = QDateTime(MIN_DATE);
+	i->set(p);
+
+	return i;
 }
 
 void NewClientDialog::setItem(Item *i)

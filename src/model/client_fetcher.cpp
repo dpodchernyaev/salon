@@ -82,6 +82,57 @@ bool ClientFetcher::saveCard(Item* item, DBConn* conn)
 	return res;
 }
 
+void ClientFetcher::deleteSlot(int id)
+{
+	DBService* service = DBService::getInstance();
+	DBConn* conn = service->getConnection();
+	if (!conn->isConnected())
+	{
+		qCritical() << Q_FUNC_INFO << "Ошибка подключания к БД";
+		Q_EMIT deleted(false);
+		return;
+	}
+
+	if (id <= 0)
+	{
+		qCritical() << Q_FUNC_INFO << "Неверный идентификатор клиента";
+		Q_EMIT deleted(false);
+		return;
+	}
+
+	bool res = true;
+	conn->beginTransaction();
+	QString sql = "UPDATE client_service SET"
+				  " client_id = 0"
+				  " WHERE client_id = " + QString::number(id);
+	QSqlQuery q = conn->executeQuery(sql);
+	if (!q.isActive())
+	{
+		res = false;
+	}
+
+	if (res == true)
+	{
+		QString sql = "DELETE FROM client WHERE id = " + QString::number(id);
+		q = conn->executeQuery(sql);
+
+		if (!q.isActive())
+		{
+			res = false;
+		}
+	}
+
+	if (res == true)
+	{
+		conn->commit();
+	}
+	else
+	{
+		conn->rollback();
+	}
+
+	Q_EMIT deleted(res);
+}
 
 void ClientFetcher::saveSlot(Item* item)
 {
@@ -198,7 +249,8 @@ void ClientFetcher::fetchSlot()
 				", client_card.card_id"
 			" FROM client"
 				" LEFT JOIN client_card"
-				" ON client.id = client_card.client_id";
+				" ON client.id = client_card.client_id"
+			" WHERE id <> 0";
 	DBConn* conn = DBService::getInstance()->getConnection();
 	if (!conn->isConnected())
 	{

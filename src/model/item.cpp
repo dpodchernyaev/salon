@@ -12,11 +12,6 @@ Item::Item()
 
 Item::~Item()
 {
-	if (model != NULL)
-	{
-		model->removeItem(this);
-	}
-
 	Q_FOREACH (QString str, hashItems.keys())
 	{
 		Item* i = hashItems.value(str);
@@ -28,7 +23,7 @@ Item::~Item()
 	}
 }
 
-int Item::getId() const
+int Item::getModelId() const
 {
 	int id = 0;
 	Item* curr = const_cast<Item*>(this);
