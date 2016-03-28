@@ -1,46 +1,28 @@
 #ifndef NEWCLIENTDIALOG_H
 #define NEWCLIENTDIALOG_H
 
+#include <gui/new_item_dialog.h>
+
 class ClientModel;
-class ClientWidget;
-class ClientItem;
-
-class CoachModel;
-class CoachWidget;
-class CoachItem;
-
-class ServiceModel;
-
-class QLineEdit;
-class QHBoxLayout;
-class ItemModel;
 class ItemWidget;
-class QVBoxLayout;
 
-#include <QDialog>
-
-class NewClientDialog : public QDialog
+class NewClientDialog : public NewItemDialog
 {
 	Q_OBJECT
 public:
 	NewClientDialog(ClientModel* model);
-	virtual ~NewClientDialog();
 
 protected:
-	QString  getErrorStr() const;
-	virtual QVBoxLayout* construct();
-
-protected Q_SLOTS:
+	virtual void clear();
+	virtual Item* createItem();
+	virtual void setItem(Item *i);
 	virtual void save();
-	virtual void cancel();
 
-protected:
-	QPushButton* saveBtn;
-	QPushButton* cancelBtn;
-	QHBoxLayout* btnBox;
+private:
+	void free();
+
+private:
 	ItemWidget* widget;
-	ItemModel* model;
-	ClientItem* item;
 };
 
 #endif // NEWCLIENTDIALOG_H

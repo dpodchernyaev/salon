@@ -25,22 +25,12 @@ NewCoachDialog::NewCoachDialog(CoachModel* model) : NewItemDialog(model)
 	rightBox->addStretch(1);
 }
 
-void NewCoachDialog::currentChanged(QModelIndex ind)
-{
-	QModelIndex sind = pmodel->mapToSource(ind);
-	Item* i = model->getItem(sind);
-	free();
-	item = (CoachItem*) i;
-	widget->set(item);
-}
-
 void NewCoachDialog::save()
 {
 	if (widget->checkSave())
 	{
 		widget->apply();
 		widget->save();
-		widget->clear();
 		NewItemDialog::save();
 	}
 	else
@@ -49,39 +39,18 @@ void NewCoachDialog::save()
 	}
 }
 
-void NewCoachDialog::free()
+Item* NewCoachDialog::createItem()
 {
-	if (item != NULL)
-	{
-		CoachItem* ci = (CoachItem*)item;
-		int id = ci->getId();
-		if (id <= 0)
-		{
-			delete item;
-			item = NULL;
-		}
-	}
+	return new CoachItem;
 }
 
-void NewCoachDialog::exit()
+void NewCoachDialog::setItem(Item *i)
 {
-	NewItemDialog::exit();
-	widget->clear();
-	close();
+	NewItemDialog::setItem(i);
+	widget->set(i);
 }
 
 void NewCoachDialog::clear()
 {
 	widget->clear();
-}
-
-void NewCoachDialog::add()
-{
-	NewItemDialog::add();
-
-	free();
-	item = new CoachItem;
-	item->setModel(model);
-
-	widget->set(item);
 }

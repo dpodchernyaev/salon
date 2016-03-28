@@ -201,6 +201,11 @@ void ClientWidget::save()
 
 void ClientWidget::clear()
 {
+	set(NULL);
+}
+
+void ClientWidget::reset()
+{
 	set(item);
 }
 

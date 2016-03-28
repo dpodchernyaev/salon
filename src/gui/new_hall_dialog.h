@@ -2,9 +2,8 @@
 #pragma once
 
 #include <QString>
-#include <QModelIndex>
 
-#include <QDialog>
+#include <gui/new_item_dialog.h>
 
 class HallModel;
 class QListView;
@@ -12,29 +11,22 @@ class HallItem;
 class HallWidget;
 class QSortFilterProxyModel;
 
-class NewHallDialog : public QDialog
+class NewHallDialog : public NewItemDialog
 {
 	Q_OBJECT
 public:
 	NewHallDialog(HallModel* model);
 
-private Q_SLOTS:
+protected:
+	virtual void clear();
+	virtual Item* createItem();
+	virtual void setItem(Item *i);
 	virtual void save();
-	virtual void cancel();
-	virtual void create();
-	void currentChanged(QModelIndex ind);
 
 private:
 	void free();
 
-private:
-	QListView *view;
-	QPushButton* newBtn;
-	QPushButton* cancelBtn;
-	QPushButton* saveBtn;
 
-	QSortFilterProxyModel* pmodel;
-	HallItem* item;
-	HallModel* model;
+private:
 	HallWidget* widget;
 };

@@ -15,7 +15,7 @@ public:
 	void setModel(ItemModel* model);
 	void save();
 
-	int getId() const;
+	virtual int getId() const;
 
 	virtual QString hash() const = 0;
 

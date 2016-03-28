@@ -75,7 +75,7 @@ void ClientInfoPanel::edit()
 
 void ClientInfoPanel::cancel()
 {
-	clientWidget->clear();
+	clientWidget->reset();
 	edit(false);
 }
 

@@ -76,6 +76,10 @@ QModelIndex ItemModel::getIndex(Item* item) const
 void ItemModel::fetched(QList<Item*> newItems)
 {
 	beginResetModel();
+	Q_FOREACH (Item* i, items)
+	{
+		i->setModel(NULL);
+	}
 	qDeleteAll(items);
 	items.clear();
 	items = newItems;

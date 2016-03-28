@@ -7,8 +7,9 @@
 class QHBoxLayout;
 class QVBoxLayout;
 class QSortFilterProxyModel;
-class QListView;
+class ItemListWidget;
 class Item;
+class QItemSelection;
 
 class ItemModel;
 
@@ -21,9 +22,12 @@ public:
 
 protected:
 	virtual void clear() = 0;
+	virtual Item* createItem() = 0;
+	virtual void setItem(Item* i);
 
 protected Q_SLOTS:
-	virtual void currentChanged(QModelIndex);
+	void selectionChanged(const QItemSelection &selected,
+						  const QItemSelection &deselected);
 
 	virtual void add();
 	virtual void del();
@@ -41,11 +45,10 @@ protected:
 
 	Item* item;
 	ItemModel* model;
-	QSortFilterProxyModel* pmodel;
 
 private:
 	QWidget* rightWidget;
-	QListView* view;
+	ItemListWidget* view;
 	QPushButton* addBtn;
 	QPushButton* editBtn;
 	QPushButton* saveBtn;

@@ -3,7 +3,7 @@
 
 #include <QMainWindow>
 
-class ClientListView;
+class ItemListWidget;
 class ClientInfoPanel;
 class ClientSearchWidget;
 class ClientItem;
@@ -11,6 +11,8 @@ class CoachModel;
 class ServiceModel;
 class HallModel;
 class CardModel;
+class ClientModel;
+class Item;
 
 class ClientPanel : public QMainWindow
 {
@@ -21,7 +23,7 @@ public:
 
 private Q_SLOTS:
 	void clientLocked(bool);
-	void selected(ClientItem*);
+	void selected(Item*);
 	void modelRestored();
 
 	void newClient();
@@ -31,10 +33,10 @@ private Q_SLOTS:
 	void newCard();
 
 private:
-	ClientListView* view;
-	ClientSearchWidget* searchWidget;
+	ItemListWidget* view;
 	ClientInfoPanel* infoWidget;
 
+	ClientModel* clientModel;
 	CardModel* cardModel;
 	HallModel* hallModel;
 	CoachModel* coachModel;

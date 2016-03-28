@@ -21,16 +21,22 @@ QVariant CoachModel::data(const QModelIndex &index, int role) const
 		return res;
 	}
 
+	CoachItem* item = (CoachItem*)items.value(index.row());
+	if (item == NULL)
+	{
+		return QVariant();
+	}
+
 	if (role == Qt::EditRole
 			|| role == Qt::DisplayRole
 			|| role == SortRole
 			|| role == SearchRole)
 	{
-		CoachItem* item = (CoachItem*)items.value(index.row());
-		if (item != NULL)
-		{
-			res = item->getName();
-		}
+		res = item->getName();
+	}
+	else if (role == KeyRole)
+	{
+		res = item->getId();
 	}
 	return res;
 }

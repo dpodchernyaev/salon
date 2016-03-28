@@ -12,7 +12,11 @@ Item::Item()
 
 Item::~Item()
 {
-	model->removeItem(this);
+	if (model != NULL)
+	{
+		model->removeItem(this);
+	}
+
 	Q_FOREACH (QString str, hashItems.keys())
 	{
 		Item* i = hashItems.value(str);

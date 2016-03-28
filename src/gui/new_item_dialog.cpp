@@ -3,9 +3,14 @@
 #include <QHBoxLayout>
 #include <QPushButton>
 #include <QSortFilterProxyModel>
+#include <QItemSelectionModel>
+#include <QItemSelection>
 #include <QListView>
 
+#include <gui/item_list_widget.h>
+#include <gui/item_list_view.h>
 #include <model/item_model.h>
+#include <model/item_proxy_model.h>
 #include <model/item.h>
 
 #include "new_item_dialog.h"
@@ -13,14 +18,8 @@
 NewItemDialog::NewItemDialog(ItemModel *model) : model(model)
 {
 	item = NULL;
-	pmodel = new QSortFilterProxyModel;
-	pmodel->setSourceModel(model);
-	pmodel->setDynamicSortFilter(true);
-	pmodel->sort(0);
-
-	view = new QListView;
-	view->setModel(pmodel);
-	view->setMaximumWidth(200);
+	view = new ItemListWidget(model);
+	view->setMaximumWidth(300);
 
 	saveBtn = new QPushButton;
 	saveBtn->setIcon(QIcon("pics/save.png"));
@@ -72,9 +71,11 @@ NewItemDialog::NewItemDialog(ItemModel *model) : model(model)
 	hbox->addLayout(privateRightBox);
 	setLayout(hbox);
 
-	QItemSelectionModel* smodel = view->selectionModel();
-	connect(smodel, SIGNAL(currentChanged(QModelIndex, QModelIndex)),
-			this, SLOT(currentChanged(QModelIndex)));
+	QItemSelectionModel* smodel = view->getView()->selectionModel();
+	connect(smodel,
+			SIGNAL(selectionChanged(const QItemSelection &, const QItemSelection &)),
+			this,
+			SLOT(selectionChanged(const QItemSelection &, const QItemSelection &)));
 
 	connect(addBtn, SIGNAL(clicked(bool)), this, SLOT(add()));
 	connect(delBtn, SIGNAL(clicked(bool)), this, SLOT(del()));
@@ -82,8 +83,6 @@ NewItemDialog::NewItemDialog(ItemModel *model) : model(model)
 	connect(editBtn, SIGNAL(clicked(bool)), this, SLOT(edit()));
 	connect(exitBtn, SIGNAL(clicked(bool)), this, SLOT(exit()));
 	connect(cancelBtn, SIGNAL(clicked(bool)), this, SLOT(cancel()));
-
-	currentChanged(QModelIndex());
 
 	connect(model, SIGNAL(lock(bool)), this, SLOT(modelLocked(bool)));
 }
@@ -97,26 +96,18 @@ void NewItemDialog::modelLocked(bool locked)
 		if (item != NULL)
 		{
 			QModelIndex ind = model->getIndex(item);
-			QModelIndex pind = pmodel->mapFromSource(ind);
-			view->setCurrentIndex(pind);
+			view->setCurrentIndex(ind);
 		}
 	}
 }
 
-void NewItemDialog::currentChanged(QModelIndex index)
+void NewItemDialog::selectionChanged(const QItemSelection &selected,
+										const QItemSelection &deselected)
 {
-	QModelIndex sind = pmodel->mapToSource(index);
-	if (sind.isValid())
-	{
-		editBtn->setEnabled(true);
-		saveBtn->setEnabled(false);
-		addBtn->setEnabled(true);
-		delBtn->setEnabled(true);
-		exitBtn->setEnabled(true);
-		cancelBtn->setEnabled(false);
-		rightWidget->setEnabled(false);
-	}
-	else
+	Q_UNUSED (deselected);
+	QModelIndexList lst = selected.indexes();
+	QModelIndex ind;
+	if (lst.isEmpty())
 	{
 		editBtn->setEnabled(false);
 		saveBtn->setEnabled(false);
@@ -126,6 +117,21 @@ void NewItemDialog::currentChanged(QModelIndex index)
 		cancelBtn->setEnabled(false);
 		rightWidget->setEnabled(false);
 	}
+	else
+	{
+		ind = lst.first();
+		editBtn->setEnabled(true);
+		saveBtn->setEnabled(false);
+		addBtn->setEnabled(true);
+		delBtn->setEnabled(true);
+		exitBtn->setEnabled(true);
+		cancelBtn->setEnabled(false);
+		rightWidget->setEnabled(false);
+	}
+
+	QModelIndex sind = view->getView()->getProxyModel()->mapToSource(ind);
+	Item* i = model->getItem(sind);
+	setItem(i);
 }
 
 void NewItemDialog::add()
@@ -137,6 +143,15 @@ void NewItemDialog::add()
 	exitBtn->setEnabled(false);
 	cancelBtn->setEnabled(true);
 	rightWidget->setEnabled(true);
+	view->setEnabled(false);
+
+	view->getView()->selectionModel()->blockSignals(true);
+	view->getView()->selectionModel()->clearSelection();
+	view->getView()->selectionModel()->blockSignals(false);
+
+	Item* i = createItem();
+	i->setModel(model);
+	setItem(i);
 }
 
 void NewItemDialog::del()
@@ -148,6 +163,7 @@ void NewItemDialog::del()
 	exitBtn->setEnabled(true);
 	cancelBtn->setEnabled(false);
 	rightWidget->setEnabled(false);
+	view->setEnabled(true);
 
 	delete item;
 	item = NULL;
@@ -156,6 +172,7 @@ void NewItemDialog::del()
 
 void NewItemDialog::exit()
 {
+	clear();
 	close();
 }
 
@@ -165,37 +182,53 @@ void NewItemDialog::edit()
 	saveBtn->setEnabled(true);
 	addBtn->setEnabled(false);
 	delBtn->setEnabled(false);
-	exitBtn->setEnabled(true);
+	exitBtn->setEnabled(false);
 	cancelBtn->setEnabled(true);
 	rightWidget->setEnabled(true);
+	view->setEnabled(false);
 }
 
 void NewItemDialog::save()
 {
-	editBtn->setEnabled(false);
+	editBtn->setEnabled(true);
 	saveBtn->setEnabled(false);
 	addBtn->setEnabled(true);
 	delBtn->setEnabled(true);
 	exitBtn->setEnabled(true);
 	cancelBtn->setEnabled(false);
 	rightWidget->setEnabled(false);
+	view->setEnabled(true);
+
+	QModelIndex ind = model->getIndex(item);
+	QModelIndex pind = view->getView()->getProxyModel()->mapFromSource(ind);
+	view->setCurrentIndex(ind);
+	view->getView()->scrollTo(pind);
 }
 
 void NewItemDialog::cancel()
 {
-	editBtn->setEnabled(false);
+	editBtn->setEnabled(true);
 	saveBtn->setEnabled(false);
 	addBtn->setEnabled(true);
 	exitBtn->setEnabled(true);
 	cancelBtn->setEnabled(false);
 	rightWidget->setEnabled(false);
-	delBtn->setEnabled(!view->selectionModel()->selectedIndexes().isEmpty());
+	view->setEnabled(true);
+	delBtn->setEnabled(!view->getView()->selectionModel()->selectedIndexes().isEmpty());
 
 	if (item != NULL)
 	{
 		if (item->getId() == 0)
 		{
+			editBtn->setEnabled(false);
 			del();
 		}
 	}
+
+	setItem(item);
+}
+
+void NewItemDialog::setItem(Item* i)
+{
+	this->item = i;
 }

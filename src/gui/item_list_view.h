@@ -1,34 +1,32 @@
-#ifndef CLIENTLISTVIEW_H
-#define CLIENTLISTVIEW_H
+
+#pragma once
 
 #include <gui/background_animation.h>
 
 #include <gui/animation_list_view.h>
 
-class ClientModel;
-class ClientProxyModel;
-class ClientItem;
+class ItemModel;
+class ItemProxyModel;
+class Item;
 
-class ClientListView : public AnimationListView
+class ItemListView : public AnimationListView
 {
 	Q_OBJECT
 public:
-	ClientListView();
-	virtual ~ClientListView();
+	ItemListView(ItemModel *model);
+	virtual ~ItemListView();
 
-	ClientModel* getSourceModel() const;
-	ClientProxyModel* getProxyModel() const;
+	ItemModel* getSourceModel() const;
+	ItemProxyModel* getProxyModel() const;
 	QModelIndex mapFromSource(const QModelIndex &index) const;
 
 protected:
 	void currentChanged(const QModelIndex &current, const QModelIndex &previous);
 
 Q_SIGNALS:
-	void currentChanged(ClientItem*);
+	void currentChanged(Item*);
 
 private:
-	ClientModel* model;
-	ClientProxyModel* proxyModel;
+	ItemModel* model;
+	ItemProxyModel* proxyModel;
 };
-
-#endif // CLIENTLISTVIEW_H

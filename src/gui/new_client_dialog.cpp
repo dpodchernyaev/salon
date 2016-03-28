@@ -20,70 +20,46 @@
 
 #include "new_client_dialog.h"
 
-QString NewClientDialog::getErrorStr() const
+NewClientDialog::NewClientDialog(ClientModel* model) : NewItemDialog(model)
 {
-	return "Такой клиент уже существует";
-}
+	item = NULL;
 
+	setWindowTitle("Новый клиент");
 
-NewClientDialog::NewClientDialog(ClientModel* model) : model(model)
-{
-	btnBox = new QHBoxLayout;
-
-	item = new ClientItem;
-	item->setModel(model);
 	widget = new ClientWidget;
-	widget->set(item);
-	setLayout(construct());
-}
-
-NewClientDialog::~NewClientDialog()
-{
-}
-
-QVBoxLayout* NewClientDialog::construct()
-{
-	QVBoxLayout* vbox = new QVBoxLayout;
-	vbox->addWidget(widget);
-
-	saveBtn = new QPushButton("Сохранить");
-	cancelBtn = new QPushButton("Отмена");
-	btnBox->addStretch(1);
-	btnBox->addWidget(saveBtn);
-	btnBox->addWidget(cancelBtn);
-
-	vbox->addLayout(btnBox);
-
-	connect(saveBtn, SIGNAL(clicked(bool)), this, SLOT(save()));
-	connect(cancelBtn, SIGNAL(clicked(bool)), this, SLOT(cancel()));
-
-	return vbox;
+	rightBox->addWidget(widget);
+	rightBox->addStretch(1);
 }
 
 void NewClientDialog::save()
 {
-	widget->apply();
-	if (Item::getItem(item->hash()) == NULL)
+	if (widget->checkSave())
 	{
+		widget->apply();
 		widget->save();
-		close();
+		NewItemDialog::save();
 	}
 	else
 	{
-		QMessageBox::warning(this, "Ошибка", getErrorStr());
+		QMessageBox::warning(NULL, "Предупреждение", "Не все поля введены верно");
 	}
 }
 
-void NewClientDialog::cancel()
+Item* NewClientDialog::createItem()
 {
-	delete item;
-	close();
+	return new ClientItem;
 }
 
+void NewClientDialog::setItem(Item *i)
+{
+	NewItemDialog::setItem(i);
+	widget->set(i);
+}
 
-
-
-
+void NewClientDialog::clear()
+{
+	widget->clear();
+}
 
 
 

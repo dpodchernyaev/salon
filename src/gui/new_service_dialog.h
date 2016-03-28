@@ -4,35 +4,26 @@
 #include <QDialog>
 #include <QModelIndex>
 
-class ServiceModel;
-class QSortFilterProxyModel;
-class ServiceItem;
-class QListView;
-class ServiceWidget;
+#include <gui/new_item_dialog.h>
 
-class NewServiceDialog : public QDialog
+class ServiceWidget;
+class ServiceModel;
+
+class NewServiceDialog : public NewItemDialog
 {
 	Q_OBJECT
 public:
 	NewServiceDialog(ServiceModel* model);
 
-protected Q_SLOTS:
+protected:
+	virtual void clear();
+	virtual Item* createItem();
+	virtual void setItem(Item *i);
 	virtual void save();
-	virtual void create();
-	virtual void cancel();
-	void currentChanged(QModelIndex ind);
 
 private:
 	void free();
 
 private:
-	QPushButton* saveBtn;
-	QPushButton* cancelBtn;
-	QPushButton* creBtn;
-
 	ServiceWidget* widget;
-	QListView* view;
-	ServiceItem* item;
-	ServiceModel* model;
-	QSortFilterProxyModel* pmodel;
 };

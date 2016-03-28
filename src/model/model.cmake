@@ -7,7 +7,7 @@ set(app_SOURCES ${app_SOURCES}
 		${current_PROJECT_DIR}/card_model.cpp
 		${current_PROJECT_DIR}/model_factory.cpp
 
-		${current_PROJECT_DIR}/client_proxy_model.cpp
+		${current_PROJECT_DIR}/item_proxy_model.cpp
 
 		${current_PROJECT_DIR}/client_fetcher.cpp
 		${current_PROJECT_DIR}/coach_fetcher.cpp

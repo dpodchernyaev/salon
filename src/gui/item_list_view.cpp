@@ -4,37 +4,35 @@
 #include <model/model_factory.h>
 #include <model/client_item.h>
 #include <model/client_model.h>
-#include <model/client_proxy_model.h>
+#include <model/item_proxy_model.h>
 
-#include "client_list_view.h"
+#include "item_list_view.h"
 
-ClientListView::ClientListView()
+ItemListView::ItemListView(ItemModel* model) : model(model)
 {
-	model = (ClientModel*)ModelFactory::getInstance()->getModel(CLIENT);
-	proxyModel = new ClientProxyModel(model);
+	proxyModel = new ItemProxyModel(model);
 	proxyModel->setSortRole(SortRole);
 	proxyModel->setDynamicSortFilter(true);
 	proxyModel->sort(0);
 	setModel(proxyModel);
 }
 
-ClientListView::~ClientListView()
+ItemListView::~ItemListView()
 {
 	delete proxyModel;
-	delete model;
 }
 
-ClientModel *ClientListView::getSourceModel() const
+ItemModel *ItemListView::getSourceModel() const
 {
 	return model;
 }
 
-ClientProxyModel* ClientListView::getProxyModel() const
+ItemProxyModel* ItemListView::getProxyModel() const
 {
 	return proxyModel;
 }
 
-QModelIndex ClientListView::mapFromSource(const QModelIndex &index) const
+QModelIndex ItemListView::mapFromSource(const QModelIndex &index) const
 {
 	if (!index.isValid())
 	{
@@ -43,11 +41,11 @@ QModelIndex ClientListView::mapFromSource(const QModelIndex &index) const
 	return proxyModel->mapFromSource(index);
 }
 
-void ClientListView::currentChanged(const QModelIndex &current,
+void ItemListView::currentChanged(const QModelIndex &current,
 									const QModelIndex &previous)
 {
 	QListView::currentChanged(current, previous);
 	QModelIndex sInd = proxyModel->mapToSource(current);
-	ClientItem* item = model->getItem(sInd);
+	Item* item = model->getItem(sInd);
 	Q_EMIT currentChanged(item);
 }

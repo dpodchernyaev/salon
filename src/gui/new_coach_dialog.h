@@ -2,9 +2,6 @@
 #define NEWCOACHDIALOG_H
 
 #include <QString>
-#include <QModelIndex>
-
-#include <QDialog>
 
 #include <gui/new_item_dialog.h>
 
@@ -21,18 +18,17 @@ class NewCoachDialog : public NewItemDialog
 public:
 	NewCoachDialog(CoachModel* model);
 
-private Q_SLOTS:
-	virtual void save();
-	virtual void exit();
-	virtual void add();
+protected:
 	virtual void clear();
-	void currentChanged(QModelIndex ind);
+	virtual Item* createItem();
+	virtual void setItem(Item *i);
+	virtual void save();
 
 private:
 	void free();
 
+
 private:
-	QLineEdit* editor;
 	CoachWidget* widget;
 };
 

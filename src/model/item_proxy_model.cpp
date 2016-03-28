@@ -1,26 +1,26 @@
 
 #include <model/client_model.h>
 
-#include "client_proxy_model.h"
+#include "item_proxy_model.h"
 
-ClientProxyModel::ClientProxyModel(ClientModel *model)
+ItemProxyModel::ItemProxyModel(ItemModel *model)
 	:sourceModel(model)
 {
 	setSourceModel(model);
 }
 
-ClientProxyModel::~ClientProxyModel()
+ItemProxyModel::~ItemProxyModel()
 {
 
 }
 
-void ClientProxyModel::setFilter(ClientProxyModel::Filter f)
+void ItemProxyModel::setFilter(ItemProxyModel::Filter f)
 {
 	filter = f;
 	invalidateFilter();
 }
 
-bool ClientProxyModel::filterAcceptsRow(int source_row,
+bool ItemProxyModel::filterAcceptsRow(int source_row,
 										const QModelIndex &source_parent) const
 {
 	bool res = QSortFilterProxyModel::filterAcceptsRow(source_row, source_parent);

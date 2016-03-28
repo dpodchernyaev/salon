@@ -1,11 +1,11 @@
-#ifndef CLIENTPROXYMODEL_H
-#define CLIENTPROXYMODEL_H
+
+#pragma once
 
 #include <QSortFilterProxyModel>
 
-class ClientModel;
+class ItemModel;
 
-class ClientProxyModel : public QSortFilterProxyModel
+class ItemProxyModel : public QSortFilterProxyModel
 {
 public:
 	struct Filter
@@ -13,8 +13,8 @@ public:
 		QString display;
 	};
 
-	ClientProxyModel(ClientModel* model);
-	virtual ~ClientProxyModel();
+	ItemProxyModel(ItemModel* model);
+	virtual ~ItemProxyModel();
 
 	void setFilter(Filter f);
 
@@ -23,8 +23,6 @@ protected:
 								  const QModelIndex &source_parent) const;
 
 private:
-	ClientModel* sourceModel;
+	ItemModel* sourceModel;
 	Filter filter;
 };
-
-#endif // CLIENTPROXYMODEL_H
