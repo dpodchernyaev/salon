@@ -25,6 +25,9 @@ public:
 
 	void fetch();
 	void save(Item* item);
+	void removeItem(Item* item);
+
+	QModelIndex getIndex(Item* item) const;
 
 	int indexOf(int id) const;
 
@@ -39,6 +42,8 @@ Q_SIGNALS:
 protected:
 	QList<Item*> items;
 	Fetcher* fetcher;
+
+	Item* forSave;
 };
 
 #endif // ITEMMODEL_H

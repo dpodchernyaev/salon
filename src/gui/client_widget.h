@@ -22,7 +22,7 @@ public:
 	void set(Item* item);
 	void apply();
 	void save();
-	void cancel();
+	void clear();
 	bool checkSave() const;
 	void edit(bool flag);
 

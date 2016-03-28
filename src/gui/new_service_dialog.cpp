@@ -138,7 +138,7 @@ void NewServiceDialog::create()
 
 void NewServiceDialog::cancel()
 {
-	widget->cancel();
+	widget->clear();
 	close();
 }
 

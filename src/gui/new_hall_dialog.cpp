@@ -121,7 +121,7 @@ void NewHallDialog::free()
 
 void NewHallDialog::cancel()
 {
-	widget->cancel();
+	widget->clear();
 	close();
 }
 

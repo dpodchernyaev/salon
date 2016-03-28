@@ -10,8 +10,9 @@
 
 #include "new_item_dialog.h"
 
-NewItemDialog::NewItemDialog(ItemModel *model)
+NewItemDialog::NewItemDialog(ItemModel *model) : model(model)
 {
+	item = NULL;
 	pmodel = new QSortFilterProxyModel;
 	pmodel->setSourceModel(model);
 	pmodel->setDynamicSortFilter(true);
@@ -83,6 +84,23 @@ NewItemDialog::NewItemDialog(ItemModel *model)
 	connect(cancelBtn, SIGNAL(clicked(bool)), this, SLOT(cancel()));
 
 	currentChanged(QModelIndex());
+
+	connect(model, SIGNAL(lock(bool)), this, SLOT(modelLocked(bool)));
+}
+
+void NewItemDialog::modelLocked(bool locked)
+{
+	setEnabled(!locked);
+
+	if (locked == true)
+	{
+		if (item != NULL)
+		{
+			QModelIndex ind = model->getIndex(item);
+			QModelIndex pind = pmodel->mapFromSource(ind);
+			view->setCurrentIndex(pind);
+		}
+	}
 }
 
 void NewItemDialog::currentChanged(QModelIndex index)
@@ -130,6 +148,10 @@ void NewItemDialog::del()
 	exitBtn->setEnabled(true);
 	cancelBtn->setEnabled(false);
 	rightWidget->setEnabled(false);
+
+	delete item;
+	item = NULL;
+	clear();
 }
 
 void NewItemDialog::exit()
@@ -164,8 +186,16 @@ void NewItemDialog::cancel()
 	editBtn->setEnabled(false);
 	saveBtn->setEnabled(false);
 	addBtn->setEnabled(true);
-	delBtn->setEnabled(true);
 	exitBtn->setEnabled(true);
 	cancelBtn->setEnabled(false);
 	rightWidget->setEnabled(false);
+	delBtn->setEnabled(!view->selectionModel()->selectedIndexes().isEmpty());
+
+	if (item != NULL)
+	{
+		if (item->getId() == 0)
+		{
+			del();
+		}
+	}
 }

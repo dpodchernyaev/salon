@@ -40,6 +40,7 @@ void CoachFetcher::fetchSlot()
 
 void CoachFetcher::saveSlot(Item* item)
 {
+	sleep(5);
 	CoachItem* cItem = (CoachItem*)item;
 
 	int id = cItem->getId();

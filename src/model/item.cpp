@@ -12,6 +12,7 @@ Item::Item()
 
 Item::~Item()
 {
+	model->removeItem(this);
 	Q_FOREACH (QString str, hashItems.keys())
 	{
 		Item* i = hashItems.value(str);
@@ -21,6 +22,18 @@ Item::~Item()
 			break;
 		}
 	}
+}
+
+int Item::getId() const
+{
+	int id = 0;
+	Item* curr = const_cast<Item*>(this);
+	QVariant value = model->data(model->getIndex(curr), KeyRole);
+	if (!value.isNull() && value.isValid())
+	{
+		id = value.toInt();
+	}
+	return id;
 }
 
 void Item::setModel(ItemModel* model)

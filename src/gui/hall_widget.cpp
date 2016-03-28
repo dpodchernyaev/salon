@@ -63,7 +63,7 @@ void HallWidget::apply()
 	}
 }
 
-void HallWidget::cancel()
+void HallWidget::clear()
 {
 	nameEdit->clear();
 	cntWidget->clear();

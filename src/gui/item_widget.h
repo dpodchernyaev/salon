@@ -12,7 +12,7 @@ public:
 	virtual ~ItemWidget();
 	virtual void set(Item* item);
 	virtual void apply() = 0;
-	virtual void cancel() = 0;
+	virtual void clear() = 0;
 	virtual bool checkSave() const = 0;
 	virtual void save();
 

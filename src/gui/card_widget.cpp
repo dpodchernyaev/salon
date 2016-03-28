@@ -63,7 +63,7 @@ void CardWidget::apply()
 	}
 }
 
-void CardWidget::cancel()
+void CardWidget::clear()
 {
 	nameEdit->clear();
 	discWidget->clear();

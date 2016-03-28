@@ -148,7 +148,7 @@ void ServiceWidget::apply()
 	}
 }
 
-void ServiceWidget::cancel()
+void ServiceWidget::clear()
 {
 	set(item);
 }

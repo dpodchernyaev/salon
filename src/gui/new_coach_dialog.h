@@ -25,21 +25,14 @@ private Q_SLOTS:
 	virtual void save();
 	virtual void exit();
 	virtual void add();
+	virtual void clear();
 	void currentChanged(QModelIndex ind);
 
 private:
 	void free();
 
 private:
-	QListView *view;
 	QLineEdit* editor;
-	QPushButton* newBtn;
-	QPushButton* cancelBtn;
-	QPushButton* saveBtn;
-
-	QSortFilterProxyModel* pmodel;
-	CoachItem* item;
-	CoachModel* model;
 	CoachWidget* widget;
 };
 

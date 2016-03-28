@@ -12,7 +12,7 @@ class HallWidget : public ItemWidget
 public:
 	HallWidget();
 	virtual void apply();
-	virtual void cancel();
+	virtual void clear();
 	virtual bool checkSave() const;
 	virtual void set(Item* item);
 

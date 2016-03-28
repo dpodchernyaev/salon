@@ -199,7 +199,7 @@ void ClientWidget::save()
 	}
 }
 
-void ClientWidget::cancel()
+void ClientWidget::clear()
 {
 	set(item);
 }

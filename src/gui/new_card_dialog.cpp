@@ -121,7 +121,7 @@ void NewCardDialog::free()
 
 void NewCardDialog::cancel()
 {
-	widget->cancel();
+	widget->clear();
 	close();
 }
 

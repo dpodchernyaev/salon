@@ -51,21 +51,26 @@ int ItemModel::indexOf(int id) const
 
 void ItemModel::save(Item* item)
 {
-	if (!items.contains(item))
-	{
-		beginInsertRows(QModelIndex(), items.size(), items.size());
-		items.append(item);
-		endInsertRows();
-	}
-	else
-	{
-		QModelIndex ind = index(items.indexOf(item));
-		Q_EMIT dataChanged(ind, ind);
-	}
-
 	Q_EMIT lock(true);
-	Item::addToHash(item);
-	fetcher->save(item);
+	forSave = item;
+	fetcher->save(forSave);
+}
+
+void ItemModel::removeItem(Item* item)
+{
+	int row = items.indexOf(item);
+	if (row != -1)
+	{
+		beginRemoveRows(QModelIndex(), row, row);
+		items.removeAll(item);
+		endRemoveRows();
+	}
+}
+
+QModelIndex ItemModel::getIndex(Item* item) const
+{
+	int row = items.indexOf(item);
+	return index(row);
 }
 
 void ItemModel::fetched(QList<Item*> newItems)
@@ -96,6 +101,21 @@ void ItemModel::saved(bool f)
 	{
 		QMessageBox::information(NULL, "Сохранено",
 							"Сохранение выполнено успешно", QMessageBox::Ok);
+
+		Q_ASSERT (forSave != NULL);
+
+		if (!items.contains(forSave))
+		{
+			beginInsertRows(QModelIndex(), items.size(), items.size());
+			items.append(forSave);
+			endInsertRows();
+		}
+		else
+		{
+			QModelIndex ind = index(items.indexOf(forSave));
+			Q_EMIT dataChanged(ind, ind);
+		}
+		Item::addToHash(forSave);
 	}
 	Q_EMIT lock(false);
 }

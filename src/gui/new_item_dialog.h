@@ -8,6 +8,7 @@ class QHBoxLayout;
 class QVBoxLayout;
 class QSortFilterProxyModel;
 class QListView;
+class Item;
 
 class ItemModel;
 
@@ -19,12 +20,7 @@ public:
 	virtual ~NewItemDialog() {}
 
 protected:
-	QHBoxLayout* btnBox;
-	QVBoxLayout* leftBox;
-	QVBoxLayout* rightBox;
-
-	ItemModel* model;
-	QSortFilterProxyModel* pmodel;
+	virtual void clear() = 0;
 
 protected Q_SLOTS:
 	virtual void currentChanged(QModelIndex);
@@ -35,6 +31,17 @@ protected Q_SLOTS:
 	virtual void edit();
 	virtual void save();
 	virtual void cancel();
+
+	virtual void modelLocked(bool);
+
+protected:
+	QHBoxLayout* btnBox;
+	QVBoxLayout* leftBox;
+	QVBoxLayout* rightBox;
+
+	Item* item;
+	ItemModel* model;
+	QSortFilterProxyModel* pmodel;
 
 private:
 	QWidget* rightWidget;

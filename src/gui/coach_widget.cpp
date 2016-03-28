@@ -26,6 +26,8 @@ CoachWidget::CoachWidget()
 	vbox->addLayout(hbox);
 
 	setLayout(vbox);
+
+	item = NULL;
 }
 
 void CoachWidget::set(Item* item)
@@ -51,7 +53,7 @@ void CoachWidget::apply()
 	}
 }
 
-void CoachWidget::cancel()
+void CoachWidget::clear()
 {
 	nameEdit->clear();
 }

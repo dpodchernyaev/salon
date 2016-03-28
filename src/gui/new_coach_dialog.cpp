@@ -36,20 +36,29 @@ void NewCoachDialog::currentChanged(QModelIndex ind)
 
 void NewCoachDialog::save()
 {
-	NewItemDialog::save();
-	widget->apply();
-	widget->save();
-	close();
+	if (widget->checkSave())
+	{
+		widget->apply();
+		widget->save();
+		widget->clear();
+		NewItemDialog::save();
+	}
+	else
+	{
+		QMessageBox::warning(NULL, "Предупреждение", "Не все поля введены верно");
+	}
 }
 
 void NewCoachDialog::free()
 {
 	if (item != NULL)
 	{
-		int id = item->getId();
+		CoachItem* ci = (CoachItem*)item;
+		int id = ci->getId();
 		if (id <= 0)
 		{
 			delete item;
+			item = NULL;
 		}
 	}
 }
@@ -57,8 +66,13 @@ void NewCoachDialog::free()
 void NewCoachDialog::exit()
 {
 	NewItemDialog::exit();
-	widget->cancel();
+	widget->clear();
 	close();
+}
+
+void NewCoachDialog::clear()
+{
+	widget->clear();
 }
 
 void NewCoachDialog::add()
