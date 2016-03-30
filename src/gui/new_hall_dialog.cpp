@@ -28,7 +28,7 @@ NewHallDialog::NewHallDialog(HallModel* model) : NewItemDialog(model)
 {
 	item = NULL;
 
-	setWindowTitle("Новый зал");
+	setWindowTitle("Залы");
 
 	widget = new HallWidget;
 	rightBox->addWidget(widget);

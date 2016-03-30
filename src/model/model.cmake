@@ -5,10 +5,14 @@ set(app_SOURCES ${app_SOURCES}
 		${current_PROJECT_DIR}/item_model.cpp
 		${current_PROJECT_DIR}/hall_model.cpp
 		${current_PROJECT_DIR}/card_model.cpp
+		${current_PROJECT_DIR}/shedule_model.cpp
+		${current_PROJECT_DIR}/cs_model.cpp
 		${current_PROJECT_DIR}/model_factory.cpp
 
 		${current_PROJECT_DIR}/item_proxy_model.cpp
 
+		${current_PROJECT_DIR}/cs_fetcher.cpp
+		${current_PROJECT_DIR}/shedule_fetcher.cpp
 		${current_PROJECT_DIR}/client_fetcher.cpp
 		${current_PROJECT_DIR}/coach_fetcher.cpp
 		${current_PROJECT_DIR}/service_fetcher.cpp
@@ -17,7 +21,9 @@ set(app_SOURCES ${app_SOURCES}
 		${current_PROJECT_DIR}/fetcher.cpp
 
 		${current_PROJECT_DIR}/item.cpp
+		${current_PROJECT_DIR}/client_service_item.cpp
 		${current_PROJECT_DIR}/client_item.cpp
+		${current_PROJECT_DIR}/shedule_item.cpp
 		${current_PROJECT_DIR}/card_item.cpp
 		${current_PROJECT_DIR}/service_item.cpp
 		${current_PROJECT_DIR}/hall_item.cpp
@@ -29,5 +35,7 @@ set(app_HEADERS ${app_HEADERS}
 		${current_PROJECT_DIR}/coach_model.h
 		${current_PROJECT_DIR}/hall_model.h
 		${current_PROJECT_DIR}/card_model.h
+		${current_PROJECT_DIR}/cs_model.h
+		${current_PROJECT_DIR}/shedule_model.h
 
 		${current_PROJECT_DIR}/fetcher.h)

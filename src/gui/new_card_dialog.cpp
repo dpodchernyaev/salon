@@ -18,7 +18,7 @@ NewCardDialog::NewCardDialog(CardModel* model) : NewItemDialog(model)
 {
 	item = NULL;
 
-	setWindowTitle("Новый карта");
+	setWindowTitle("Карты");
 
 	widget = new CardWidget;
 	rightBox->addWidget(widget);

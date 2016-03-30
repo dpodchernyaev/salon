@@ -11,7 +11,6 @@ class CoachWidget : public ItemWidget
 public:
 	CoachWidget();
 	virtual void apply();
-	virtual void clear();
 	virtual bool checkSave() const;
 	virtual void set(Item* item);
 

@@ -173,6 +173,7 @@ void NewItemDialog::del()
 	rightWidget->setEnabled(false);
 	view->setEnabled(true);
 
+//	clear();
 	deleteItem();
 }
 
@@ -241,7 +242,7 @@ void NewItemDialog::cancel()
 
 	if (item != NULL)
 	{
-		if (item->getModelId() == 0)
+		if (item->getId() == 0)
 		{
 			editBtn->setEnabled(false);
 			del();

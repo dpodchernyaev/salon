@@ -28,16 +28,17 @@ ClientWidget::ClientWidget()
 	QGridLayout* grid = new QGridLayout;
 
 	int row = 0;
-	QLabel* label = new QLabel("Имя: ");
+
+	QLabel* label = new QLabel("Фамилия: ");
+	surnameWidget = new QLineEdit;
+	grid->addWidget(label, row, 0);
+	grid->addWidget(surnameWidget, row++, 1);
+
+	label = new QLabel("Имя: ");
 	nameWidget = new QLineEdit;
 	nameWidget->setMinimumWidth(300);
 	grid->addWidget(label, row, 0);
 	grid->addWidget(nameWidget, row++, 1);
-
-	label = new QLabel("Фамилия: ");
-	surnameWidget = new QLineEdit;
-	grid->addWidget(label, row, 0);
-	grid->addWidget(surnameWidget, row++, 1);
 
 	label = new QLabel("Отчество: ");
 	patronymicWidget = new QLineEdit;
@@ -79,7 +80,7 @@ ClientWidget::ClientWidget()
 	grid->addWidget(label, row, 0);
 	grid->addWidget(emailWidget, row++, 1);
 
-	notifyWidget = new QCheckBox("Опопвещать по email");
+	notifyWidget = new QCheckBox("Оповещать по email");
 	grid->addWidget(notifyWidget, row++, 1);
 
 	QVBoxLayout* vbox = new QVBoxLayout;
@@ -197,11 +198,6 @@ void ClientWidget::save()
 	{
 		photo->save();
 	}
-}
-
-void ClientWidget::clear()
-{
-	set(NULL);
 }
 
 void ClientWidget::reset()

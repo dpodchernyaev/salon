@@ -25,6 +25,7 @@ ItemListWidget::ItemListWidget(ItemModel* model) : model(model)
 
 	editor = new QLineEdit;
 	completer = new QCompleter(editor);
+	completer->setCompletionMode(QCompleter::InlineCompletion);
 
 	completer->setModel(model);
 	completer->setCompletionRole(Qt::DisplayRole);

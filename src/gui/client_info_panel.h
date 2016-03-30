@@ -2,11 +2,28 @@
 #define CLIENTINFOPANEL_H
 
 #include <QWidget>
+#include <QPushButton>
 
 class ClientWidget;
 class ClientItem;
-class QPushButton;
-class QPushButton;
+
+class CsModel;
+class ItemTableView;
+class Item;
+
+class DoublePushButton : public QPushButton
+{
+	Q_OBJECT
+protected:
+	void mouseDoubleClickEvent(QMouseEvent *e)
+	{
+		QPushButton::mouseDoubleClickEvent(e);
+		Q_EMIT doubleClicked();
+	}
+
+Q_SIGNALS:
+	void doubleClicked();
+};
 
 class ClientInfoPanel : public QWidget
 {
@@ -21,16 +38,21 @@ private:
 	void edit(bool);
 
 private Q_SLOTS:
-	void save();
-	void edit();
-	void cancel();
-	void clean();
+	void buyService();
+	void delService();
+	void useService();
+	void serviceLocked(bool);
+	void serviceSelected(Item*);
 
 private:
+
+	QPushButton* delBtn;
+	QPushButton* buyBtn;
+	QPushButton* useBtn;
+
+	ItemTableView* serviceView;
 	ClientWidget* clientWidget;
-	QPushButton* saveClientBtn;
-	QPushButton* editClientBtn;
-	QPushButton* cancelClientBtn;
+	CsModel* csModel;
 };
 
 #endif // CLIENTINFOPANEL_H

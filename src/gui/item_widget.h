@@ -12,9 +12,11 @@ public:
 	virtual ~ItemWidget();
 	virtual void set(Item* item);
 	virtual void apply() = 0;
-	virtual void clear() = 0;
+	virtual void clear();
 	virtual bool checkSave() const = 0;
 	virtual void save();
+
+	Item* get() const {return item;}
 
 protected:
 	Item* item;

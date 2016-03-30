@@ -47,8 +47,8 @@ void HallWidget::set(Item* item)
 	}
 	else
 	{
-		nameEdit->setText("");
-		cntWidget->setValue(0);
+		nameEdit->clear();
+		cntWidget->clear();
 	}
 }
 
@@ -61,12 +61,6 @@ void HallWidget::apply()
 		i->setCnt(cntWidget->value());
 
 	}
-}
-
-void HallWidget::clear()
-{
-	nameEdit->clear();
-	cntWidget->clear();
 }
 
 bool HallWidget::checkSave() const

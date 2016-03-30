@@ -48,10 +48,10 @@ protected:
 
 	Item* item;
 	ItemModel* model;
+	ItemListWidget* view;
 
 private:
 	QWidget* rightWidget;
-	ItemListWidget* view;
 	QPushButton* addBtn;
 	QPushButton* editBtn;
 	QPushButton* saveBtn;

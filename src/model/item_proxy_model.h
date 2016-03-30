@@ -26,3 +26,13 @@ private:
 	ItemModel* sourceModel;
 	Filter filter;
 };
+
+class ClientProxyModel : public ItemProxyModel
+{
+public:
+	ClientProxyModel(ItemModel* model);
+	virtual ~ClientProxyModel();
+
+protected:
+	virtual bool lessThan(const QModelIndex &left, const QModelIndex &right) const;
+};

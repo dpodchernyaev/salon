@@ -24,7 +24,7 @@ NewClientDialog::NewClientDialog(ClientModel* model) : NewItemDialog(model)
 {
 	item = NULL;
 
-	setWindowTitle("Новый клиент");
+	setWindowTitle("Клиенты");
 
 	widget = new ClientWidget;
 	rightBox->addWidget(widget);

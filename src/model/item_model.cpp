@@ -23,6 +23,20 @@ int ItemModel::rowCount(const QModelIndex &parent) const
 	return items.size();
 }
 
+int ItemModel::columnCount(const QModelIndex &parent) const
+{
+	Q_UNUSED(parent);
+	return 1;
+}
+
+Item* ItemModel::getItem(int id) const
+{
+	Item* res = NULL;
+	int row = indexOf(id);
+	res = items.value(row);
+	return res;
+}
+
 Item* ItemModel::getItem(const QModelIndex &ind) const
 {
 	int r = ind.row();
@@ -41,7 +55,7 @@ int ItemModel::indexOf(int id) const
 	int res = -1;
 	for (int i = 0; i < rowCount(QModelIndex()); i++)
 	{
-		int key = index(i).data(KeyRole).toInt();
+		int key = index(i, 0).data(KeyRole).toInt();
 		if (key == id)
 		{
 			res = i;
@@ -58,19 +72,29 @@ void ItemModel::save(Item* item)
 	fetcher->save(forSave);
 }
 
+void ItemModel::clean()
+{
+	beginResetModel();
+	qDeleteAll(items);
+	items.clear();
+	forSave = NULL;
+	endResetModel();
+}
+
 void ItemModel::deleteItem(Item* item)
 {
 	int row = items.indexOf(item);
 
 	if (row != -1)
 	{
-		int id = item->getModelId();
+		int id = item->getId();
 		beginRemoveRows(QModelIndex(), row, row);
 		items.removeAll(item);
 		endRemoveRows();
 
 		if (id > 0)
 		{
+			Q_EMIT lock(true);
 			fetcher->deleteItem(id);
 		}
 	}
@@ -80,18 +104,14 @@ void ItemModel::deleteItem(Item* item)
 QModelIndex ItemModel::getIndex(Item* item) const
 {
 	int row = items.indexOf(item);
-	return index(row);
+	return index(row, 0);
 }
 
 void ItemModel::fetched(QList<Item*> newItems)
 {
+	clean();
+
 	beginResetModel();
-	Q_FOREACH (Item* i, items)
-	{
-		i->setModel(NULL);
-	}
-	qDeleteAll(items);
-	items.clear();
 	items = newItems;
 	endResetModel();
 
@@ -140,7 +160,7 @@ void ItemModel::saved(bool f)
 		}
 		else
 		{
-			QModelIndex ind = index(items.indexOf(forSave));
+			QModelIndex ind = index(items.indexOf(forSave), 0);
 			Q_EMIT dataChanged(ind, ind);
 		}
 		Item::addToHash(forSave);

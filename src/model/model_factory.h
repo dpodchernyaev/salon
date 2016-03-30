@@ -11,7 +11,9 @@ enum ModelType
 	COACH,
 	HALL,
 	CARD,
-	CLIENT
+	CLIENT,
+	CS,
+	SHEDULE
 };
 
 class ModelFactory

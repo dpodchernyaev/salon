@@ -23,16 +23,15 @@ Item::~Item()
 	}
 }
 
-int Item::getModelId() const
+QVariant Item::data(int role)
 {
-	int id = 0;
-	Item* curr = const_cast<Item*>(this);
-	QVariant value = model->data(model->getIndex(curr), KeyRole);
-	if (!value.isNull() && value.isValid())
+	QVariant res;
+	if (model != NULL)
 	{
-		id = value.toInt();
+		QModelIndex ind = model->getIndex(this);
+		res = model->data(ind, role);
 	}
-	return id;
+	return res;
 }
 
 void Item::setModel(ItemModel* model)

@@ -63,12 +63,6 @@ void CardWidget::apply()
 	}
 }
 
-void CardWidget::clear()
-{
-	nameEdit->clear();
-	discWidget->clear();
-}
-
 bool CardWidget::checkSave() const
 {
 	bool res = true;

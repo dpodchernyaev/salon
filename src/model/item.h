@@ -15,8 +15,9 @@ public:
 	void setModel(ItemModel* model);
 	void save();
 
-	int getModelId() const;
+	QVariant data(int role);
 
+	virtual int getId() const = 0;
 	virtual QString hash() const = 0;
 
 	static Item* getItem(const QString &hash);

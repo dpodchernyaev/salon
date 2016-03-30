@@ -40,7 +40,7 @@ void CoachWidget::set(Item* item)
 	}
 	else
 	{
-		nameEdit->setText("");
+		nameEdit->clear();
 	}
 }
 
@@ -51,11 +51,6 @@ void CoachWidget::apply()
 		CoachItem* i = (CoachItem*)item;
 		i->setName(nameEdit->text());
 	}
-}
-
-void CoachWidget::clear()
-{
-	nameEdit->clear();
 }
 
 bool CoachWidget::checkSave() const

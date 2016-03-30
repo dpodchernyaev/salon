@@ -148,11 +148,6 @@ void ServiceWidget::apply()
 	}
 }
 
-void ServiceWidget::clear()
-{
-	set(item);
-}
-
 bool ServiceWidget::checkSave() const
 {
 	bool res = true;

@@ -47,6 +47,18 @@ QVariant ClientModel::data(const QModelIndex &index, int role) const
 	{
 		res = p.id;
 	}
+	else if (role == BirthdayRole)
+	{
+		res = p.birthday;
+	}
+	else if (role == Qt::DecorationRole)
+	{
+		if (isBirthday(p.birthday.date()))
+		{
+
+			res = QPixmap("pics/birthday.png" ,"PNG");
+		}
+	}
 
 	return res;
 }
@@ -59,7 +71,7 @@ ClientItem* ClientModel::getItem(const QModelIndex &index) const
 QModelIndex ClientModel::getIndex(int id) const
 {
 	ClientItem* item = getItem(id);
-	return index(items.indexOf(item));
+	return index(items.indexOf(item), 0);
 }
 
 ClientItem* ClientModel::getItem(int id) const

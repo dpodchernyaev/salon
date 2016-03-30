@@ -37,6 +37,10 @@ QVariant ServiceModel::data(const QModelIndex &index, int role) const
 	{
 		res = item->getId();
 	}
+	else if (role == PriceRole)
+	{
+		res = item->get().price;
+	}
 
 	return res;
 }

@@ -11,6 +11,8 @@ class QCompleter;
 class QModelIndex;
 class Item;
 
+#include <QAbstractItemModel>
+
 class ItemListWidget : public QWidget
 {
 	Q_OBJECT

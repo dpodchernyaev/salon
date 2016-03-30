@@ -23,7 +23,6 @@ public:
 
 	void set(Item* item);
 	void apply();
-	void clear();
 	bool checkSave() const;
 
 private Q_SLOTS:

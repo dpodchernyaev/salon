@@ -18,7 +18,7 @@ NewCoachDialog::NewCoachDialog(CoachModel* model) : NewItemDialog(model)
 {
 	item = NULL;
 
-	setWindowTitle("Новый тренер");
+	setWindowTitle("Тренеры");
 
 	widget = new CoachWidget;
 	rightBox->addWidget(widget);

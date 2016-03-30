@@ -43,6 +43,10 @@ QVariant CardModel::data(const QModelIndex &index, int role) const
 	{
 		res = item->getId();
 	}
+	else if (role == DiscontRole)
+	{
+		res = item->getDiscont();
+	}
 
 	return res;
 }

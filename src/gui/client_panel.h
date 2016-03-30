@@ -13,6 +13,7 @@ class HallModel;
 class CardModel;
 class ClientModel;
 class Item;
+class SheduleModel;
 
 class ClientPanel : public QMainWindow
 {
@@ -31,6 +32,7 @@ private Q_SLOTS:
 	void newService();
 	void newHall();
 	void newCard();
+	void newShedule();
 
 private:
 	ItemListWidget* view;
@@ -41,6 +43,7 @@ private:
 	HallModel* hallModel;
 	CoachModel* coachModel;
 	ServiceModel* serviceModel;
+	SheduleModel* sheduleModel;
 };
 
 #endif // CLIENTPANEL_H

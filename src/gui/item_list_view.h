@@ -16,9 +16,35 @@ public:
 	ItemListView(ItemModel *model);
 	virtual ~ItemListView();
 
+	void setProxyModel(ItemProxyModel* proxy);
 	ItemModel* getSourceModel() const;
 	ItemProxyModel* getProxyModel() const;
 	QModelIndex mapFromSource(const QModelIndex &index) const;
+	Item* getSelected() const;
+
+protected:
+	void currentChanged(const QModelIndex &current, const QModelIndex &previous);
+
+Q_SIGNALS:
+	void currentChanged(Item*);
+
+private:
+	ItemModel* model;
+	ItemProxyModel* proxyModel;
+};
+
+class ItemTableView : public AnimationTableView
+{
+	Q_OBJECT
+public:
+	ItemTableView(ItemModel *model);
+	virtual ~ItemTableView();
+
+	ItemModel* getSourceModel() const;
+	ItemProxyModel* getProxyModel() const;
+	QModelIndex mapFromSource(const QModelIndex &index) const;
+
+	Item* getSelected() const;
 
 protected:
 	void currentChanged(const QModelIndex &current, const QModelIndex &previous);
