@@ -54,10 +54,10 @@ ClientInfoPanel::ClientInfoPanel()
 	btnbox->addWidget(useBtn);
 
 	csModel = (CsModel*)ModelFactory::getInstance()->getModel(CS);
-	CsProxyModel* csProxy = new CsProxyModel(csModel);
-	csProxy->setDynamicSortFilter(true);
-	csProxy->setSortRole(SortRole);
-	csProxy->sort(0, Qt::DescendingOrder);
+//	CsProxyModel* csProxy = new CsProxyModel(csModel);
+//	csProxy->setDynamicSortFilter(true);
+//	csProxy->setSortRole(SortRole);
+//	csProxy->sort(0, Qt::DescendingOrder);
 
 	serviceView = new ItemTableView(csModel);
 	serviceView->horizontalHeader()->setStretchLastSection(true);
@@ -66,7 +66,7 @@ ClientInfoPanel::ClientInfoPanel()
 	serviceView->setSelectionMode(QAbstractItemView::SingleSelection);
 	serviceView->setSelectionBehavior(QAbstractItemView::SelectRows);
 	serviceView->setEditTriggers(QAbstractItemView::NoEditTriggers);
-	serviceView->setProxyModel(csProxy);
+//	serviceView->setProxyModel(csProxy);
 
 	QHBoxLayout* hbox = new QHBoxLayout;
 	hbox->addWidget(clientWidget);
@@ -101,6 +101,10 @@ ClientInfoPanel::ClientInfoPanel()
 
 	connect(serviceView, SIGNAL(currentChanged(Item*)),
 			this, SLOT(serviceSelected(Item*)));
+
+	upTimer.setInterval(500);
+
+	connect(&upTimer, SIGNAL(timeout()), this, SLOT(fetch()));
 }
 
 void ClientInfoPanel::serviceSelected(Item* item)
@@ -121,6 +125,7 @@ void ClientInfoPanel::serviceLocked(bool f)
 		CsModel* cs = (CsModel*)ModelFactory::getInstance()->getModel(CS);
 		summWidget->setText(QString::number(cs->getSumm(), 'f', 2) + " руб.");
 		serviceView->hideAnimation();
+		buyBtn->setEnabled(true);
 	}
 }
 
@@ -184,24 +189,24 @@ void ClientInfoPanel::useService()
 
 void ClientInfoPanel::setItem(ClientItem *item)
 {
-	csModel->clean();
 	clientWidget->set(item);
-	int cId = 0;
-	if (item != NULL)
-	{
-		cId = item->getId();
-		csModel->fetchForClient(cId);
 
-		serviceView->setEnabled(true);
-		delBtn->setEnabled(serviceView->getSelected() != NULL);
-		buyBtn->setEnabled(true);
-		useBtn->setEnabled(serviceView->getSelected() != NULL);
-	}
-	else
+	csModel->clean();
+	serviceView->setEnabled(false);
+	delBtn->setEnabled(false);
+	buyBtn->setEnabled(false);
+	useBtn->setEnabled(false);
+	upTimer.start();
+}
+
+void ClientInfoPanel::fetch()
+{
+	if (clientWidget->get() == NULL)
 	{
-		serviceView->setEnabled(false);
-		delBtn->setEnabled(false);
-		buyBtn->setEnabled(false);
-		useBtn->setEnabled(false);
+		return;
 	}
+
+	csModel->fetchForClient(clientWidget->get()->getId());
+
+	upTimer.stop();
 }

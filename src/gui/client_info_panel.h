@@ -2,6 +2,7 @@
 #define CLIENTINFOPANEL_H
 
 #include <QWidget>
+#include <QTimer>
 #include <QPushButton>
 
 class ClientWidget;
@@ -46,6 +47,8 @@ private Q_SLOTS:
 	void serviceLocked(bool);
 	void serviceSelected(Item*);
 
+	void fetch();
+
 private:
 
 	QPushButton* delBtn;
@@ -56,6 +59,8 @@ private:
 	ClientWidget* clientWidget;
 	QLineEdit* summWidget;
 	CsModel* csModel;
+
+	QTimer upTimer;
 };
 
 #endif // CLIENTINFOPANEL_H

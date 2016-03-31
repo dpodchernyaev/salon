@@ -28,8 +28,8 @@ double CsModel::getSumm() const
 
 void CsModel::fetchForClient(int id)
 {
-	Q_EMIT lock(true);
 	clientId = id;
+	Q_EMIT lock(true);
 	CsFetcher* f = (CsFetcher*)fetcher;
 	f->fetchClient(id);
 }
