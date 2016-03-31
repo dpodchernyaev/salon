@@ -50,6 +50,12 @@ void ItemModel::fetch()
 	fetcher->fetch();
 }
 
+int ItemModel::indexOf(Item* item) const
+{
+	int res = items.indexOf(item);
+	return res;
+}
+
 int ItemModel::indexOf(int id) const
 {
 	int res = -1;
@@ -117,7 +123,6 @@ void ItemModel::fetched(QList<Item*> newItems)
 
 	Q_FOREACH (Item* i, items)
 	{
-		Item::addToHash(i);
 		i->setModel(this);
 	}
 
@@ -163,7 +168,6 @@ void ItemModel::saved(bool f)
 			QModelIndex ind = index(items.indexOf(forSave), 0);
 			Q_EMIT dataChanged(ind, ind);
 		}
-		Item::addToHash(forSave);
 	}
 	Q_EMIT lock(false);
 }

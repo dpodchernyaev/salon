@@ -49,8 +49,6 @@ public:
 
 	int getId() const;
 
-	virtual QString hash() const;
-
 	void set(const ClientParam&);
 	ClientParam get() const;
 

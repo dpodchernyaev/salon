@@ -53,7 +53,7 @@ ServiceWidget::ServiceWidget()
 	grid->addWidget(limitDaysWidget, row++, 1);
 
 	usedWidget = new QCheckBox("Используется");
-	grid->addWidget(usedWidget, row++, 1);
+	//grid->addWidget(usedWidget, row++, 1);
 
 
 	QVBoxLayout* vbox = new QVBoxLayout;

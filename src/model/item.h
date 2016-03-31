@@ -6,6 +6,13 @@
 
 class ItemModel;
 
+enum LimitType
+{
+	LT_DATE,
+	LT_COUNT,
+	LT_DATE_COUNT
+};
+
 class Item
 {
 public:
@@ -18,13 +25,8 @@ public:
 	QVariant data(int role);
 
 	virtual int getId() const = 0;
-	virtual QString hash() const = 0;
-
-	static Item* getItem(const QString &hash);
-	static Item* addToHash(Item*);
 
 protected:
-	static QHash<QString, Item*> hashItems;
 	ItemModel* model;
 };
 

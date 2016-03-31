@@ -12,6 +12,7 @@
 #include <gui/item_list_view.h>
 #include <gui/buy_dialog.h>
 
+#include <model/item_proxy_model.h>
 #include <model/card_item.h>
 #include <model/service_item.h>
 #include <model/cs_model.h>
@@ -53,6 +54,11 @@ ClientInfoPanel::ClientInfoPanel()
 	btnbox->addWidget(useBtn);
 
 	csModel = (CsModel*)ModelFactory::getInstance()->getModel(CS);
+	CsProxyModel* csProxy = new CsProxyModel(csModel);
+	csProxy->setDynamicSortFilter(true);
+	csProxy->setSortRole(SortRole);
+	csProxy->sort(0, Qt::DescendingOrder);
+
 	serviceView = new ItemTableView(csModel);
 	serviceView->horizontalHeader()->setStretchLastSection(true);
 	serviceView->horizontalHeader()->setResizeMode(QHeaderView::ResizeToContents);
@@ -60,6 +66,7 @@ ClientInfoPanel::ClientInfoPanel()
 	serviceView->setSelectionMode(QAbstractItemView::SingleSelection);
 	serviceView->setSelectionBehavior(QAbstractItemView::SelectRows);
 	serviceView->setEditTriggers(QAbstractItemView::NoEditTriggers);
+	serviceView->setProxyModel(csProxy);
 
 	QHBoxLayout* hbox = new QHBoxLayout;
 	hbox->addWidget(clientWidget);
@@ -148,7 +155,10 @@ void ClientInfoPanel::buyService()
 			CsItem* i = new CsItem;
 			CsParam p = i->getParam();
 			p.client_id = clientItem->getId();
-			p.service_id = si->getId();
+			p.limit_value = si->get().value;
+			p.limit_type = si->get().limitType;
+			p.limit_days = si->get().limitDays;
+			p.name = si->get().name;
 			p.date = QDateTime::currentDateTime();
 			p.summ = si->get().price * (1 - (double)disc / 100);
 			i->setParam(p);

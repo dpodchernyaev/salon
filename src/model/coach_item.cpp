@@ -8,11 +8,6 @@ CoachItem::CoachItem()
 	id = 0;
 }
 
-QString CoachItem::hash() const
-{
-	return "CoachItem_" + name + "_" + phone;
-}
-
 QString CoachItem::getName() const
 {
 	return name;

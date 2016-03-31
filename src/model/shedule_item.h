@@ -31,7 +31,6 @@ public:
 	SheduleItem();
 	virtual ~SheduleItem();
 
-	QString hash() const;
 	int getId() const;
 
 	void setParam(const SheduleParam &p);

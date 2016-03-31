@@ -14,7 +14,8 @@ enum UserModelRole
 	SearchRole = Qt::UserRole + 3,
 	PriceRole = Qt::UserRole + 4,
 	DiscontRole = Qt::UserRole + 5,
-	BirthdayRole = Qt::UserRole + 6
+	BirthdayRole = Qt::UserRole + 6,
+	IsActive = Qt::UserRole + 6
 };
 
 class ItemModel : public QAbstractTableModel
@@ -37,6 +38,7 @@ public:
 	QModelIndex getIndex(Item* item) const;
 
 	int indexOf(int id) const;
+	int indexOf(Item* item) const;
 
 protected Q_SLOTS:
 	virtual void fetched(QList<Item*> newItems);

@@ -20,9 +20,12 @@ void CsFetcher::fetchSlot()
 			"SELECT"
 				" id"
 				", client_id"
-				", service_id"
 				", date"
 				", summ"
+				", limit_value"
+				", limit_days"
+				", limit_type"
+				", name"
 			" FROM client_service"
 			" WHERE id <> 0 AND client_id = " + QString::number(clientId);
 	DBConn* conn = DBService::getInstance()->getConnection();
@@ -41,9 +44,12 @@ void CsFetcher::fetchSlot()
 		int i = 0;
 		p.id = q.value(i++).toInt();
 		p.client_id = q.value(i++).toInt();
-		p.service_id = q.value(i++).toInt();
 		p.date = q.value(i++).toDateTime();
 		p.summ = q.value(i++).toDouble();
+		p.limit_value = q.value(i++).toInt();
+		p.limit_days = q.value(i++).toInt();
+		p.limit_type = (LimitType)q.value(i++).toInt();
+		p.name = q.value(i++).toString();
 		item->setParam(p);
 		items.append(item);
 	}
@@ -75,15 +81,21 @@ void CsFetcher::saveSlot(Item* item)
 			"UPDATE client_service"
 				" SET"
 					"client_id = ?"
-					", service_id = ?"
 					", date = ?"
 					", summ = ?"
+					", limit_value = ?"
+					", limit_days = ?"
+					", limit_type = ?"
+					", name = ?"
 				" WHERE id = ?";
 		q.prepare(sql);
 		q.bindValue(i++, p.client_id);
-		q.bindValue(i++, p.service_id);
 		q.bindValue(i++, p.date);
 		q.bindValue(i++, p.summ);
+		q.bindValue(i++, p.limit_value);
+		q.bindValue(i++, p.limit_days);
+		q.bindValue(i++, p.limit_type);
+		q.bindValue(i++, p.name);
 		q.bindValue(i++, p.id);
 	}
 	else
@@ -99,14 +111,17 @@ void CsFetcher::saveSlot(Item* item)
 		}
 		sql =
 			"INSERT INTO client_service("
-					" id, client_id, service_id, date, summ)"
-				" VALUES(?, ?, ?, ?, ?)";
+					" id, client_id, date, summ, limit_value, limit_days, limit_type, name)"
+				" VALUES(?, ?, ?, ?, ?, ?, ?, ?)";
 		q.prepare(sql);
 		q.bindValue(i++, p.id);
 		q.bindValue(i++, p.client_id);
-		q.bindValue(i++, p.service_id);
 		q.bindValue(i++, p.date);
 		q.bindValue(i++, p.summ);
+		q.bindValue(i++, p.limit_value);
+		q.bindValue(i++, p.limit_days);
+		q.bindValue(i++, p.limit_type);
+		q.bindValue(i++, p.name);
 	}
 
 	bool res = conn->executeQuery(q);

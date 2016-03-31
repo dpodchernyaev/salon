@@ -6,11 +6,6 @@ HallItem::HallItem()
 	cnt = 0;
 }
 
-QString HallItem::hash() const
-{
-	return "HallItem_" + name;
-}
-
 QString HallItem::getName() const
 {
 	return name;

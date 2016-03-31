@@ -179,7 +179,7 @@ void NewItemDialog::del()
 
 void NewItemDialog::deleteItem()
 {
-	if (Item::getItem(item->hash()) == NULL)
+	if (model->indexOf(item) == -1)
 	{
 		delete item;
 		item = NULL;

@@ -1,8 +1,14 @@
 
 #include <QDateTime>
+#include <QPixmap>
+#include <QBrush>
 
 #include <variables.h>
+
 #include <model/client_model.h>
+#include <model/cs_model.h>
+
+#include <model/client_service_item.h>
 
 #include "item_proxy_model.h"
 
@@ -73,5 +79,54 @@ bool ClientProxyModel::lessThan(const QModelIndex &left,
 		}
 	}
 
+	return res;
+}
+
+
+// =====================
+
+
+CsProxyModel::CsProxyModel(CsModel* model) : ItemProxyModel(model)
+{
+}
+
+QVariant CsProxyModel::data(const QModelIndex &index, int role) const
+{
+	QVariant res = ItemProxyModel::data(index, role);
+	if (role == Qt::DecorationRole)
+	{
+		if ( (index.column() == 0) && (index.data(IsActive).toBool() == false) )
+		{
+			res = QPixmap("pics/del_16.png", "PNG");
+		}
+	}
+	else if (role == Qt::BackgroundColorRole)
+	{
+		if (index.data(IsActive).toBool() == false)
+		{
+			return QBrush(QColor(122, 122, 122, 122));
+		}
+	}
+	return res;
+}
+bool CsProxyModel::lessThan(const QModelIndex &left, const QModelIndex &right) const
+{
+	bool res = QSortFilterProxyModel::lessThan(left, right);
+
+	if (left.data(IsActive) != right.data(IsActive))
+	{
+		res = left.data(IsActive).toBool();
+		if (sortOrder() == Qt::DescendingOrder)
+		{
+			res = !res;
+		}
+	}
+	return res;
+}
+
+
+bool CsProxyModel::filterAcceptsRow(int source_row, const QModelIndex &source_parent) const
+{
+	bool res = ItemProxyModel::filterAcceptsRow(source_row, source_parent);
 	return res;
 }

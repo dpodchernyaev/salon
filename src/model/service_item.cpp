@@ -19,11 +19,6 @@ int ServiceItem::getId() const
 	return param.id;
 }
 
-QString ServiceItem::hash() const
-{
-	return "ServiceItem" + param.name;
-}
-
 void ServiceItem::set(const ServiceParam &p)
 {
 	param = p;

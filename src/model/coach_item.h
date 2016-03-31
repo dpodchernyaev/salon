@@ -17,8 +17,6 @@ public:
 	void setPhone(const QString &value);
 	void setId(int id);
 
-	QString hash() const;
-
 private:
 	int id;
 	QString name;

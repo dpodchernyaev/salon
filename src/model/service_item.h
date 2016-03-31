@@ -7,13 +7,6 @@
 #include <variables.h>
 #include <model/item.h>
 
-enum LimitType
-{
-	LT_DATE,
-	LT_COUNT,
-	LT_DATE_COUNT
-};
-
 struct ServiceParam
 {
 	int id;
@@ -43,8 +36,6 @@ public:
 	virtual ~ServiceItem();
 
 	int getId() const;
-
-	virtual QString hash() const;
 
 	void set(const ServiceParam&);
 	ServiceParam get() const;

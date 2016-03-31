@@ -11,15 +11,6 @@ CsItem::~CsItem()
 
 }
 
-QString CsItem::hash() const
-{
-	return "ClientServiceItem_" +
-			QString::number(param.client_id) + "_" +
-			QString::number(param.service_id) + "_" +
-			param.date.toString(DATE_TIME_FORMAT) + "_" +
-			QString::number(param.id);
-}
-
 int CsItem::getId() const
 {
 	return param.id;

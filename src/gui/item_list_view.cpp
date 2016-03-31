@@ -86,6 +86,13 @@ ItemTableView::~ItemTableView()
 	delete proxyModel;
 }
 
+void ItemTableView::setProxyModel(ItemProxyModel* proxy)
+{
+	setModel(proxy);
+	delete proxyModel;
+	proxyModel = proxy;
+}
+
 ItemModel *ItemTableView::getSourceModel() const
 {
 	return model;

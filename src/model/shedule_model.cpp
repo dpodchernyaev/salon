@@ -82,7 +82,7 @@ QString SheduleModel::getHall(int id)
 	Item* item = model->getItem(id);
 	if (item == NULL)
 	{
-		res = "Неизвестно";
+		res = "Удалено";
 	}
 	else
 	{
@@ -105,7 +105,7 @@ QString SheduleModel::getCoach(int id)
 	Item* item = model->getItem(id);
 	if (item == NULL)
 	{
-		res = "Неизвестно";
+		res = "Удалено";
 	}
 	else
 	{

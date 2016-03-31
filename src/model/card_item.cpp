@@ -7,11 +7,6 @@ CardItem::CardItem()
 	discont = 0;
 }
 
-QString CardItem::hash() const
-{
-	return "CardItem_" + name;
-}
-
 QString CardItem::getName() const
 {
 	return name;

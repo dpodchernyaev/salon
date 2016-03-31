@@ -27,23 +27,13 @@ void ServiceFetcher::deleteSlot(int id)
 		return;
 	}
 
-	conn->beginTransaction();
-	QString sql = "UPDATE client_service SET service_id = 0"
-				  " WHERE service_id = " + QString::number(id);
-
-
-	//QString::number(id);
-
 	bool res = false;
+	conn->beginTransaction();
+	QString sql = "DELETE FROM service WHERE id = " + QString::number(id);
 	QSqlQuery q = conn->executeQuery(sql);
 	if (q.isActive())
 	{
-		sql = "DELETE FROM service WHERE id = " + QString::number(id);
-		q = conn->executeQuery(sql);
-		if (q.isActive())
-		{
-			res = true;
-		}
+		res = true;
 	}
 
 	if (res == true)

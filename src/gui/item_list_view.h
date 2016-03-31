@@ -40,6 +40,7 @@ public:
 	ItemTableView(ItemModel *model);
 	virtual ~ItemTableView();
 
+	void setProxyModel(ItemProxyModel* proxy);
 	ItemModel* getSourceModel() const;
 	ItemProxyModel* getProxyModel() const;
 	QModelIndex mapFromSource(const QModelIndex &index) const;
