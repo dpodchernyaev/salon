@@ -138,20 +138,12 @@ void SheduleFetcher::deleteSlot(int id)
 	}
 
 	conn->beginTransaction();
-	QString sql = "UPDATE shedule_group SET shedule_id = 0"
-				  " WHERE shedule_id = " + QString::number(id);
-
-
 	bool res = false;
+	QString sql = "DELETE FROM shedule WHERE id = " + QString::number(id);
 	QSqlQuery q = conn->executeQuery(sql);
 	if (q.isActive())
 	{
-		sql = "DELETE FROM shedule WHERE id = " + QString::number(id);
-		q = conn->executeQuery(sql);
-		if (q.isActive())
-		{
-			res = true;
-		}
+		res = true;
 	}
 
 	if (res == true)

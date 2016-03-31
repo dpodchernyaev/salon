@@ -61,10 +61,17 @@ void HallFetcher::deleteSlot(int id)
 	conn->beginTransaction();
 	QString sql = "UPDATE shedule SET hall_id = 0"
 				  " WHERE hall_id = " + QString::number(id);
+	QString sql1 = "UPDATE vgroup SET hall_id = 0"
+				  " WHERE hall_id = " + QString::number(id);
 
 
 	bool res = false;
 	QSqlQuery q = conn->executeQuery(sql);
+	if (q.isActive())
+	{
+		q = conn->executeQuery(sql1);
+	}
+
 	if (q.isActive())
 	{
 		sql = "DELETE FROM hall WHERE id = " + QString::number(id);
