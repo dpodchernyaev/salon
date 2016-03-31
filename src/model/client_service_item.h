@@ -11,10 +11,12 @@ struct CsParam
 	int id;
 	int client_id;
 	int service_id;
+	double summ;
 	QDateTime date;
 
 	CsParam()
 	{
+		summ = 0;
 		id = 0;
 		client_id = 0;
 		service_id = 0;

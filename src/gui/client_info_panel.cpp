@@ -6,6 +6,7 @@
 #include <QHBoxLayout>
 #include <QTableView>
 #include <QLabel>
+#include <QLineEdit>
 #include <QHeaderView>
 
 #include <gui/item_list_view.h>
@@ -23,7 +24,7 @@
 #include "client_info_panel.h"
 
 ClientInfoPanel::ClientInfoPanel()
-{
+{	
 	clientWidget = new ClientWidget;
 
 	delBtn = new DoublePushButton;
@@ -38,10 +39,16 @@ ClientInfoPanel::ClientInfoPanel()
 
 	useBtn->setEnabled(false);
 
+	summWidget = new QLineEdit;
+	summWidget->setReadOnly(true);
+	QLabel* sLabel = new QLabel("Потрачено: ");
+
 	QHBoxLayout* btnbox = new QHBoxLayout;
 	btnbox->addStretch(1);
 	btnbox->addWidget(delBtn);
 	btnbox->addStretch(1);
+	btnbox->addWidget(sLabel);
+	btnbox->addWidget(summWidget);
 	btnbox->addWidget(buyBtn);
 	btnbox->addWidget(useBtn);
 
@@ -104,6 +111,8 @@ void ClientInfoPanel::serviceLocked(bool f)
 	}
 	else
 	{
+		CsModel* cs = (CsModel*)ModelFactory::getInstance()->getModel(CS);
+		summWidget->setText(QString::number(cs->getSumm(), 'f', 2) + " руб.");
 		serviceView->hideAnimation();
 	}
 }
@@ -141,6 +150,7 @@ void ClientInfoPanel::buyService()
 			p.client_id = clientItem->getId();
 			p.service_id = si->getId();
 			p.date = QDateTime::currentDateTime();
+			p.summ = si->get().price * (1 - (double)disc / 100);
 			i->setParam(p);
 			csModel->save(i);
 		}

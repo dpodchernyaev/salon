@@ -16,6 +16,18 @@ CsModel::~CsModel()
 
 }
 
+double CsModel::getSumm() const
+{
+	double summ = 0;
+	Q_FOREACH (Item* i, items)
+	{
+		CsItem* cs = (CsItem*)i;
+		summ += cs->getParam().summ;
+	}
+
+	return summ;
+}
+
 void CsModel::fetchForClient(int id)
 {
 	Q_EMIT lock(true);

@@ -11,6 +11,8 @@ class CsModel;
 class ItemTableView;
 class Item;
 
+class QLineEdit;
+
 class DoublePushButton : public QPushButton
 {
 	Q_OBJECT
@@ -52,6 +54,7 @@ private:
 
 	ItemTableView* serviceView;
 	ClientWidget* clientWidget;
+	QLineEdit* summWidget;
 	CsModel* csModel;
 };
 

@@ -22,6 +22,7 @@ void CsFetcher::fetchSlot()
 				", client_id"
 				", service_id"
 				", date"
+				", summ"
 			" FROM client_service"
 			" WHERE id <> 0 AND client_id = " + QString::number(clientId);
 	DBConn* conn = DBService::getInstance()->getConnection();
@@ -42,6 +43,7 @@ void CsFetcher::fetchSlot()
 		p.client_id = q.value(i++).toInt();
 		p.service_id = q.value(i++).toInt();
 		p.date = q.value(i++).toDateTime();
+		p.summ = q.value(i++).toDouble();
 		item->setParam(p);
 		items.append(item);
 	}
@@ -75,11 +77,13 @@ void CsFetcher::saveSlot(Item* item)
 					"client_id = ?"
 					", service_id = ?"
 					", date = ?"
+					", summ = ?"
 				" WHERE id = ?";
 		q.prepare(sql);
 		q.bindValue(i++, p.client_id);
 		q.bindValue(i++, p.service_id);
 		q.bindValue(i++, p.date);
+		q.bindValue(i++, p.summ);
 		q.bindValue(i++, p.id);
 	}
 	else
@@ -95,13 +99,14 @@ void CsFetcher::saveSlot(Item* item)
 		}
 		sql =
 			"INSERT INTO client_service("
-					" id, client_id, service_id, date)"
-				" VALUES(?, ?, ?, ?)";
+					" id, client_id, service_id, date, summ)"
+				" VALUES(?, ?, ?, ?, ?)";
 		q.prepare(sql);
 		q.bindValue(i++, p.id);
 		q.bindValue(i++, p.client_id);
 		q.bindValue(i++, p.service_id);
 		q.bindValue(i++, p.date);
+		q.bindValue(i++, p.summ);
 	}
 
 	bool res = conn->executeQuery(q);
