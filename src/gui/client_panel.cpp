@@ -120,7 +120,7 @@ void ClientPanel::newClient()
 	if (i != NULL)
 	{
 		ClientItem* ci = (ClientItem*)i;
-		infoWidget->setItem(ci);
+		infoWidget->setItem(ci, false);
 	}
 }
 

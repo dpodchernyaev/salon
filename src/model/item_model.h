@@ -15,7 +15,8 @@ enum UserModelRole
 	PriceRole = Qt::UserRole + 4,
 	DiscontRole = Qt::UserRole + 5,
 	BirthdayRole = Qt::UserRole + 6,
-	IsActive = Qt::UserRole + 6
+	IsActive = Qt::UserRole + 6,
+	TimeSortRole = Qt::UserRole + 7,
 };
 
 class ItemModel : public QAbstractTableModel

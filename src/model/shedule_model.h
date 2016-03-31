@@ -12,7 +12,9 @@ public:
 
 	QVariant data(const QModelIndex &index, int role) const;
 	int columnCount(const QModelIndex &parent) const;
+	QVariant headerData(int section, Qt::Orientation orientation, int role) const;
 
+	bool contains(const QDate &date) const;
 	static QString getDay(int id);
 	static QString getHall(int id);
 	static QString getCoach(int id);

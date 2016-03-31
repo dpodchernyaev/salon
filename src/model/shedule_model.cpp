@@ -22,6 +22,35 @@ SheduleModel::~SheduleModel()
 
 }
 
+QVariant SheduleModel::headerData(int section, Qt::Orientation orientation, int role) const
+{
+	QVariant res = ItemModel::headerData(section, orientation, role);
+
+	if (orientation == Qt::Horizontal && role == Qt::DisplayRole)
+	{
+		if (section == 0)
+		{
+			res = "День";
+		}
+		else if (section == 1)
+		{
+			res = "Начало";
+		}
+		else if (section == 2)
+		{
+			res = "Конец";
+		}
+		else if (section == 3)
+		{
+			res = "Зал";
+		}
+		else if (section == 4)
+		{
+			res = "Тренер";
+		}
+	}
+	return res;
+}
 int SheduleModel::columnCount(const QModelIndex &parent) const
 {
 	/*
@@ -33,6 +62,21 @@ int SheduleModel::columnCount(const QModelIndex &parent) const
 	 * 5 - сумарный
 	*/
 	return 6;
+}
+
+bool SheduleModel::contains(const QDate &date) const
+{
+	bool res = false;
+	Q_FOREACH (Item* i, items)
+	{
+		SheduleItem* s = (SheduleItem*)i;
+		if (s->getParam().day == date.dayOfWeek())
+		{
+			res = true;
+			break;
+		}
+	}
+	return res;
 }
 
 QString SheduleModel::getDay(int id)
@@ -177,6 +221,10 @@ QVariant SheduleModel::data(const QModelIndex &index, int role) const
 	else if (role == SortRole)
 	{
 		res = p.day;
+	}
+	else if (role == TimeSortRole)
+	{
+		res = p.bTime;
 	}
 	else if (role == SearchRole)
 	{

@@ -11,6 +11,7 @@
 
 #include <gui/item_list_view.h>
 #include <gui/buy_dialog.h>
+#include <gui/calendar_dialog.h>
 
 #include <model/item_proxy_model.h>
 #include <model/card_item.h>
@@ -184,19 +185,25 @@ void ClientInfoPanel::delService()
 
 void ClientInfoPanel::useService()
 {
+	CalendarDialog wgt;
+	wgt.exec();
 	qDebug() << "USE";
 }
 
-void ClientInfoPanel::setItem(ClientItem *item)
+void ClientInfoPanel::setItem(ClientItem *item, bool reload)
 {
 	clientWidget->set(item);
 
-	csModel->clean();
 	serviceView->setEnabled(false);
 	delBtn->setEnabled(false);
 	buyBtn->setEnabled(false);
 	useBtn->setEnabled(false);
-	upTimer.start();
+
+	if (reload == true)
+	{
+		csModel->clean();
+		upTimer.start();
+	}
 }
 
 void ClientInfoPanel::fetch()

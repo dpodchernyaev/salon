@@ -20,6 +20,8 @@ set(app_SOURCES ${app_SOURCES}
 		${current_PROJECT_DIR}/coach_widget.cpp
 		${current_PROJECT_DIR}/shedule_widget.cpp
 		${current_PROJECT_DIR}/new_item_dialog.cpp
+		${current_PROJECT_DIR}/calendar_dialog.cpp
+		${current_PROJECT_DIR}/calendar_widget.cpp
 		${current_PROJECT_DIR}/animation_list_view.cpp)
 
 set(app_HEADERS ${app_HEADERS}
@@ -36,4 +38,6 @@ set(app_HEADERS ${app_HEADERS}
 		${current_PROJECT_DIR}/new_card_dialog.h
 		${current_PROJECT_DIR}/new_hall_dialog.h
 		${current_PROJECT_DIR}/new_item_dialog.h
+		${current_PROJECT_DIR}/calendar_dialog.h
+		${current_PROJECT_DIR}/calendar_widget.h
 		${current_PROJECT_DIR}/new_service_dialog.h)

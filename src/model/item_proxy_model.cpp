@@ -7,7 +7,9 @@
 
 #include <model/client_model.h>
 #include <model/cs_model.h>
+#include <model/shedule_model.h>
 
+#include <model/shedule_item.h>
 #include <model/client_service_item.h>
 
 #include "item_proxy_model.h"
@@ -90,6 +92,11 @@ CsProxyModel::CsProxyModel(CsModel* model) : ItemProxyModel(model)
 {
 }
 
+void CsProxyModel::setFilterDate(const QDate &date)
+{
+	this->date = date;
+}
+
 QVariant CsProxyModel::data(const QModelIndex &index, int role) const
 {
 	QVariant res = ItemProxyModel::data(index, role);
@@ -128,5 +135,42 @@ bool CsProxyModel::lessThan(const QModelIndex &left, const QModelIndex &right) c
 bool CsProxyModel::filterAcceptsRow(int source_row, const QModelIndex &source_parent) const
 {
 	bool res = ItemProxyModel::filterAcceptsRow(source_row, source_parent);
+
+	if (date.isValid())
+	{
+		Item* item = sourceModel->getItem(sourceModel->index(source_row, 0));
+		CsItem* cs = (CsItem*)item;
+	}
+
+	return res;
+}
+
+
+// =====================
+
+
+SheduleProxyModel::SheduleProxyModel(SheduleModel* model) : ItemProxyModel(model)
+{
+}
+
+void SheduleProxyModel::setFilterDate(const QDate &date)
+{
+	this->date = date;
+}
+
+bool SheduleProxyModel::filterAcceptsRow(int source_row, const QModelIndex &source_parent) const
+{
+	bool res = ItemProxyModel::filterAcceptsRow(source_row, source_parent);
+
+	if (date.isValid())
+	{
+		Item* item = sourceModel->getItem(sourceModel->index(source_row, 0));
+		SheduleItem* cs = (SheduleItem*)item;
+		if (cs->getParam().day != date.dayOfWeek())
+		{
+			res = false;
+		}
+	}
+
 	return res;
 }

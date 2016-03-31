@@ -35,7 +35,7 @@ public:
 	ClientInfoPanel();
 	virtual ~ClientInfoPanel();
 
-	void setItem(ClientItem* item);
+	void setItem(ClientItem* item, bool reload = true);
 
 private:
 	void edit(bool);
