@@ -119,6 +119,7 @@ void ClientInfoPanel::serviceLocked(bool f)
 	serviceView->setEnabled(!f);
 	if (f == true)
 	{
+		summWidget->setText("");
 		serviceView->showAnimation();
 	}
 	else
@@ -201,6 +202,7 @@ void ClientInfoPanel::setItem(ClientItem *item, bool reload)
 
 	if (reload == true)
 	{
+		summWidget->setText("");
 		csModel->clean();
 		upTimer.start();
 	}
