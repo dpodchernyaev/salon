@@ -100,6 +100,8 @@ INCLUDE_SUBDIR ("db" "db")
 INCLUDE_SUBDIR ("config" "config")
 INCLUDE_SUBDIR ("gui" "gui")
 INCLUDE_SUBDIR ("model" "model")
+INCLUDE_SUBDIR ("smtp/src" "smtp")
+
 #INCLUDE_SUBDIR ("config/widgets" "widgets")
 
 include_directories(${FSQt_INCLUDES})
