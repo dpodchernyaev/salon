@@ -10,6 +10,7 @@
 #include <QDebug>
 #include <QSqlQuery>
 
+#include <login_dialog.h>
 #include <db/db_service.h>
 #include <gui/client_panel.h>
 
@@ -34,6 +35,18 @@ launchApp(int argc, char *argv[])
 	QTextCodec::setCodecForCStrings(codec);
 
 	QLocale::setDefault(QLocale(QLocale::Russian, QLocale::RussianFederation));
+
+	if (!DBService::getInstance()->getConnection()->isConnected())
+	{
+		QMessageBox::critical(NULL, "Ошибка БД", "Нет соединения с БД");
+		exit(0);
+	}
+
+	LoginDialog login;
+	if (login.exec() == false)
+	{
+		exit(0);
+	}
 
 	qRegisterMetaType<ClientItem*>("ClientItem*");
 	qRegisterMetaType<Item*>("Item*");
