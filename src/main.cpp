@@ -21,6 +21,8 @@
 class ClientItem;
 class Item;
 
+
+
 /** Запускает приложение */
 int
 launchApp(int argc, char *argv[])

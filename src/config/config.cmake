@@ -6,3 +6,7 @@ set(app_HEADERS ${app_HEADERS})
 configure_file(
 	${current_PROJECT_DIR}/salon.ini ${CMAKE_BINARY_DIR}/salon.ini
 	COPYONLY)
+
+configure_file(
+	${current_PROJECT_DIR}/birthday ${CMAKE_BINARY_DIR}/birthday
+	COPYONLY)

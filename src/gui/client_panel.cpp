@@ -22,10 +22,15 @@
 #include <gui/new_hall_dialog.h>
 #include <gui/client_info_panel.h>
 
+#include <smtp_client/email_sender.h>
+
 #include "client_panel.h"
 
 ClientPanel::ClientPanel()
 {
+	email_sender = new EmailSender;
+	email_sender->start();
+
 	serviceModel = (ServiceModel*)ModelFactory::getInstance()->getModel(SERVICE);
 	cardModel = (CardModel*)ModelFactory::getInstance()->getModel(CARD);
 	coachModel = (CoachModel*)ModelFactory::getInstance()->getModel(COACH);
@@ -102,7 +107,7 @@ ClientPanel::ClientPanel()
 
 ClientPanel::~ClientPanel()
 {
-
+	delete email_sender;
 }
 
 void ClientPanel::modelRestored()

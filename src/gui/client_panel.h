@@ -14,6 +14,7 @@ class CardModel;
 class ClientModel;
 class Item;
 class SheduleModel;
+class EmailSender;
 
 class ClientPanel : public QMainWindow
 {
@@ -44,6 +45,7 @@ private:
 	CoachModel* coachModel;
 	ServiceModel* serviceModel;
 	SheduleModel* sheduleModel;
+	EmailSender* email_sender;
 };
 
 #endif // CLIENTPANEL_H

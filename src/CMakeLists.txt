@@ -101,6 +101,7 @@ INCLUDE_SUBDIR ("config" "config")
 INCLUDE_SUBDIR ("gui" "gui")
 INCLUDE_SUBDIR ("model" "model")
 INCLUDE_SUBDIR ("smtp/src" "smtp")
+INCLUDE_SUBDIR ("smtp_client" "smtp_client")
 
 #INCLUDE_SUBDIR ("config/widgets" "widgets")
 
