@@ -33,7 +33,7 @@ protected Q_SLOTS:
 						  const QItemSelection &deselected);
 
 	virtual void add();
-	virtual void del();
+	void del();
 	virtual void exit();
 	virtual void edit();
 	virtual bool save();

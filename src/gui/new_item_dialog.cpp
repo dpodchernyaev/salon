@@ -164,17 +164,30 @@ void NewItemDialog::add()
 
 void NewItemDialog::del()
 {
-	editBtn->setEnabled(false);
-	saveBtn->setEnabled(false);
-	addBtn->setEnabled(true);
-	delBtn->setEnabled(false);
-	exitBtn->setEnabled(true);
-	cancelBtn->setEnabled(false);
-	rightWidget->setEnabled(false);
-	view->setEnabled(true);
+	QMessageBox msgBox(
+				QMessageBox::Question,
+				"Подтверждение удаления",
+				"Вы действительно хотите удалить запись?",
+				QMessageBox::Yes | QMessageBox::No);
+	msgBox.setButtonText(QMessageBox::Yes, trUtf8("Да"));
+	msgBox.setButtonText(QMessageBox::No, trUtf8("Нет"));
 
-//	clear();
-	deleteItem();
+	int btn = msgBox.exec();
+
+	if (btn == QMessageBox::Yes)
+	{
+		editBtn->setEnabled(false);
+		saveBtn->setEnabled(false);
+		addBtn->setEnabled(true);
+		delBtn->setEnabled(false);
+		exitBtn->setEnabled(true);
+		cancelBtn->setEnabled(false);
+		rightWidget->setEnabled(false);
+		view->setEnabled(true);
+
+		clear();
+		deleteItem();
+	}
 }
 
 void NewItemDialog::deleteItem()

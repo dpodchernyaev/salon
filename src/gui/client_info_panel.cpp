@@ -29,7 +29,7 @@ ClientInfoPanel::ClientInfoPanel()
 {	
 	clientWidget = new ClientWidget;
 
-	delBtn = new DoublePushButton;
+	delBtn = new QPushButton;
 	delBtn->setIcon(QIcon("pics/del.png"));
 	delBtn->setToolTip("Удалить купленное (двойной клик)");
 	buyBtn = new QPushButton;
@@ -55,10 +55,10 @@ ClientInfoPanel::ClientInfoPanel()
 	btnbox->addWidget(useBtn);
 
 	csModel = (CsModel*)ModelFactory::getInstance()->getModel(CS);
-//	CsProxyModel* csProxy = new CsProxyModel(csModel);
-//	csProxy->setDynamicSortFilter(true);
-//	csProxy->setSortRole(SortRole);
-//	csProxy->sort(0, Qt::DescendingOrder);
+	CsProxyModel* csProxy = new CsProxyModel(csModel);
+	csProxy->setDynamicSortFilter(true);
+	csProxy->setSortRole(SortRole);
+	csProxy->sort(0, Qt::DescendingOrder);
 
 	serviceView = new ItemTableView(csModel);
 	serviceView->horizontalHeader()->setStretchLastSection(true);
@@ -67,7 +67,7 @@ ClientInfoPanel::ClientInfoPanel()
 	serviceView->setSelectionMode(QAbstractItemView::SingleSelection);
 	serviceView->setSelectionBehavior(QAbstractItemView::SelectRows);
 	serviceView->setEditTriggers(QAbstractItemView::NoEditTriggers);
-//	serviceView->setProxyModel(csProxy);
+	serviceView->setProxyModel(csProxy);
 
 	QHBoxLayout* hbox = new QHBoxLayout;
 	hbox->addWidget(clientWidget);
@@ -96,7 +96,7 @@ ClientInfoPanel::ClientInfoPanel()
 
 	connect(csModel, SIGNAL(lock(bool)), this, SLOT(serviceLocked(bool)));
 
-	connect(delBtn, SIGNAL(doubleClicked()), this, SLOT(delService()));
+	connect(delBtn, SIGNAL(clicked(bool)), this, SLOT(delService()));
 	connect(useBtn, SIGNAL(clicked(bool)), this, SLOT(useService()));
 	connect(buyBtn, SIGNAL(clicked(bool)), this, SLOT(buyService()));
 
@@ -176,12 +176,25 @@ void ClientInfoPanel::buyService()
 
 void ClientInfoPanel::delService()
 {
-	Item* i = serviceView->getSelected();
-	if (i != NULL)
+	QMessageBox msgBox(
+				QMessageBox::Question,
+				"Подтверждение удаления",
+				"Вы действительно хотите удалить запись?",
+				QMessageBox::Yes | QMessageBox::No);
+	msgBox.setButtonText(QMessageBox::Yes, trUtf8("Да"));
+	msgBox.setButtonText(QMessageBox::No, trUtf8("Нет"));
+
+	int btn = msgBox.exec();
+
+	if (btn == QMessageBox::Yes)
 	{
-		csModel->deleteItem(i);
+		Item* i = serviceView->getSelected();
+		if (i != NULL)
+		{
+			csModel->deleteItem(i);
+		}
+		qDebug() << "DEL";
 	}
-	qDebug() << "DEL";
 }
 
 void ClientInfoPanel::useService()

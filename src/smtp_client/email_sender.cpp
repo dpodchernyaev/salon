@@ -29,6 +29,7 @@ EmailSender::EmailSender()
 
 	fetcher = new ClientFetcher;
 
+	timer.moveToThread(th);
 	timer.setInterval(DEF_INTERVAL);
 
 	connect(this, SIGNAL(destroyed()), th, SLOT(deleteLater()));
