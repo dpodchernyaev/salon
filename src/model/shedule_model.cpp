@@ -64,6 +64,51 @@ int SheduleModel::columnCount(const QModelIndex &parent) const
 	return 6;
 }
 
+bool SheduleModel::isValid(SheduleItem* item) const
+{
+	bool res = true;
+	SheduleParam p = item->getParam();
+
+	if ( (p.coach_id <= 0) || (p.hall_id <= 0) || (p.day < 0) )
+	{
+		return false;
+	}
+
+	if (p.bTime >= p.eTime)
+	{
+		return false;
+	}
+
+	Q_FOREACH (Item* i, items)
+	{
+		if (item == i)
+		{
+			continue;
+		}
+
+		SheduleItem* si = (SheduleItem*)i;
+		SheduleParam cp = si->getParam();
+
+		// если имеется пересечение по времени
+		if ( ! ( (p.bTime < cp.bTime) && (p.eTime < cp.bTime)
+			 || (p.bTime > cp.eTime) && (p.bTime > cp.bTime) ) )
+		{
+			if (p.day == cp.day)
+			{
+				if (p.hall_id == cp.hall_id)
+				{
+					res = false;
+				}
+				else if (p.coach_id == cp.coach_id)
+				{
+					res = false;
+				}
+			}
+		}
+	}
+	return res;
+}
+
 bool SheduleModel::contains(const QDate &date) const
 {
 	bool res = false;

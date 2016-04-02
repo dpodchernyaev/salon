@@ -33,10 +33,27 @@ bool NewSheduleDialog::save()
 {
 	if (widget->checkSave())
 	{
+		bool res = false;
+		SheduleModel* sm = (SheduleModel*)model;
+		SheduleItem* si = (SheduleItem*)item;
+		SheduleParam saved = si->getParam();
+
 		widget->apply();
-		widget->save();
-		NewItemDialog::save();
-		return true;
+
+		res = sm->isValid(si);
+		if (res == true)
+		{
+			widget->save();
+			NewItemDialog::save();
+		}
+		else
+		{
+			si->setParam(saved);
+			QMessageBox::warning(NULL, "Предупреждение",
+								 "Обнаружено пересечение в расписании");
+		}
+
+		return res;
 	}
 	else
 	{

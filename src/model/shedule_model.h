@@ -3,6 +3,8 @@
 
 #include <model/item_model.h>
 
+class SheduleItem;
+
 class SheduleModel : public ItemModel
 {
 	Q_OBJECT
@@ -15,6 +17,8 @@ public:
 	QVariant headerData(int section, Qt::Orientation orientation, int role) const;
 
 	bool contains(const QDate &date) const;
+
+	bool isValid(SheduleItem* item) const;
 	static QString getDay(int id);
 	static QString getHall(int id);
 	static QString getCoach(int id);
