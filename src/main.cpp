@@ -44,11 +44,11 @@ launchApp(int argc, char *argv[])
 		exit(0);
 	}
 
-	LoginDialog login;
-	if (login.exec() == false)
-	{
-		exit(0);
-	}
+//	LoginDialog login;
+//	if (login.exec() == false)
+//	{
+//		exit(0);
+//	}
 
 	qRegisterMetaType<ClientItem*>("ClientItem*");
 	qRegisterMetaType<Item*>("Item*");

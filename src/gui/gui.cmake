@@ -25,6 +25,7 @@ set(app_SOURCES ${app_SOURCES}
 		${current_PROJECT_DIR}/animation_list_view.cpp)
 
 set(app_HEADERS ${app_HEADERS}
+		${current_PROJECT_DIR}/photo_widget.h
 		${current_PROJECT_DIR}/buy_dialog.h
 		${current_PROJECT_DIR}/item_list_widget.h
 		${current_PROJECT_DIR}/service_widget.h

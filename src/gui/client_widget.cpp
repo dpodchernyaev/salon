@@ -23,7 +23,7 @@ ClientWidget::ClientWidget()
 	item = NULL;
 	photo = new PhotoWidget;
 	photo->setFixedSize(150, 200);
-	photo->setPhoto("pics/no_photo.png");
+	photo->setName("");
 
 	QGridLayout* grid = new QGridLayout;
 
@@ -127,7 +127,7 @@ void ClientWidget::setClient(ClientItem *item)
 	this->item = item;
 	if (item == NULL)
 	{
-		photo->setPhoto("");
+		photo->setName("");
 		nameWidget->setText("");
 		surnameWidget->setText("");
 		patronymicWidget->setText("");
@@ -142,18 +142,7 @@ void ClientWidget::setClient(ClientItem *item)
 	else
 	{
 		ClientParam p = item->get();
-		if (p.photo.isEmpty())
-		{
-			photo->setName(
-						p.surname + "_" +
-						p.name + "_" +
-						p.patronymic + "_" +
-						p.birthday.toString(DATE_FORMAT));
-		}
-		else
-		{
-			photo->setName(p.photo);
-		}
+		photo->setName(p.photo);
 		nameWidget->setText(p.name);
 		surnameWidget->setText(p.surname);
 		patronymicWidget->setText(p.patronymic);
@@ -194,10 +183,6 @@ void ClientWidget::apply()
 void ClientWidget::save()
 {
 	ItemWidget::save();
-	if (item != NULL)
-	{
-		photo->save();
-	}
 }
 
 void ClientWidget::reset()

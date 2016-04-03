@@ -12,8 +12,6 @@ ClientFetcher::~ClientFetcher()
 
 }
 
-
-
 bool ClientFetcher::checkClientService(int client_id, DBConn* conn)
 {
 	if (client_id == 0)
