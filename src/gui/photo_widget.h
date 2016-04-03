@@ -5,12 +5,34 @@
 
 #include <gui/background_animation.h>
 
+class PhotoLoader : public QObject
+{
+	Q_OBJECT
+public:
+	PhotoLoader(QWidget* view);
+	virtual ~PhotoLoader();
+
+	void load(const QString &name);
+
+private Q_SLOTS:
+	void loadSlot();
+
+Q_SIGNALS:
+	void loaded(QImage*);
+	void loadSignal();
+
+private:
+	QWidget* view;
+	QMutex mtx;
+	QStringList queue;
+};
+
 class PhotoWidget : public QLabel, public BackgroundAnimation
 {
 	Q_OBJECT
 public:
 	PhotoWidget();
-	virtual ~PhotoWidget() {}
+	virtual ~PhotoWidget();
 	void setName(const QString &name);
 	QString getName() const;
 
@@ -22,15 +44,9 @@ protected:
 
 private Q_SLOTS:
 	void loaded(QImage* img);
-	void load();
-
-Q_SIGNALS:
-	void loadSignal();
-	void loadedSignal(QImage*);
 
 private:
-	QStringList queue;
-	QMutex mtx;
+	PhotoLoader* loader;
 	QString name; ///< сохраняемое имя изображения
 	bool readOnly;
 };

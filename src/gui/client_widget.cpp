@@ -22,7 +22,7 @@ ClientWidget::ClientWidget()
 {
 	item = NULL;
 	photo = new PhotoWidget;
-	photo->setFixedSize(150, 200);
+	photo->setFixedSize(200, 250);
 	photo->setName("");
 
 	QGridLayout* grid = new QGridLayout;

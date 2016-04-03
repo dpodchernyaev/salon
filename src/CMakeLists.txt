@@ -138,6 +138,7 @@ set(QT_USE_QTSVG TRUE)
 include(${QT_USE_FILE})
 add_definitions(${QT_DEFINITIONS} ${FSQt_DEFINITIONS})
 add_definitions("-DQT_NO_KEYWORDS")
+add_definitions("-DSMTP_BUILD")
 
 ######### END #########
 

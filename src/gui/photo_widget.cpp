@@ -14,87 +14,23 @@
 
 PhotoWidget::PhotoWidget() : BackgroundAnimation(this)
 {
-	QThread* th = new QThread;
-	th->start();
-	moveToThread(th);
-
+	loader = new PhotoLoader(this);
 	setAlignment(Qt::AlignCenter);
 	readOnly = false;
 
-	connect(this, SIGNAL(loadSignal()), this, SLOT(load()));
-	connect(this, SIGNAL(loadedSignal(QImage*)), this, SLOT(loaded(QImage*)));
+	connect(loader, SIGNAL(loaded(QImage*)), this, SLOT(loaded(QImage*)));
+}
+
+PhotoWidget::~PhotoWidget()
+{
+	loader->deleteLater();
 }
 
 void PhotoWidget::setName(const QString &name)
 {
 	this->name = name;
-	Config* cfg = Config::getInstance();
-	QString path = cfg->getValue(PHOTO_PATH).toString();
-	path.append(QDir::separator()).append(name);
-
 	showAnimation();
-
-	mtx.lock();
-	queue.append(path);
-	mtx.unlock();
-
-	Q_EMIT load();
-}
-
-void PhotoWidget::load()
-{
-	mtx.lock();
-	if (queue.isEmpty())
-	{
-		return;
-	}
-	QString path = queue.takeLast();
-	queue.clear();
-	mtx.unlock();
-
-	QString localPath;
-	QFileInfo fi(path);
-	if (!fi.exists() || !fi.isFile())
-	{
-		qWarning() << "Файла с фотографией не существует " << path;
-		localPath = "pics/no_photo.png";
-	}
-	else
-	{
-		localPath = fi.absoluteFilePath();
-	}
-
-	QImage img(localPath);
-
-	QSize s = img.size();
-	if (s.width() > width() || s.height() > height())
-	{
-		img = img.scaled(width() - 10, height() - 10, Qt::KeepAspectRatio);
-	}
-
-	QImage* res = NULL;
-	if (!img.isNull())
-	{
-		res = new QImage(img);
-	}
-	else
-	{
-		res = new QImage();
-	}
-
-	mtx.lock();
-	bool isEmpt = queue.isEmpty();
-	mtx.unlock();
-
-	if (isEmpt == true)
-	{
-		Q_EMIT loadedSignal(res);
-	}
-	else
-	{
-		delete res;
-		load();
-	}
+	loader->load(name);
 }
 
 void PhotoWidget::loaded(QImage* img)
@@ -160,3 +96,91 @@ void PhotoWidget::setReadOnly(bool flag)
 	readOnly = flag;
 }
 
+// =================
+PhotoLoader::PhotoLoader(QWidget *view) : view(view)
+{
+	QThread* th = new QThread;
+	th->start();
+	moveToThread(th);
+
+	connect(this, SIGNAL(loadSignal()), this, SLOT(loadSlot()));
+	connect(th, SIGNAL(finished()), th, SLOT(deleteLater()));
+}
+
+PhotoLoader::~PhotoLoader()
+{
+	thread()->exit();
+}
+
+void PhotoLoader::load(const QString& name)
+{
+	Config* cfg = Config::getInstance();
+	QString path = cfg->getValue(PHOTO_PATH).toString();
+	path = path.replace("\\", "/");
+	path.append(QDir::separator()).append(name);
+
+	mtx.lock();
+	queue.append(path);
+	mtx.unlock();
+
+	Q_EMIT loadSignal();
+}
+
+void PhotoLoader::loadSlot()
+{
+	mtx.lock();
+	if (queue.isEmpty())
+	{
+		mtx.unlock();
+		return;
+	}
+	QString path = queue.takeLast();
+	queue.clear();
+	mtx.unlock();
+
+	QString localPath;
+	QFileInfo fi(path);
+	if (!fi.exists() || !fi.isFile())
+	{
+		qWarning() << "Файла с фотографией не существует " << path;
+		localPath = "pics/no_photo.png";
+	}
+	else
+	{
+		localPath = fi.absoluteFilePath();
+	}
+
+	QImage img(localPath);
+
+	QSize s = img.size();
+	if (s.width() > view->width() || s.height() > view->height())
+	{
+		img = img.scaled(view->width() - 10,
+						 view->height() - 10,
+						 Qt::KeepAspectRatio);
+	}
+
+	QImage* res = NULL;
+	if (!img.isNull())
+	{
+		res = new QImage(img);
+	}
+	else
+	{
+		res = new QImage();
+	}
+
+	mtx.lock();
+	bool isEmpt = queue.isEmpty();
+	mtx.unlock();
+
+	if (isEmpt == true)
+	{
+		Q_EMIT loaded(res);
+	}
+	else
+	{
+		delete res;
+		loadSlot();
+	}
+}
