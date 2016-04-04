@@ -40,49 +40,21 @@ void CardFetcher::fetchSlot()
 	Q_EMIT fetched(items);
 }
 
-void CardFetcher::deleteSlot(int id)
+bool CardFetcher::deleteSlot(Item *i, DBConn *conn)
 {
-	DBConn* conn = DBService::getInstance()->getConnection();
-	if (!conn->isConnected())
-	{
-		qCritical() << Q_FUNC_INFO << "Ошибка подключания к БД";
-		Q_EMIT deleted(false);
-		return;
-	}
-
-	if (id <= 0)
-	{
-		qCritical() << Q_FUNC_INFO << "Неверный идентификатор записи";
-		Q_EMIT deleted(false);
-		return;
-	}
-
-	QString sql = "DELETE FROM card WHERE id = " + QString::number(id);
+	QString sql = "DELETE FROM card WHERE id = " + QString::number(i->getId());
 	QSqlQuery q = conn->executeQuery(sql);
-
-	bool res = q.isActive();
-	Q_EMIT deleted(res);
+	return q.isActive();
 }
 
-void CardFetcher::saveSlot(Item* item)
+bool CardFetcher::saveSlot(Item* item, DBConn *conn)
 {
 	CardItem* cItem = (CardItem*)item;
 
 	int id = cItem->getId();
 	QString name = cItem->getName();
 	int disc = cItem->getDiscont();
-
 	QString sql = "";
-
-	DBConn* conn = DBService::getInstance()->getConnection();
-	if (!conn->isConnected())
-	{
-		qCritical() << Q_FUNC_INFO << "Ошибка подключания к БД";
-		Q_EMIT saved(false);
-		return;
-	}
-
-	conn->beginTransaction();
 	QSqlQuery q(conn->qtDatabase());
 
 	int i = 0;
@@ -120,8 +92,5 @@ void CardFetcher::saveSlot(Item* item)
 		q.bindValue(i++, disc);
 	}
 
-	bool res = conn->executeQuery(q);
-	conn->commit();
-
-	Q_EMIT saved(res);
+	return conn->executeQuery(q);
 }

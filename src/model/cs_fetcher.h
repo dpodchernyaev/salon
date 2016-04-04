@@ -2,6 +2,9 @@
 #define CSFETCHER_H
 
 class Item;
+class DBConn;
+
+#include <QMutex>
 
 #include <model/fetcher.h>
 
@@ -14,12 +17,14 @@ public:
 	void fetchClient(int clientId);
 
 protected:
-	virtual void deleteSlot(int);
+	virtual bool deleteSlot(Item *i, DBConn *conn);
 	virtual void fetchSlot();
-	virtual void saveSlot(Item* item);
+	virtual bool saveSlot(Item* item, DBConn* conn);
 
 private:
-	int clientId;
+	QList<int> queue;
+	int lastId;
+	QMutex mtx;
 };
 
 #endif // CSFETCHER_H

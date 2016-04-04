@@ -10,43 +10,18 @@ ServiceFetcher::ServiceFetcher()
 
 }
 
-void ServiceFetcher::deleteSlot(int id)
+bool ServiceFetcher::deleteSlot(Item *i, DBConn *conn)
 {
-	DBConn* conn = DBService::getInstance()->getConnection();
-	if (!conn->isConnected())
-	{
-		qCritical() << Q_FUNC_INFO << "Ошибка подключания к БД";
-		Q_EMIT deleted(false);
-		return;
-	}
-
-	if (id <= 0)
+	if (i->getId() <= 0)
 	{
 		qCritical() << Q_FUNC_INFO << "Неверный идентификатор";
-		Q_EMIT deleted(false);
-		return;
+		return false;
 	}
 
-	bool res = false;
-	conn->beginTransaction();
-	QString sql = "DELETE FROM service WHERE id = " + QString::number(id);
+	QString sql = "DELETE FROM service WHERE id = "
+				  + QString::number(i->getId());
 	QSqlQuery q = conn->executeQuery(sql);
-	if (q.isActive())
-	{
-		res = true;
-	}
-
-	if (res == true)
-	{
-		conn->commit();
-	}
-	else
-	{
-		conn->rollback();
-	}
-
-	Q_EMIT deleted(res);
-
+	return q.isActive();
 }
 
 void ServiceFetcher::fetchSlot()
@@ -92,23 +67,11 @@ void ServiceFetcher::fetchSlot()
 	Q_EMIT fetched(items);
 }
 
-void ServiceFetcher::saveSlot(Item* item)
+bool ServiceFetcher::saveSlot(Item* item, DBConn *conn)
 {
 	ServiceItem* cItem = (ServiceItem*)item;
-
 	ServiceParam p = cItem->get();
-
 	QString sql = "";
-
-	DBConn* conn = DBService::getInstance()->getConnection();
-	if (!conn->isConnected())
-	{
-		qCritical() << Q_FUNC_INFO << "Ошибка подключания к БД";
-		Q_EMIT saved(false);
-		return;
-	}
-
-	conn->beginTransaction();
 	QSqlQuery q(conn->qtDatabase());
 
 	int i = 0;
@@ -160,8 +123,5 @@ void ServiceFetcher::saveSlot(Item* item)
 		q.bindValue(i++, p.used);
 	}
 
-	bool res = conn->executeQuery(q);
-	conn->commit();
-
-	Q_EMIT saved(res);
+	return conn->executeQuery(q);
 }

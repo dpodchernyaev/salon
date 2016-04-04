@@ -14,19 +14,28 @@
 #include <gui/calendar_dialog.h>
 
 #include <model/item_proxy_model.h>
-#include <model/card_item.h>
-#include <model/service_item.h>
 #include <model/cs_model.h>
-#include <model/client_service_item.h>
 #include <model/card_model.h>
 #include <model/model_factory.h>
+#include <model/group_model.h>
+#include <model/visit_model.h>
+
+#include <model/group_item.h>
+#include <model/visit_item.h>
+#include <model/card_item.h>
+#include <model/service_item.h>
+#include <model/shedule_item.h>
+#include <model/client_service_item.h>
 #include <model/client_item.h>
+
 #include <gui/client_widget.h>
 
 #include "client_info_panel.h"
 
 ClientInfoPanel::ClientInfoPanel()
 {	
+	waitDialog = new QMessageBox("Ожидайте", "Идет обработка данных...",
+									QMessageBox::Information, 0, 0, 0, this);
 	clientWidget = new ClientWidget;
 
 	delBtn = new QPushButton;
@@ -38,6 +47,9 @@ ClientInfoPanel::ClientInfoPanel()
 	useBtn = new QPushButton;
 	useBtn->setIcon(QIcon("pics/use.png"));
 	useBtn->setToolTip("Оформить посещение");
+	delVisBtn = new QPushButton;
+	delVisBtn->setIcon(QIcon("pics/del.png"));
+	delVisBtn->setToolTip("Отменить бронь");
 
 	useBtn->setEnabled(false);
 
@@ -54,11 +66,27 @@ ClientInfoPanel::ClientInfoPanel()
 	btnbox->addWidget(buyBtn);
 	btnbox->addWidget(useBtn);
 
+	visModel = (VisitModel*)ModelFactory::getInstance()->getModel(VISIT);
 	csModel = (CsModel*)ModelFactory::getInstance()->getModel(CS);
 	CsProxyModel* csProxy = new CsProxyModel(csModel);
 	csProxy->setDynamicSortFilter(true);
 	csProxy->setSortRole(SortRole);
 	csProxy->sort(0, Qt::DescendingOrder);
+
+	ItemProxyModel* visitProxy = new ItemProxyModel(visModel);
+	visitProxy->setDynamicSortFilter(true);
+	visitProxy->setSortRole(SortRole);
+	visitProxy->sort(0);
+
+	visitView = new ItemTableView(visModel);
+	visitView->setProxyModel(visitProxy);
+	visitView->verticalHeader()->hide();
+	visitView->horizontalHeader()->setStretchLastSection(true);
+	visitView->horizontalHeader()->setResizeMode(QHeaderView::ResizeToContents);
+	visitView->resizeColumnsToContents();
+	visitView->setSelectionMode(QAbstractItemView::SingleSelection);
+	visitView->setSelectionBehavior(QAbstractItemView::SelectRows);
+	visitView->setEditTriggers(QAbstractItemView::NoEditTriggers);
 
 	serviceView = new ItemTableView(csModel);
 	serviceView->horizontalHeader()->setStretchLastSection(true);
@@ -69,8 +97,21 @@ ClientInfoPanel::ClientInfoPanel()
 	serviceView->setEditTriggers(QAbstractItemView::NoEditTriggers);
 	serviceView->setProxyModel(csProxy);
 
+	QFont tmpFont;
+	tmpFont.setBold(true);
+
+	QLabel* tmpLabel = new QLabel("Бронь: ");
+	tmpLabel->setFont(tmpFont);
+
+	QVBoxLayout* visitBox = new QVBoxLayout;
+	visitBox->addWidget(tmpLabel);
+	visitBox->addWidget(visitView);
+	visitBox->addWidget(delVisBtn, 0, Qt::AlignHCenter);
+	visitBox->addStretch(1);
+
 	QHBoxLayout* hbox = new QHBoxLayout;
 	hbox->addWidget(clientWidget);
+	hbox->addLayout(visitBox);
 	hbox->addStretch(1);
 
 	QFont f;
@@ -95,7 +136,10 @@ ClientInfoPanel::ClientInfoPanel()
 	serviceView->hideAnimation();
 
 	connect(csModel, SIGNAL(lock(bool)), this, SLOT(serviceLocked(bool)));
+	connect(visModel, SIGNAL(lock(bool)), this, SLOT(visitLocked(bool)));
+	connect(visModel, SIGNAL(lock(bool)), waitDialog, SLOT(accept()));
 
+	connect(delVisBtn, SIGNAL(clicked(bool)), this, SLOT(delVisit()));
 	connect(delBtn, SIGNAL(clicked(bool)), this, SLOT(delService()));
 	connect(useBtn, SIGNAL(clicked(bool)), this, SLOT(useService()));
 	connect(buyBtn, SIGNAL(clicked(bool)), this, SLOT(buyService()));
@@ -103,15 +147,42 @@ ClientInfoPanel::ClientInfoPanel()
 	connect(serviceView, SIGNAL(currentChanged(Item*)),
 			this, SLOT(serviceSelected(Item*)));
 
+	connect(visitView, SIGNAL(currentChanged(Item*)),
+			this, SLOT(visitSelected(Item*)));
+
 	upTimer.setInterval(500);
 
 	connect(&upTimer, SIGNAL(timeout()), this, SLOT(fetch()));
+}
+
+ClientInfoPanel::~ClientInfoPanel()
+{
+
+}
+
+void ClientInfoPanel::visitSelected(Item* item)
+{
+	delVisBtn->setEnabled(item != NULL);
 }
 
 void ClientInfoPanel::serviceSelected(Item* item)
 {
 	delBtn->setEnabled(item != NULL);
 	useBtn->setEnabled(item != NULL);
+}
+
+void ClientInfoPanel::visitLocked(bool f)
+{
+	visitView->setEnabled(!f);
+	delVisBtn->setEnabled(!f);
+	if (f == true)
+	{
+		visitView->showAnimation();
+	}
+	else
+	{
+		visitView->hideAnimation();
+	}
 }
 
 void ClientInfoPanel::serviceLocked(bool f)
@@ -129,11 +200,6 @@ void ClientInfoPanel::serviceLocked(bool f)
 		serviceView->hideAnimation();
 		buyBtn->setEnabled(true);
 	}
-}
-
-ClientInfoPanel::~ClientInfoPanel()
-{
-
 }
 
 void ClientInfoPanel::buyService()
@@ -174,6 +240,20 @@ void ClientInfoPanel::buyService()
 	}
 }
 
+void ClientInfoPanel::delVisit()
+{
+	Item* item = visitView->getSelected();
+	VisitItem* vi = (VisitItem*)item;
+
+	Item* csitem = csModel->getItem(vi->getParam().cs_id);
+	if (csitem != NULL)
+	{
+		CsItem* cs = (CsItem*)csitem;
+		vi->setCs(cs);
+		visModel->deleteItem(vi);
+	}
+}
+
 void ClientInfoPanel::delService()
 {
 	QMessageBox msgBox(
@@ -199,24 +279,96 @@ void ClientInfoPanel::delService()
 
 void ClientInfoPanel::useService()
 {
+	Item* i = serviceView->getSelected();
+	if (i == NULL)
+	{
+		return;
+	}
+	CsItem* csi = (CsItem*)i;
+	CsParam pcsi = csi->getParam();
+
+	bool isA = csModel->isActive(pcsi);
+	if (isA == false)
+	{
+		return;
+	}
+
+
 	CalendarDialog wgt;
-	wgt.exec();
-	qDebug() << "USE";
+	bool res = wgt.exec();
+
+	GroupModel* gModel = (GroupModel*)
+						 ModelFactory::getInstance()->getModel(GROUP);
+
+	if (res == true)
+	{
+		QDate date = wgt.getDate();
+		SheduleItem* si = wgt.getSheduleItem();
+		if (si == NULL)
+		{
+			return;
+		}
+		SheduleParam psi = si->getParam();
+		QDateTime dt(date, psi.bTime);
+
+		GroupItem* gItem = gModel->getItem(dt, psi.hall_id);
+		VisitItem* vi = new VisitItem;
+		VisitParam vp;
+		if (gItem == NULL)
+		{
+			gItem = new GroupItem;
+			GroupParam gParam;
+			gParam.coach_id = psi.coach_id;
+			gParam.hall_id = psi.hall_id;
+			gParam.bdtime = dt;
+			gParam.etime = psi.eTime;
+			gItem->setParam(gParam);
+			vi->setGroup(gItem);
+		}
+		else
+		{
+			if (visModel->getItemInGroup(gItem->getParam().id) != NULL)
+			{
+				delete vi;
+				QMessageBox::information(NULL, "Предупреждение",
+										 "Клиент уже записан на занятие");
+				// запись уже присутствует
+				return;
+			}
+			vp.vgroup_id = gItem->getId();
+		}
+
+		vp.cs_id = csi->getParam().id;
+		vp.dtime = dt;
+		vp.info = "";
+		vi->setParam(vp);
+		vi->setCs(csi);
+
+		visModel->save(vi);
+
+		waitDialog->exec();
+	}
+	else
+	{
+		qDebug() << "Отменено";
+	}
 }
 
 void ClientInfoPanel::setItem(ClientItem *item, bool reload)
 {
 	clientWidget->set(item);
 
-	serviceView->setEnabled(false);
-	delBtn->setEnabled(false);
-	buyBtn->setEnabled(false);
-	useBtn->setEnabled(false);
-
 	if (reload == true)
 	{
+		delBtn->setEnabled(false);
+		useBtn->setEnabled(false);
+		serviceView->setEnabled(false);
+		buyBtn->setEnabled(false);
+		serviceView->showAnimation();
+		visitView->showAnimation();
+		visitView->setEnabled(false);
+		delVisBtn->setEnabled(false);
 		summWidget->setText("");
-		csModel->clean();
 		upTimer.start();
 	}
 }
@@ -229,6 +381,7 @@ void ClientInfoPanel::fetch()
 	}
 
 	csModel->fetchForClient(clientWidget->get()->getId());
+	visModel->fetch(clientWidget->get()->getId());
 
 	upTimer.stop();
 }

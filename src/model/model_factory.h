@@ -13,7 +13,9 @@ enum ModelType
 	CARD,
 	CLIENT,
 	CS,
-	SHEDULE
+	SHEDULE,
+	GROUP,
+	VISIT
 };
 
 class ModelFactory
@@ -23,6 +25,14 @@ public:
 	static ModelFactory* getInstance();
 
 	ItemModel* getModel(ModelType type) const;
+
+	void reload();
+
+	static QString getDay(int id);
+	static QString getHall(int id);
+	static QString getHallByGroup(int id);
+	static QString getCoach(int id);
+	static QString getService(int id);
 
 private:
 	static ModelFactory* inst;

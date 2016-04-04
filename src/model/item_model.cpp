@@ -10,8 +10,8 @@ ItemModel::ItemModel(Fetcher* fetcher) : fetcher(fetcher)
 {
 	connect(fetcher, SIGNAL(fetched(QList<Item*>)),
 			this, SLOT(fetched(QList<Item*>)));
-	connect(fetcher, SIGNAL(saved(bool)),
-			this, SLOT(saved(bool)));
+	connect(fetcher, SIGNAL(saved(Item*, bool)),
+			this, SLOT(saved(Item*, bool)));
 	connect(fetcher, SIGNAL(deleted(bool)),
 			this, SLOT(deleted(bool)));
 }
@@ -29,6 +29,11 @@ int ItemModel::columnCount(const QModelIndex &parent) const
 	return 1;
 }
 
+Fetcher* ItemModel::getFetcher() const
+{
+	return fetcher;
+}
+
 Item* ItemModel::getItem(int id) const
 {
 	Item* res = NULL;
@@ -42,7 +47,6 @@ Item* ItemModel::getItem(const QModelIndex &ind) const
 	int r = ind.row();
 	return items.value(r);
 }
-
 
 void ItemModel::fetch()
 {
@@ -71,11 +75,18 @@ int ItemModel::indexOf(int id) const
 	return res;
 }
 
+void ItemModel::add(Item* item)
+{
+	beginInsertRows(QModelIndex(), items.size(), items.size());
+	items.append(item);
+	item->setModel(this);
+	endInsertRows();
+}
+
 void ItemModel::save(Item* item)
 {
 	Q_EMIT lock(true);
-	forSave = item;
-	fetcher->save(forSave);
+	fetcher->save(item);
 }
 
 void ItemModel::clean()
@@ -83,7 +94,6 @@ void ItemModel::clean()
 	beginResetModel();
 	qDeleteAll(items);
 	items.clear();
-	forSave = NULL;
 	endResetModel();
 }
 
@@ -101,10 +111,17 @@ void ItemModel::deleteItem(Item* item)
 		if (id > 0)
 		{
 			Q_EMIT lock(true);
-			fetcher->deleteItem(id);
+			fetcher->deleteItem(item);
+		}
+		else
+		{
+			delete item;
 		}
 	}
-	delete item;
+	else
+	{
+		delete item;
+	}
 }
 
 QModelIndex ItemModel::getIndex(Item* item) const
@@ -144,7 +161,7 @@ void ItemModel::deleted(bool f)
 	Q_EMIT lock(false);
 }
 
-void ItemModel::saved(bool f)
+void ItemModel::saved(Item* item, bool f)
 {
 	if (f == false)
 	{
@@ -152,20 +169,18 @@ void ItemModel::saved(bool f)
 	}
 	else
 	{
-		QMessageBox::information(NULL, "Сохранено",
-							"Сохранение выполнено успешно", QMessageBox::Ok);
+		Q_ASSERT (item != NULL);
 
-		Q_ASSERT (forSave != NULL);
-
-		if (!items.contains(forSave))
+		if (!items.contains(item))
 		{
 			beginInsertRows(QModelIndex(), items.size(), items.size());
-			items.append(forSave);
+			item->setModel(this);
+			items.append(item);
 			endInsertRows();
 		}
 		else
 		{
-			QModelIndex ind = index(items.indexOf(forSave), 0);
+			QModelIndex ind = index(items.indexOf(item), 0);
 			Q_EMIT dataChanged(ind, ind);
 		}
 	}

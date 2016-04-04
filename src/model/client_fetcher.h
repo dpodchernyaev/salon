@@ -14,8 +14,8 @@ public:
 
 private:
 	void fetchSlot();
-	void saveSlot(Item *item);
-	void deleteSlot(int id);
+	bool saveSlot(Item *Item, DBConn* conn);
+	bool deleteSlot(Item *i, DBConn *conn);
 
 	bool saveCard(Item *item, DBConn *conn);
 

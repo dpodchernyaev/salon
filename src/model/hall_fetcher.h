@@ -10,7 +10,7 @@ public:
 	virtual ~HallFetcher() {}
 
 protected:
-	virtual void deleteSlot(int id);
+	virtual bool deleteSlot(Item *i, DBConn *conn);
 	virtual void fetchSlot();
-	virtual void saveSlot(Item* item);
+	virtual bool saveSlot(Item* item, DBConn* conn);
 };

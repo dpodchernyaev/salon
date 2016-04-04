@@ -15,8 +15,9 @@ enum UserModelRole
 	PriceRole = Qt::UserRole + 4,
 	DiscontRole = Qt::UserRole + 5,
 	BirthdayRole = Qt::UserRole + 6,
-	IsActive = Qt::UserRole + 6,
-	TimeSortRole = Qt::UserRole + 7,
+	IsActive = Qt::UserRole + 7,
+	TimeSortRole = Qt::UserRole + 8,
+	LimitValueRole = Qt::UserRole + 9
 };
 
 class ItemModel : public QAbstractTableModel
@@ -30,11 +31,15 @@ public:
 	Item* getItem(const QModelIndex &ind) const;
 	Item* getItem(int id) const;
 
+	Fetcher* getFetcher() const;
+
 	void fetch();
 	void save(Item* item);
+	void add(Item* item);
 	void deleteItem(Item* item);
 
-	void clean();
+
+	virtual void clean();
 
 	QModelIndex getIndex(Item* item) const;
 
@@ -43,7 +48,7 @@ public:
 
 protected Q_SLOTS:
 	virtual void fetched(QList<Item*> newItems);
-	virtual void saved(bool);
+	virtual void saved(Item *item, bool);
 	virtual void deleted(bool);
 
 Q_SIGNALS:
@@ -53,8 +58,6 @@ Q_SIGNALS:
 protected:
 	QList<Item*> items;
 	Fetcher* fetcher;
-
-	Item* forSave;
 };
 
 #endif // ITEMMODEL_H

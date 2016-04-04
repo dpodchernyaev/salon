@@ -80,76 +80,29 @@ bool ClientFetcher::saveCard(Item* item, DBConn* conn)
 	return res;
 }
 
-void ClientFetcher::deleteSlot(int id)
+bool ClientFetcher::deleteSlot(Item *i, DBConn *conn)
 {
-	DBService* service = DBService::getInstance();
-	DBConn* conn = service->getConnection();
-	if (!conn->isConnected())
-	{
-		qCritical() << Q_FUNC_INFO << "Ошибка подключания к БД";
-		Q_EMIT deleted(false);
-		return;
-	}
-
-	if (id <= 0)
-	{
-		qCritical() << Q_FUNC_INFO << "Неверный идентификатор клиента";
-		Q_EMIT deleted(false);
-		return;
-	}
-
-	bool res = true;
-	conn->beginTransaction();
 	QString sql = "UPDATE client_service SET"
 				  " client_id = 0"
-				  " WHERE client_id = " + QString::number(id);
+				  " WHERE client_id = " + QString::number(i->getId());
 	QSqlQuery q = conn->executeQuery(sql);
-	if (!q.isActive())
-	{
-		res = false;
-	}
 
+	bool res = q.isActive();
 	if (res == true)
 	{
-		QString sql = "DELETE FROM client WHERE id = " + QString::number(id);
+		QString sql = "DELETE FROM client WHERE id = " +
+						QString::number(i->getId());
 		q = conn->executeQuery(sql);
-
-		if (!q.isActive())
-		{
-			res = false;
-		}
+		res = q.isActive();
 	}
-
-	if (res == true)
-	{
-		conn->commit();
-	}
-	else
-	{
-		conn->rollback();
-	}
-
-	Q_EMIT deleted(res);
+	return res;
 }
 
-void ClientFetcher::saveSlot(Item* item)
+bool ClientFetcher::saveSlot(Item* item, DBConn* conn)
 {
 	ClientItem* cItem = (ClientItem*)item;
-
 	ClientParam p = cItem->get();
-
-
 	QString sql = "";
-
-	DBConn* conn = DBService::getInstance()->getConnection();
-	if (!conn->isConnected())
-	{
-		qCritical() << Q_FUNC_INFO << "Ошибка подключания к БД";
-		Q_EMIT saved(false);
-		return;
-	}
-
-	conn->beginTransaction();
 	QSqlQuery q(conn->qtDatabase());
 
 	int i = 0;
@@ -215,17 +168,7 @@ void ClientFetcher::saveSlot(Item* item)
 	{
 		res = saveCard(item, conn);
 	}
-
-	if (res == true)
-	{
-		conn->commit();
-	}
-	else
-	{
-		conn->rollback();
-	}
-
-	Q_EMIT saved(res);
+	return res;
 }
 
 void ClientFetcher::fetchSlot()

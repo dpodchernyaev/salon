@@ -12,6 +12,8 @@
 
 #include "photo_widget.h"
 
+static QThread* th = NULL;
+
 PhotoWidget::PhotoWidget() : BackgroundAnimation(this)
 {
 	loader = new PhotoLoader(this);
@@ -99,17 +101,18 @@ void PhotoWidget::setReadOnly(bool flag)
 // =================
 PhotoLoader::PhotoLoader(QWidget *view) : view(view)
 {
-	QThread* th = new QThread;
-	th->start();
+	if (th == NULL)
+	{
+		th = new QThread;
+		th->start();
+	}
 	moveToThread(th);
 
 	connect(this, SIGNAL(loadSignal()), this, SLOT(loadSlot()));
-	connect(th, SIGNAL(finished()), th, SLOT(deleteLater()));
 }
 
 PhotoLoader::~PhotoLoader()
 {
-	thread()->exit();
 }
 
 void PhotoLoader::load(const QString& name)

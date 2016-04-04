@@ -16,6 +16,7 @@ CalendarWidget::~CalendarWidget()
 
 #include <model/model_factory.h>
 #include <model/shedule_model.h>
+#include <model/group_model.h>
 void CalendarWidget::paintCell(QPainter *painter, const QRect &rect, const QDate &date) const
 {
 	QCalendarWidget::paintCell(painter, rect, date);

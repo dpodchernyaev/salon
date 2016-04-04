@@ -11,6 +11,6 @@ public:
 
 protected:
 	virtual void fetchSlot();
-	virtual void deleteSlot(int id);
-	virtual void saveSlot(Item* item);
+	virtual bool deleteSlot(Item *i, DBConn *conn);
+	virtual bool saveSlot(Item* item, DBConn* conn);
 };

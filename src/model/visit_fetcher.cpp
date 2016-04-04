@@ -1,0 +1,213 @@
+#include <QDebug>
+
+
+#include <unistd.h>
+#include <model/group_item.h>
+#include <model/visit_item.h>
+#include <model/client_service_item.h>
+
+#include <db/db_service.h>
+
+#include <model/cs_model.h>
+#include <model/group_model.h>
+#include <model/model_factory.h>
+
+#include "visit_fetcher.h"
+
+VisitFetcher::VisitFetcher()
+{
+	gModel = (GroupModel*)ModelFactory::getInstance()->getModel(GROUP);
+	csModel = (CsModel*)ModelFactory::getInstance()->getModel(CS);
+
+	minDate = QDate::currentDate();
+}
+
+VisitFetcher::~VisitFetcher()
+{
+}
+
+void VisitFetcher::fetchForClient(int id)
+{
+	mtx.lock();
+	queue.append(id);
+	mtx.unlock();
+
+	fetch();
+}
+
+bool VisitFetcher::deleteSlot(Item *i, DBConn *conn)
+{
+	QString sql = "DELETE FROM visit WHERE id = " + QString::number(i->getId());
+	QSqlQuery q = conn->executeQuery(sql);
+
+	bool res = q.isActive();
+
+	if (res == true)
+	{
+		VisitItem* vis = (VisitItem*)i;
+		CsItem* cs = vis->getCs();
+		if (cs != NULL)
+		{
+			CsParam csp = cs->getParam();
+			if (csp.limit_type != LT_DATE)
+			{
+				csp.limit_value += 1;
+				cs->setParam(csp);
+				res = csModel->getFetcher()->saveItem(cs, conn);
+			}
+		}
+		vis->setCs(NULL);
+	}
+	return res;
+}
+
+bool VisitFetcher::saveSlot(Item* item, DBConn *conn)
+{
+	bool res = false;
+
+	usleep(1000000 * 1);
+	VisitItem* vItem = (VisitItem*)item;
+	VisitParam p = vItem->getParam();
+	QString sql = "";
+	GroupItem* gItem = vItem->getGroup();
+	if (gItem != NULL)
+	{
+		res = gModel->getFetcher()->saveSlot(gItem, conn);
+		vItem->setGroup(NULL);
+
+		if (res == false)
+		{
+			return res;
+		}
+		gModel->add(gItem);
+		int gid = gItem->getId();
+		p.vgroup_id = gid;
+	}
+
+	QSqlQuery q(conn->qtDatabase());
+
+	int i = 0;
+	if (p.id != 0)
+	{
+		sql =
+			"UPDATE visit"
+				" SET"
+					" client_service_id = ?"
+					", vgroup_id = ?"
+					", info = ?"
+					", dtime = ?"
+				" WHERE id = ?";
+		q.prepare(sql);
+		q.bindValue(i++, p.cs_id);
+		q.bindValue(i++, p.vgroup_id);
+		q.bindValue(i++, p.info);
+		q.bindValue(i++, p.dtime);
+		q.bindValue(i++, p.id);
+	}
+	else
+	{
+		sql = "SELECT nextval('visit_id_seq')";
+		QSqlQuery seq(conn->qtDatabase());
+		seq.exec(sql);
+		if (seq.next())
+		{
+			qDebug() << "NEW ID = " << seq.value(0).toInt();
+			p.id = seq.value(0).toInt();
+		}
+		sql =
+			"INSERT INTO visit("
+					" id, client_service_id, vgroup_id, info, dtime)"
+				" VALUES(?, ?, ?, ?, ?)";
+		q.prepare(sql);
+		q.bindValue(i++, p.id);
+		q.bindValue(i++, p.cs_id);
+		q.bindValue(i++, p.vgroup_id);
+		q.bindValue(i++, p.info);
+		q.bindValue(i++, p.dtime);
+	}
+
+	res = conn->executeQuery(q);
+	if (res == true)
+	{
+		CsItem* cs = vItem->getCs();
+		if (cs != NULL)
+		{
+			CsParam csp = cs->getParam();
+			if (csp.limit_type != LT_DATE)
+			{
+				csp.limit_value = csp.limit_value - 1;
+				cs->setParam(csp);
+				res = csModel->getFetcher()->saveItem(cs, conn);
+			}
+		}
+	}
+
+	if (res == true)
+	{
+		vItem->setParam(p);
+	}
+
+	return res;
+}
+
+void VisitFetcher::fetchSlot()
+{
+	mtx.lock();
+	if (queue.isEmpty())
+	{
+		return;
+		mtx.unlock();
+	}
+
+	int clientId = queue.takeLast();
+	queue.clear();
+	mtx.unlock();
+
+	QList<Item*> items;
+	DBConn* conn = DBService::getInstance()->getConnection();
+	if (!conn->isConnected())
+	{
+		qCritical() << Q_FUNC_INFO << "Ошибка подключания к БД";
+		Q_EMIT fetched(items);
+		return;
+	}
+
+	QSqlQuery q(conn->qtDatabase());
+	QString sql =
+			"SELECT"
+				" visit.id"
+				", visit.client_service_id"
+				", visit.vgroup_id"
+				", visit.info"
+				", visit.dtime"
+			" FROM visit, client_service, client"
+			" WHERE dtime >= ?"
+				" AND client_service.id = visit.client_service_id"
+				" AND client_service.client_id = client.id"
+				" AND client.id = ?";
+
+	q.prepare(sql);
+	qDebug() << "PARAM: " << minDate << clientId;
+
+	int i = 0;
+	q.bindValue(i++, minDate);
+	q.bindValue(i++, clientId);
+
+	bool res = conn->executeQuery(q);
+	while ( (res == true) && q.next())
+	{
+		VisitParam param;
+
+		int i = 0;
+		param.id = q.value(i++).toInt();
+		param.cs_id = q.value(i++).toInt();
+		param.vgroup_id = q.value(i++).toInt();
+		param.info = q.value(i++).toString();
+		param.dtime = q.value(i++).toDateTime();
+
+		VisitItem* item = new VisitItem;
+		item->setParam(param);
+		items.append(item);
+	}
+	Q_EMIT fetched(items);
+}

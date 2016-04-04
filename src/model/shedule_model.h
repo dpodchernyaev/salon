@@ -19,9 +19,6 @@ public:
 	bool contains(const QDate &date) const;
 
 	bool isValid(SheduleItem* item) const;
-	static QString getDay(int id);
-	static QString getHall(int id);
-	static QString getCoach(int id);
 };
 
 #endif // SHEDULEMODEL_H

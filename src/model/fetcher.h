@@ -5,6 +5,7 @@
 #include <QList>
 
 class Item;
+class DBConn;
 
 class Fetcher : public QObject
 {
@@ -15,19 +16,23 @@ public:
 
 	void fetch();
 	void save(Item* item);
-	void deleteItem(int);
+	void deleteItem(Item* item);
+
+	bool saveItem(Item* item, DBConn* conn);
+	virtual bool saveSlot(Item* item, DBConn* conn) = 0;
+	virtual bool deleteSlot(Item* i, DBConn* conn) = 0;
 
 private Q_SLOTS:
+	void savePrivate(Item* item);
+	void deletePrivate(Item* item);
 	virtual void fetchSlot() = 0;
-	virtual void saveSlot(Item* item) = 0;
-	virtual void deleteSlot(int) {}
 
 Q_SIGNALS:
 	void fetchSignal();
 	void saveSignal(Item*);
-	void deleteSignal(int);
+	void deleteSignal(Item*);
 	void fetched(QList<Item*> items);
-	void saved(bool);
+	void saved(Item*, bool);
 	void deleted(bool);
 };
 

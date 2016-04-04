@@ -6,6 +6,7 @@
 
 class ItemModel;
 
+/* порядок обязателен */
 enum LimitType
 {
 	LT_DATE,

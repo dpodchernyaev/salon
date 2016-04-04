@@ -39,25 +39,14 @@ void CoachFetcher::fetchSlot()
 	Q_EMIT fetched(items);
 }
 
-void CoachFetcher::saveSlot(Item* item)
+bool CoachFetcher::saveSlot(Item* item, DBConn *conn)
 {
 	CoachItem* cItem = (CoachItem*)item;
 
 	int id = cItem->getId();
 	QString name = cItem->getName();
 	QString phone = cItem->getPhone();
-
 	QString sql = "";
-
-	DBConn* conn = DBService::getInstance()->getConnection();
-	if (!conn->isConnected())
-	{
-		qCritical() << Q_FUNC_INFO << "Ошибка подключания к БД";
-		Q_EMIT saved(false);
-		return;
-	}
-
-	conn->beginTransaction();
 	QSqlQuery q(conn->qtDatabase());
 
 	int i = 0;
@@ -92,36 +81,24 @@ void CoachFetcher::saveSlot(Item* item)
 		q.bindValue(i++, name);
 	}
 
-	bool res = conn->executeQuery(q);
-	conn->commit();
-
-	Q_EMIT saved(res);
+	return conn->executeQuery(q);
 }
 
-void CoachFetcher::deleteSlot(int id)
+bool CoachFetcher::deleteSlot(Item *i, DBConn *conn)
 {
-	DBConn* conn = DBService::getInstance()->getConnection();
-	if (!conn->isConnected())
-	{
-		qCritical() << Q_FUNC_INFO << "Ошибка подключания к БД";
-		Q_EMIT deleted(false);
-		return;
-	}
-
-	if (id <= 0)
+	if (i->getId() <= 0)
 	{
 		qCritical() << Q_FUNC_INFO << "Неверный идентификатор";
-		Q_EMIT deleted(false);
-		return;
+		return false;
 	}
 
 	bool res = false;
-	conn->beginTransaction();
+
 	QString sql = "UPDATE shedule SET coach_id = 0"
-				  " WHERE coach_id = " + QString::number(id);
+				  " WHERE coach_id = " + QString::number(i->getId());
 
 	QString sql1 = "UPDATE vgroup SET coach_id = 0"
-				  " WHERE coach_id = " + QString::number(id);
+				  " WHERE coach_id = " + QString::number(i->getId());
 
 	QSqlQuery q = conn->executeQuery(sql);
 	if (q.isActive())
@@ -131,7 +108,7 @@ void CoachFetcher::deleteSlot(int id)
 
 	if (q.isActive())
 	{
-		sql = "DELETE FROM coach WHERE id = " + QString::number(id);
+		sql = "DELETE FROM coach WHERE id = " + QString::number(i->getId());
 		q = conn->executeQuery(sql);
 		if (q.isActive())
 		{
@@ -139,14 +116,5 @@ void CoachFetcher::deleteSlot(int id)
 		}
 	}
 
-	if (res == true)
-	{
-		conn->commit();
-	}
-	else
-	{
-		conn->rollback();
-	}
-
-	Q_EMIT deleted(res);
+	return res;
 }

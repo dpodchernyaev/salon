@@ -52,22 +52,11 @@ void SheduleFetcher::fetchSlot()
 	Q_EMIT fetched(items);
 }
 
-void SheduleFetcher::saveSlot(Item* item)
+bool SheduleFetcher::saveSlot(Item* item, DBConn* conn)
 {
 	SheduleItem* cItem = (SheduleItem*)item;
 	SheduleParam p = cItem->getParam();
-
 	QString sql = "";
-
-	DBConn* conn = DBService::getInstance()->getConnection();
-	if (!conn->isConnected())
-	{
-		qCritical() << Q_FUNC_INFO << "Ошибка подключания к БД";
-		Q_EMIT saved(false);
-		return;
-	}
-
-	conn->beginTransaction();
 	QSqlQuery q(conn->qtDatabase());
 
 	int i = 0;
@@ -114,46 +103,13 @@ void SheduleFetcher::saveSlot(Item* item)
 		q.bindValue(i++, p.eTime);
 	}
 
-	bool res = conn->executeQuery(q);
-	conn->commit();
-
-	Q_EMIT saved(res);
+	return conn->executeQuery(q);
 }
 
-void SheduleFetcher::deleteSlot(int id)
+bool SheduleFetcher::deleteSlot(Item *i, DBConn *conn)
 {
-	DBConn* conn = DBService::getInstance()->getConnection();
-	if (!conn->isConnected())
-	{
-		qCritical() << Q_FUNC_INFO << "Ошибка подключания к БД";
-		Q_EMIT deleted(false);
-		return;
-	}
-
-	if (id <= 0)
-	{
-		qCritical() << Q_FUNC_INFO << "Неверный идентификатор";
-		Q_EMIT deleted(false);
-		return;
-	}
-
-	conn->beginTransaction();
-	bool res = false;
-	QString sql = "DELETE FROM shedule WHERE id = " + QString::number(id);
+	QString sql = "DELETE FROM shedule WHERE id = " +
+					QString::number(i->getId());
 	QSqlQuery q = conn->executeQuery(sql);
-	if (q.isActive())
-	{
-		res = true;
-	}
-
-	if (res == true)
-	{
-		conn->commit();
-	}
-	else
-	{
-		conn->rollback();
-	}
-
-	Q_EMIT deleted(res);
+	return q.isActive();
 }

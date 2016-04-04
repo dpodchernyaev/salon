@@ -28,10 +28,46 @@ double CsModel::getSumm() const
 
 void CsModel::fetchForClient(int id)
 {
-	clientId = id;
+	if (cached.size() > 50)
+	{
+		Q_FOREACH (int id, cached.keys().toSet())
+		{
+			qDeleteAll(cached.value(id));
+		}
+		cached.clear();
+	}
+
+	// удаление старых объектов из кэш
+	if (cached.contains(clientId) == true)
+	{
+		qDeleteAll(cached.take(clientId));
+	}
+
+	// добавление текущих
+	QList<Item*> tmpLst;
+	Q_FOREACH (Item* i, items)
+	{
+		CsItem* csi = (CsItem*)i;
+		CsItem* ncsi = new CsItem;
+		*ncsi = *csi;
+		tmpLst.append(ncsi);
+	}
+	cached.insert(clientId, tmpLst);
+	tmpLst.clear();
+
+	// изымаем старые записи, если есть. Если нет, то выгружаем из БД
 	Q_EMIT lock(true);
-	CsFetcher* f = (CsFetcher*)fetcher;
-	f->fetchClient(id);
+	if (cached.contains(id) == true)
+	{
+		tmpLst = cached.take(id);
+		fetched(tmpLst);
+	}
+	else
+	{
+		CsFetcher* f = (CsFetcher*)fetcher;
+		f->fetchClient(id);
+	}
+	clientId = id;
 }
 
 QVariant CsModel::data(const QModelIndex &index, int role) const
@@ -87,6 +123,10 @@ QVariant CsModel::data(const QModelIndex &index, int role) const
 	{
 		return p.date;
 	}
+	else if (role == KeyRole)
+	{
+		return p.id;
+	}
 	return res;
 }
 
@@ -125,20 +165,32 @@ QVariant CsModel::headerData(int section, Qt::Orientation orientation, int role)
 	return res;
 }
 
-bool CsModel::isActive(const QModelIndex& ind) const
+bool CsModel::isActive(const CsParam &p) const
 {
-	bool res = true;
+	bool f1 = true;
+	bool f2 = true;
 
-	CsItem* i = (CsItem*)getItem(ind);
-	CsParam p = i->getParam();
 
-	if (p.limit_type != LT_COUNT)
+	if ( (p.limit_type == LT_DATE) || (p.limit_type == LT_DATE_COUNT) )
 	{
 		QDateTime currDate = QDateTime::currentDateTime();
 		QDateTime limitDate = p.date;
 		limitDate = limitDate.addDays(p.limit_days);
-		res = currDate.date() <= limitDate.date();
+		f1 = currDate.date() <= limitDate.date();
 	}
 
-	return res;
+	if ( (p.limit_type == LT_COUNT) || (p.limit_type == LT_DATE_COUNT) )
+	{
+		f2 = p.limit_value > 0;
+	}
+
+	return f1 && f2;
+}
+
+bool CsModel::isActive(const QModelIndex& ind) const
+{
+	CsItem* i = (CsItem*)getItem(ind);
+	CsParam p = i->getParam();
+
+	return isActive(p);
 }

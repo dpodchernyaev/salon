@@ -7,13 +7,24 @@
 
 CsFetcher::CsFetcher()
 {
-	clientId = 0;
+	lastId = 0;
 }
 
 //#include <unistd.h>
 
 void CsFetcher::fetchSlot()
 {
+	mtx.lock();
+	if (queue.isEmpty())
+	{
+		mtx.unlock();
+		return;
+	}
+
+	lastId = queue.takeLast();
+	queue.clear();
+	mtx.unlock();
+
 //	usleep(1000000);
 	QList<Item*> items;
 	QString sql =
@@ -27,7 +38,7 @@ void CsFetcher::fetchSlot()
 				", limit_type"
 				", name"
 			" FROM client_service"
-			" WHERE id <> 0 AND client_id = " + QString::number(clientId);
+			" WHERE id <> 0 AND client_id = " + QString::number(lastId);
 	DBConn* conn = DBService::getInstance()->getConnection();
 	if (!conn->isConnected())
 	{
@@ -56,22 +67,11 @@ void CsFetcher::fetchSlot()
 	Q_EMIT fetched(items);
 }
 
-void CsFetcher::saveSlot(Item* item)
+bool CsFetcher::saveSlot(Item* item, DBConn* conn)
 {
 	CsItem* cItem = (CsItem*)item;
 	CsParam p = cItem->getParam();
-
 	QString sql = "";
-
-	DBConn* conn = DBService::getInstance()->getConnection();
-	if (!conn->isConnected())
-	{
-		qCritical() << Q_FUNC_INFO << "Ошибка подключания к БД";
-		Q_EMIT saved(false);
-		return;
-	}
-
-	conn->beginTransaction();
 	QSqlQuery q(conn->qtDatabase());
 
 	int i = 0;
@@ -80,7 +80,7 @@ void CsFetcher::saveSlot(Item* item)
 		sql =
 			"UPDATE client_service"
 				" SET"
-					"client_id = ?"
+					" client_id = ?"
 					", date = ?"
 					", summ = ?"
 					", limit_value = ?"
@@ -124,60 +124,22 @@ void CsFetcher::saveSlot(Item* item)
 		q.bindValue(i++, p.name);
 	}
 
-	bool res = conn->executeQuery(q);
-	conn->commit();
-
-	Q_EMIT saved(res);
+	return conn->executeQuery(q);
 }
 
 void CsFetcher::fetchClient(int clientId)
 {
-	this->clientId = clientId;
+	mtx.lock();
+	queue.append(clientId);
+	mtx.unlock();
+
 	fetch();
 }
 
-void CsFetcher::deleteSlot(int id)
+bool CsFetcher::deleteSlot(Item *i, DBConn *conn)
 {
-	DBConn* conn = DBService::getInstance()->getConnection();
-	if (!conn->isConnected())
-	{
-		qCritical() << Q_FUNC_INFO << "Ошибка подключания к БД";
-		Q_EMIT deleted(false);
-		return;
-	}
-
-	if (id <= 0)
-	{
-		qCritical() << Q_FUNC_INFO << "Неверный идентификатор";
-		Q_EMIT deleted(false);
-		return;
-	}
-
-	conn->beginTransaction();
-	QString sql = "UPDATE visit SET client_service_id = 0"
-				  " WHERE client_service_id = " + QString::number(id);
-
-
-	bool res = false;
+	QString sql = "DELETE FROM client_service WHERE id = " +
+				  QString::number(i->getId());
 	QSqlQuery q = conn->executeQuery(sql);
-	if (q.isActive())
-	{
-		sql = "DELETE FROM client_service WHERE id = " + QString::number(id);
-		q = conn->executeQuery(sql);
-		if (q.isActive())
-		{
-			res = true;
-		}
-	}
-
-	if (res == true)
-	{
-		conn->commit();
-	}
-	else
-	{
-		conn->rollback();
-	}
-
-	Q_EMIT deleted(res);
+	return q.isActive();
 }

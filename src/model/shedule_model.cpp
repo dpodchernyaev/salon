@@ -124,86 +124,6 @@ bool SheduleModel::contains(const QDate &date) const
 	return res;
 }
 
-QString SheduleModel::getDay(int id)
-{
-	QString res = "Ошибка";
-	if (id == 1)
-	{
-		res = "Понедельник";
-	}
-	else if (id == 2)
-	{
-		res = "Вторник";
-	}
-	else if (id == 3)
-	{
-		res = "Среда";
-	}
-	else if (id == 4)
-	{
-		res = "Четверг";
-	}
-	else if (id == 5)
-	{
-		res = "Пятница";
-	}
-	else if (id == 6)
-	{
-		res = "Суббота";
-	}
-	else if (id == 7)
-	{
-		res = "Воскресение";
-	}
-	return res;
-}
-
-QString SheduleModel::getHall(int id)
-{
-	QString res;
-	if (id == 0)
-	{
-		res = "Удалено";
-		return res;
-	}
-
-	HallModel* model = (HallModel*)ModelFactory::getInstance()->getModel(HALL);
-	Item* item = model->getItem(id);
-	if (item == NULL)
-	{
-		res = "Удалено";
-	}
-	else
-	{
-		HallItem* i = (HallItem*)item;
-		res = i->getName();
-	}
-	return res;
-}
-
-QString SheduleModel::getCoach(int id)
-{
-	QString res;
-	if (id == 0)
-	{
-		res = "Удалено";
-		return res;
-	}
-
-	CoachModel* model = (CoachModel*)ModelFactory::getInstance()->getModel(COACH);
-	Item* item = model->getItem(id);
-	if (item == NULL)
-	{
-		res = "Удалено";
-	}
-	else
-	{
-		CoachItem* i = (CoachItem*)item;
-		res = i->getName();
-	}
-	return res;
-}
-
 QVariant SheduleModel::data(const QModelIndex &index, int role) const
 {
 	QVariant res;
@@ -231,7 +151,7 @@ QVariant SheduleModel::data(const QModelIndex &index, int role) const
 	{
 		if (col == 0)
 		{
-			res = getDay(p.day);
+			res =ModelFactory::getDay(p.day);
 		}
 		else if (col == 1)
 		{
@@ -243,20 +163,20 @@ QVariant SheduleModel::data(const QModelIndex &index, int role) const
 		}
 		else if (col == 3)
 		{
-			res = getHall(p.hall_id);
+			res = ModelFactory::getHall(p.hall_id);
 		}
 		else if (col == 4)
 		{
-			res = getCoach(p.coach_id);
+			res = ModelFactory::getCoach(p.coach_id);
 		}
 		else if (col == 5)
 		{
 			res =
-					getDay(p.day)
+					ModelFactory::getDay(p.day)
 					+ " --> " + p.bTime.toString(TIME_FORMAT)
 					+ " --> " + p.eTime.toString(TIME_FORMAT)
-					+ " --> " + getHall(p.hall_id)
-					+ " --> " + getCoach(p.coach_id);
+					+ " --> " + ModelFactory::getHall(p.hall_id)
+					+ " --> " + ModelFactory::getCoach(p.coach_id);
 		}
 	}
 	else if (role == KeyRole)
@@ -273,7 +193,9 @@ QVariant SheduleModel::data(const QModelIndex &index, int role) const
 	}
 	else if (role == SearchRole)
 	{
-		res = getDay(p.day) + " " + getCoach(p.coach_id) + " " + getHall(p.hall_id);
+		res = ModelFactory::getDay(p.day) + " " +
+			  ModelFactory::getCoach(p.coach_id) + " " +
+			  ModelFactory::getHall(p.hall_id);
 	}
 
 	return res;

@@ -9,10 +9,13 @@ class ClientWidget;
 class ClientItem;
 
 class CsModel;
+class VisitModel;
+
 class ItemTableView;
 class Item;
 
 class QLineEdit;
+class QMessageBox;
 
 class DoublePushButton : public QPushButton
 {
@@ -43,22 +46,31 @@ private:
 private Q_SLOTS:
 	void buyService();
 	void delService();
+	void delVisit();
 	void useService();
 	void serviceLocked(bool);
+	void visitLocked(bool);
 	void serviceSelected(Item*);
+	void visitSelected(Item*);
 
 	void fetch();
 
 private:
 
+	QMessageBox* waitDialog;
+
+	QPushButton* delVisBtn;
+
 	QPushButton* delBtn;
 	QPushButton* buyBtn;
 	QPushButton* useBtn;
 
+	ItemTableView* visitView;
 	ItemTableView* serviceView;
 	ClientWidget* clientWidget;
 	QLineEdit* summWidget;
 	CsModel* csModel;
+	VisitModel* visModel;
 
 	QTimer upTimer;
 };

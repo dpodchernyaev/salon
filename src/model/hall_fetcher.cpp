@@ -41,79 +41,40 @@ void HallFetcher::fetchSlot()
 	Q_EMIT fetched(items);
 }
 
-void HallFetcher::deleteSlot(int id)
+bool HallFetcher::deleteSlot(Item *i, DBConn *conn)
 {
-	DBConn* conn = DBService::getInstance()->getConnection();
-	if (!conn->isConnected())
-	{
-		qCritical() << Q_FUNC_INFO << "Ошибка подключания к БД";
-		Q_EMIT deleted(false);
-		return;
-	}
-
-	if (id <= 0)
-	{
-		qCritical() << Q_FUNC_INFO << "Неверный идентификатор";
-		Q_EMIT deleted(false);
-		return;
-	}
-
-	conn->beginTransaction();
 	QString sql = "UPDATE shedule SET hall_id = 0"
-				  " WHERE hall_id = " + QString::number(id);
+				  " WHERE hall_id = " + QString::number(i->getId());
 	QString sql1 = "UPDATE vgroup SET hall_id = 0"
-				  " WHERE hall_id = " + QString::number(id);
+				  " WHERE hall_id = " + QString::number(i->getId());
 
 
-	bool res = false;
 	QSqlQuery q = conn->executeQuery(sql);
-	if (q.isActive())
+	bool res = q.isActive();
+
+	if (res == true)
 	{
 		q = conn->executeQuery(sql1);
-	}
-
-	if (q.isActive())
-	{
-		sql = "DELETE FROM hall WHERE id = " + QString::number(id);
-		q = conn->executeQuery(sql);
-		if (q.isActive())
-		{
-			res = true;
-		}
+		res = q.isActive();
 	}
 
 	if (res == true)
 	{
-		conn->commit();
+		sql = "DELETE FROM hall WHERE id = " + QString::number(i->getId());
+		q = conn->executeQuery(sql);
+		res = q.isActive();
 	}
-	else
-	{
-		conn->rollback();
-	}
-
-	Q_EMIT deleted(res);
-
+	return res;
 }
 
-void HallFetcher::saveSlot(Item* item)
+bool HallFetcher::saveSlot(Item* item, DBConn *conn)
 {
 	HallItem* cItem = (HallItem*)item;
 
 	int id = cItem->getId();
 	QString name = cItem->getName();
 	int cnt = cItem->getCnt();
-
 	QString sql = "";
-
-	DBConn* conn = DBService::getInstance()->getConnection();
-	if (!conn->isConnected())
-	{
-		qCritical() << Q_FUNC_INFO << "Ошибка подключания к БД";
-		Q_EMIT saved(false);
-		return;
-	}
-
-	conn->beginTransaction();
 	QSqlQuery q(conn->qtDatabase());
 
 	int i = 0;
@@ -151,8 +112,5 @@ void HallFetcher::saveSlot(Item* item)
 		q.bindValue(i++, cnt);
 	}
 
-	bool res = conn->executeQuery(q);
-	conn->commit();
-
-	Q_EMIT saved(res);
+	return conn->executeQuery(q);
 }

@@ -10,9 +10,9 @@ public:
 	virtual ~CoachFetcher() {}
 
 protected:
-	virtual void deleteSlot(int);
+	virtual bool deleteSlot(Item* i, DBConn* conn);
 	virtual void fetchSlot();
-	virtual void saveSlot(Item* item);
+	virtual bool saveSlot(Item* item, DBConn* conn);
 };
 
 #endif // COACHFETCHER_H

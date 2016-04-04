@@ -55,7 +55,7 @@ SheduleWidget::SheduleWidget()
 
 	for (int i = 1; i <= 7; i++)
 	{
-		dayWidget->addItem(SheduleModel::getDay(i), i);
+		dayWidget->addItem(ModelFactory::getDay(i), i);
 	}
 
 	clear();
@@ -75,11 +75,11 @@ void SheduleWidget::set(Item* item)
 		SheduleParam p = i->getParam();
 		dayWidget->setCurrentIndex(p.day - 1);
 
-		QString str = SheduleModel::getHall(p.hall_id);
+		QString str = ModelFactory::getHall(p.hall_id);
 		int ind = hallWidget->findText(str);
 		hallWidget->setCurrentIndex(ind);
 
-		str = SheduleModel::getCoach(p.coach_id);
+		str = ModelFactory::getCoach(p.coach_id);
 		ind = coachWidget->findText(str);
 		coachWidget->setCurrentIndex(ind);
 

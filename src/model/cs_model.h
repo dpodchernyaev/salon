@@ -4,6 +4,7 @@
 #include <model/item_model.h>
 
 class CsFetcher;
+class CsParam;
 
 class CsModel : public ItemModel
 {
@@ -18,11 +19,13 @@ public:
 	QVariant headerData(int section, Qt::Orientation orientation, int role) const;
 
 	bool isActive(const QModelIndex& ind) const;
+	bool isActive(const CsParam &p) const;
 
 	double getSumm() const;
 
 private:
 	int clientId;
+	QMap<int, QList<Item*> > cached;
 };
 
 #endif // CSMODEL_H
