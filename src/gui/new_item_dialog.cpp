@@ -17,9 +17,9 @@
 
 NewItemDialog::NewItemDialog(ItemModel *model) : model(model)
 {
-	setWindowFlags(windowFlags() & ~Qt::WindowMinimizeButtonHint);
-	setWindowFlags(windowFlags() & ~Qt::WindowMaximizeButtonHint);
+	setWindowFlags(windowFlags() | Qt::CustomizeWindowHint);
 	setWindowFlags(windowFlags() & ~Qt::WindowCloseButtonHint);
+	setWindowFlags(windowFlags() & ~Qt::WindowContextHelpButtonHint);
 
 	item = NULL;
 	view = new ItemListWidget(model);
@@ -99,6 +99,13 @@ NewItemDialog::NewItemDialog(ItemModel *model) : model(model)
 	rightWidget->setEnabled(false);
 }
 
+void NewItemDialog::keyPressEvent(QKeyEvent *e)
+{
+	if(e->key() != Qt::Key_Escape)
+	{
+		QDialog::keyPressEvent(e);
+	}
+}
 void NewItemDialog::modelLocked(bool locked)
 {
 	setEnabled(!locked);

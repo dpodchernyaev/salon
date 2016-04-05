@@ -21,7 +21,18 @@
 class ClientItem;
 class Item;
 
-
+#include <QCleanlooksStyle>
+class SalonStyle : public QCleanlooksStyle
+{
+public:
+	int pixelMetric(PixelMetric metric, const QStyleOption * option = 0, const QWidget * widget = 0 ) const {
+		int s = QCleanlooksStyle::pixelMetric(metric, option, widget);
+		if (metric == QStyle::PM_SmallIconSize) {
+			s = 40;
+		}
+		return s;
+	}
+};
 
 /** Запускает приложение */
 int
@@ -31,6 +42,10 @@ launchApp(int argc, char *argv[])
 	XInitThreads();
 #endif
 	QApplication app(argc, argv);
+
+#ifdef Q_OS_WIN
+	QApplication::setStyle(new SalonStyle);
+#endif
 
 	QTextCodec *codec = QTextCodec::codecForName("UTF-8");
 	QTextCodec::setCodecForTr(codec);

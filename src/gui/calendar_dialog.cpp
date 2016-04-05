@@ -19,9 +19,9 @@
 
 CalendarDialog::CalendarDialog()
 {
-	setWindowFlags(windowFlags() & ~Qt::WindowMinimizeButtonHint);
-	setWindowFlags(windowFlags() & ~Qt::WindowMaximizeButtonHint);
+	setWindowFlags(windowFlags() | Qt::CustomizeWindowHint);
 	setWindowFlags(windowFlags() & ~Qt::WindowCloseButtonHint);
+	setWindowFlags(windowFlags() & ~Qt::WindowContextHelpButtonHint);
 
 	gModel = (GroupModel*)ModelFactory::getInstance()->getModel(GROUP);
 

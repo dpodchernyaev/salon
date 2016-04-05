@@ -21,6 +21,8 @@ public:
 	virtual ~NewItemDialog() {}
 
 protected:
+	void keyPressEvent(QKeyEvent *e);
+
 	virtual void clear() = 0;
 	virtual Item* createItem() = 0;
 	virtual void setItem(Item* i);
