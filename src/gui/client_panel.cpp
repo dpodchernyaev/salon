@@ -5,6 +5,8 @@
 #include <QVBoxLayout>
 #include <QHBoxLayout>
 
+#include <model/item.h>
+#include <report/client_report.h>
 #include <model/model_factory.h>
 #include <model/client_model.h>
 #include <model/card_model.h>
@@ -22,6 +24,7 @@
 #include <gui/new_coach_dialog.h>
 #include <gui/new_hall_dialog.h>
 #include <gui/client_info_panel.h>
+#include <gui/item_list_view.h>
 
 #include <smtp_client/email_sender.h>
 
@@ -74,8 +77,10 @@ ClientPanel::ClientPanel()
 			this, SLOT(selected(Item*)));
 
 	QMenu* menu = new QMenu("Меню");
+	QMenu* report = new QMenu("Отчеты");
 	QMenuBar* bar = menuBar();
 	bar->addMenu(menu);
+	bar->addMenu(report);
 
 	QAction* action = new QAction("Клиенты", menu);
 	connect(action, SIGNAL(triggered(bool)), this, SLOT(newClient()));
@@ -106,6 +111,12 @@ ClientPanel::ClientPanel()
 	connect(action, SIGNAL(triggered(bool)), this, SLOT(newShedule()));
 	menu->addAction(action);
 
+	// ============
+
+	action = new QAction("Отчет по клиенту", report);
+	connect(action, SIGNAL(triggered(bool)), this, SLOT(clientReport()));
+	report->addAction(action);
+
 
 	connect(clientModel, SIGNAL(modelRestored()),
 			this, SLOT(modelRestored()));
@@ -120,6 +131,16 @@ void ClientPanel::modelRestored()
 {
 	QModelIndex first = clientModel->index(0, 0);
 	view->setCurrentIndex(first);
+}
+
+void ClientPanel::clientReport()
+{
+	Item* i = view->getView()->getSelected();
+	if (i != NULL)
+	{
+		ClientReport rep(i->getId());
+		rep.exec();
+	}
 }
 
 void ClientPanel::newVid()

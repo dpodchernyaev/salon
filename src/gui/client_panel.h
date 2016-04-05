@@ -37,6 +37,8 @@ private Q_SLOTS:
 	void newCard();
 	void newShedule();
 
+	void clientReport();
+
 private:
 	ItemListWidget* view;
 	ClientInfoPanel* infoWidget;

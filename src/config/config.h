@@ -15,6 +15,7 @@ static QString EMAIL_PASSWD = "email_passwd";
 static QString EMAIL_SMTP_SSL = "email_smtp_ssl";
 static QString EMAIL_SMTP_SSL_PORT = "email_smtp_ssl_port";
 static QString BIRTHDAY_FILE = "birthday_file";
+static QString REPORT_DIR = "report_dir";
 
 class Config
 {
