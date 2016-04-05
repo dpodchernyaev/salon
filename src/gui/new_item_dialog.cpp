@@ -17,6 +17,10 @@
 
 NewItemDialog::NewItemDialog(ItemModel *model) : model(model)
 {
+	setWindowFlags(windowFlags() & ~Qt::WindowMinimizeButtonHint);
+	setWindowFlags(windowFlags() & ~Qt::WindowMaximizeButtonHint);
+	setWindowFlags(windowFlags() & ~Qt::WindowCloseButtonHint);
+
 	item = NULL;
 	view = new ItemListWidget(model);
 	view->setMaximumWidth(300);

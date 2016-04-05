@@ -97,7 +97,7 @@ bool VisitFetcher::saveSlot(Item* item, DBConn *conn)
 {
 	bool res = false;
 
-	usleep(1000000 * 1);
+	//usleep(1000000 * 1);
 	VisitItem* vItem = (VisitItem*)item;
 	VisitParam p = vItem->getParam();
 	QString sql = "";

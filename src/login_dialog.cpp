@@ -14,6 +14,10 @@
 
 LoginDialog::LoginDialog()
 {
+	setWindowFlags(windowFlags() & ~Qt::WindowMinimizeButtonHint);
+	setWindowFlags(windowFlags() & ~Qt::WindowMaximizeButtonHint);
+	setWindowFlags(windowFlags() & ~Qt::WindowCloseButtonHint);
+
 	setFixedSize(250, 150);
 	QPushButton* okBtn = new QPushButton("Ок");
 	QPushButton* cBtn = new QPushButton("Отмена");

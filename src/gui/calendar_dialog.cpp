@@ -19,6 +19,10 @@
 
 CalendarDialog::CalendarDialog()
 {
+	setWindowFlags(windowFlags() & ~Qt::WindowMinimizeButtonHint);
+	setWindowFlags(windowFlags() & ~Qt::WindowMaximizeButtonHint);
+	setWindowFlags(windowFlags() & ~Qt::WindowCloseButtonHint);
+
 	gModel = (GroupModel*)ModelFactory::getInstance()->getModel(GROUP);
 
 	sModel = (SheduleModel*)ModelFactory::getInstance()->getModel(SHEDULE);

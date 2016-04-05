@@ -14,6 +14,9 @@
 
 BuyDialog::BuyDialog(ItemModel *model, int disc) : model(model), disc(disc)
 {
+	setWindowFlags(windowFlags() & ~Qt::WindowMinimizeButtonHint);
+	setWindowFlags(windowFlags() & ~Qt::WindowMaximizeButtonHint);
+	setWindowFlags(windowFlags() & ~Qt::WindowCloseButtonHint);
 	setWindowTitle("Покупка новой услуги");
 
 	view = new ItemListView(model);
