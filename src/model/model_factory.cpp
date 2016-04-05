@@ -6,6 +6,7 @@
 #include <model/service_model.h>
 #include <model/client_model.h>
 #include <model/cs_model.h>
+#include <model/vid_model.h>
 #include <model/shedule_model.h>
 #include <model/group_model.h>
 #include <model/visit_model.h>
@@ -13,6 +14,7 @@
 #include <model/client_service_item.h>
 #include <model/hall_item.h>
 #include <model/coach_item.h>
+#include <model/vid_item.h>
 #include <model/group_item.h>
 
 #include "model_factory.h"
@@ -34,6 +36,7 @@ void ModelFactory::reload()
 	models.insert(SHEDULE, new SheduleModel);
 	models.insert(GROUP, new GroupModel);
 	models.insert(VISIT, new VisitModel);
+	models.insert(VID, new VidModel);
 
 	getModel(SERVICE)->fetch();
 	getModel(CARD)->fetch();
@@ -42,6 +45,7 @@ void ModelFactory::reload()
 	getModel(CLIENT)->fetch();
 	getModel(SHEDULE)->fetch();
 	getModel(GROUP)->fetch();
+	getModel(VID)->fetch();
 }
 
 ModelFactory *ModelFactory::getInstance()
@@ -57,6 +61,23 @@ ModelFactory *ModelFactory::getInstance()
 ItemModel *ModelFactory::getModel(ModelType type) const
 {
 	return models.value(type);
+}
+
+QString ModelFactory::getVid(int id)
+{
+	QString res;
+	VidModel* model = (VidModel*)ModelFactory::getInstance()->getModel(VID);
+	Item* i = model->getItem(id);
+	if (i == NULL)
+	{
+		res = "Нет";
+	}
+	else
+	{
+		VidItem* csi = (VidItem*)i;
+		res = csi->getParam().name;
+	}
+	return res;
 }
 
 QString ModelFactory::getService(int id)
@@ -168,5 +189,3 @@ QString ModelFactory::getCoach(int id)
 	}
 	return res;
 }
-
-

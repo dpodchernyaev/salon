@@ -151,6 +151,7 @@ bool CsProxyModel::filterAcceptsRow(int source_row, const QModelIndex &source_pa
 
 SheduleProxyModel::SheduleProxyModel(SheduleModel* model) : ItemProxyModel(model)
 {
+	vidId = 0;
 }
 
 void SheduleProxyModel::setFilterDate(const QDate &date)
@@ -158,15 +159,28 @@ void SheduleProxyModel::setFilterDate(const QDate &date)
 	this->date = date;
 }
 
+void SheduleProxyModel::setFilterVid(int vidId)
+{
+	this->vidId = vidId;
+}
+
 bool SheduleProxyModel::filterAcceptsRow(int source_row, const QModelIndex &source_parent) const
 {
 	bool res = ItemProxyModel::filterAcceptsRow(source_row, source_parent);
 
+	Item* item = sourceModel->getItem(sourceModel->index(source_row, 0));
+	SheduleItem* cs = (SheduleItem*)item;
 	if (date.isValid())
 	{
-		Item* item = sourceModel->getItem(sourceModel->index(source_row, 0));
-		SheduleItem* cs = (SheduleItem*)item;
 		if (cs->getParam().day != date.dayOfWeek())
+		{
+			res = false;
+		}
+	}
+
+	if (vidId > 0)
+	{
+		if (cs->getParam().vid_id != vidId)
 		{
 			res = false;
 		}

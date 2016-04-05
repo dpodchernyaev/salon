@@ -82,8 +82,6 @@ ClientInfoPanel::ClientInfoPanel()
 	visitView->setProxyModel(visitProxy);
 	visitView->verticalHeader()->hide();
 	visitView->horizontalHeader()->setStretchLastSection(true);
-	visitView->horizontalHeader()->setResizeMode(QHeaderView::ResizeToContents);
-	visitView->resizeColumnsToContents();
 	visitView->setSelectionMode(QAbstractItemView::SingleSelection);
 	visitView->setSelectionBehavior(QAbstractItemView::SelectRows);
 	visitView->setEditTriggers(QAbstractItemView::NoEditTriggers);
@@ -112,7 +110,7 @@ ClientInfoPanel::ClientInfoPanel()
 	QHBoxLayout* hbox = new QHBoxLayout;
 	hbox->addWidget(clientWidget);
 	hbox->addLayout(visitBox);
-	hbox->addStretch(1);
+	//hbox->addStretch(1);
 
 	QFont f;
 	f.setBold(true);
@@ -134,6 +132,8 @@ ClientInfoPanel::ClientInfoPanel()
 
 	clientWidget->edit(false);
 	serviceView->hideAnimation();
+	visitView->hideAnimation();
+	delVisBtn->setEnabled(false);
 
 	connect(csModel, SIGNAL(lock(bool)), this, SLOT(serviceLocked(bool)));
 	connect(visModel, SIGNAL(lock(bool)), this, SLOT(visitLocked(bool)));
@@ -174,13 +174,15 @@ void ClientInfoPanel::serviceSelected(Item* item)
 void ClientInfoPanel::visitLocked(bool f)
 {
 	visitView->setEnabled(!f);
-	delVisBtn->setEnabled(!f);
 	if (f == true)
 	{
+		delVisBtn->setEnabled(false);
 		visitView->showAnimation();
 	}
 	else
 	{
+		delVisBtn->setEnabled(visitView->getSelected() != NULL);
+		visitView->resizeColumnsToContents();
 		visitView->hideAnimation();
 	}
 }
@@ -231,6 +233,7 @@ void ClientInfoPanel::buyService()
 			p.limit_value = si->get().value;
 			p.limit_type = si->get().limitType;
 			p.limit_days = si->get().limitDays;
+			p.vid_id = si->get().vid_id;
 			p.name = si->get().name;
 			p.date = QDateTime::currentDateTime();
 			p.summ = si->get().price * (1 - (double)disc / 100);
@@ -295,6 +298,7 @@ void ClientInfoPanel::useService()
 
 
 	CalendarDialog wgt;
+	wgt.setFilterItem(csi);
 	bool res = wgt.exec();
 
 	GroupModel* gModel = (GroupModel*)
@@ -340,7 +344,7 @@ void ClientInfoPanel::useService()
 
 		vp.cs_id = csi->getParam().id;
 		vp.dtime = dt;
-		vp.info = "";
+		vp.info = ModelFactory::getVid(psi.vid_id);
 		vi->setParam(vp);
 		vi->setCs(csi);
 

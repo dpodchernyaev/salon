@@ -1,4 +1,5 @@
 
+#include <model/model_factory.h>
 #include <model/client_service_item.h>
 #include <model/cs_fetcher.h>
 
@@ -84,15 +85,20 @@ QVariant CsModel::data(const QModelIndex &index, int role) const
 	int col = index.column();
 	if (role == Qt::DisplayRole)
 	{
-		if (col == 0)
+		int colNum = 0;
+		if (col == colNum++)
+		{
+			res = ModelFactory::getVid(p.vid_id);
+		}
+		else if (col == colNum++)
 		{
 			res = p.name;
 		}
-		else if (col == 1)
+		else if (col == colNum++)
 		{
 			res = p.date.toString(DATE_FORMAT);
 		}
-		else if (col == 2)
+		else if (col == colNum++)
 		{
 			if (p.limit_type != LT_COUNT)
 			{
@@ -103,7 +109,7 @@ QVariant CsModel::data(const QModelIndex &index, int role) const
 				res = "Нет";
 			}
 		}
-		else if (col == 3)
+		else if (col == colNum++)
 		{
 			if (p.limit_type != LT_DATE)
 			{
@@ -133,11 +139,12 @@ QVariant CsModel::data(const QModelIndex &index, int role) const
 int CsModel::columnCount(const QModelIndex &parent) const
 {
 	Q_UNUSED (parent);
-	// 0 - название
-	// 1 - дата покупки
-	// 2 - срок истекания
-	// 3 - остаток
-	return 4;
+	// 0 - вид
+	// 1 - название
+	// 2 - дата покупки
+	// 3 - срок истекания
+	// 4 - остаток
+	return 5;
 }
 
 QVariant CsModel::headerData(int section, Qt::Orientation orientation, int role) const
@@ -146,6 +153,10 @@ QVariant CsModel::headerData(int section, Qt::Orientation orientation, int role)
 	if (orientation == Qt::Horizontal && role == Qt::DisplayRole)
 	{
 		if (section == 0)
+		{
+			res = "Вид";
+		}
+		else if (section == 0)
 		{
 			res = "Название";
 		}

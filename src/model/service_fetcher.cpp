@@ -36,6 +36,7 @@ void ServiceFetcher::fetchSlot()
 				", service.value"
 				", service.limit_days"
 				", service.used"
+				", service.vid_id"
 			" FROM service"
 			" WHERE id <> 0";
 	DBConn* conn = DBService::getInstance()->getConnection();
@@ -60,6 +61,7 @@ void ServiceFetcher::fetchSlot()
 		p.value = q.value(i++).toInt();
 		p.limitDays = q.value(i++).toInt();
 		p.used = q.value(i++).toBool();
+		p.vid_id = q.value(i++).toInt();
 
 		item->set(p);
 		items.append(item);
@@ -86,6 +88,7 @@ bool ServiceFetcher::saveSlot(Item* item, DBConn *conn)
 					", value = ?"
 					", limit_days = ?"
 					", used = ?"
+					", vid_id = ?"
 				" WHERE id = ?";
 		q.prepare(sql);
 
@@ -95,6 +98,7 @@ bool ServiceFetcher::saveSlot(Item* item, DBConn *conn)
 		q.bindValue(i++, p.value);
 		q.bindValue(i++, p.limitDays);
 		q.bindValue(i++, p.used);
+		q.bindValue(i++, p.vid_id);
 		q.bindValue(i++, p.id);
 	}
 	else
@@ -110,8 +114,8 @@ bool ServiceFetcher::saveSlot(Item* item, DBConn *conn)
 		}
 		sql =
 			"INSERT INTO service("
-					" id, name, price, limit_type, value, limit_days, used)"
-				" VALUES(?, ?, ?, ?, ?, ?, ?)";
+					" id, name, price, limit_type, value, limit_days, used, vid_id)"
+				" VALUES(?, ?, ?, ?, ?, ?, ?, ?)";
 		q.prepare(sql);
 
 		q.bindValue(i++, p.id);
@@ -121,6 +125,7 @@ bool ServiceFetcher::saveSlot(Item* item, DBConn *conn)
 		q.bindValue(i++, p.value);
 		q.bindValue(i++, p.limitDays);
 		q.bindValue(i++, p.used);
+		q.bindValue(i++, p.vid_id);
 	}
 
 	return conn->executeQuery(q);

@@ -70,7 +70,6 @@ bool CoachFetcher::saveSlot(Item* item, DBConn *conn)
 		{
 			qDebug() << "NEW ID = " << seq.value(0).toInt();
 			id = seq.value(0).toInt();
-			cItem->setId(id);
 		}
 		sql =
 			"INSERT INTO coach("
@@ -81,17 +80,18 @@ bool CoachFetcher::saveSlot(Item* item, DBConn *conn)
 		q.bindValue(i++, name);
 	}
 
-	return conn->executeQuery(q);
+	bool res = conn->executeQuery(q);
+
+	if (res == true)
+	{
+		cItem->setId(id);
+	}
+
+	return res;
 }
 
 bool CoachFetcher::deleteSlot(Item *i, DBConn *conn)
 {
-	if (i->getId() <= 0)
-	{
-		qCritical() << Q_FUNC_INFO << "Неверный идентификатор";
-		return false;
-	}
-
 	bool res = false;
 
 	QString sql = "UPDATE shedule SET coach_id = 0"

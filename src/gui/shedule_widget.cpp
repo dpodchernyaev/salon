@@ -23,6 +23,13 @@ SheduleWidget::SheduleWidget()
 	QLabel* label = NULL;
 
 	int row = 0;
+
+	label = new QLabel("Вид занятий:");
+	vidWidget = new QComboBox;
+	vidWidget->setModel(ModelFactory::getInstance()->getModel(VID));
+	grid->addWidget(label, row, 0);
+	grid->addWidget(vidWidget, row++, 1);
+
 	label = new QLabel("День недели:");
 	dayWidget = new QComboBox;
 	grid->addWidget(label, row, 0);
@@ -85,6 +92,9 @@ void SheduleWidget::set(Item* item)
 
 		bTimeWidget->setTime(p.bTime);
 		eTimeWidget->setTime(p.eTime);
+
+		ind = vidWidget->findData(p.vid_id, KeyRole);
+		vidWidget->setCurrentIndex(ind);
 	}
 	else
 	{
@@ -93,6 +103,7 @@ void SheduleWidget::set(Item* item)
 		eTimeWidget->setTime(QTime());
 		hallWidget->setCurrentIndex(-1);
 		coachWidget->setCurrentIndex(-1);
+		vidWidget->setCurrentIndex(-1);
 	}
 }
 
@@ -120,7 +131,10 @@ bool SheduleWidget::checkSave() const
 	{
 		res = false;
 	}
-
+	else if (vidWidget->currentIndex() < 0)
+	{
+		res = false;
+	}
 
 	return res;
 }
@@ -143,6 +157,7 @@ void SheduleWidget::apply()
 	p.bTime = bTimeWidget->time();
 	p.eTime = eTimeWidget->time();
 	p.day = dayWidget->currentIndex() + 1;
+	p.vid_id = vidWidget->itemData(vidWidget->currentIndex(), KeyRole).toInt();
 
 	i->setParam(p);
 }

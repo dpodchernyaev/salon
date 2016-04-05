@@ -9,6 +9,7 @@
 struct CsParam
 {
 	int id;
+	int vid_id;
 	int client_id;
 	int limit_days;
 	int limit_value;
@@ -22,6 +23,7 @@ struct CsParam
 		name = "";
 		summ = 0;
 		id = 0;
+		vid_id = 0;
 		client_id = 0;
 		limit_days = 0;
 		limit_type = LT_DATE_COUNT;

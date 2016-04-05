@@ -9,6 +9,7 @@ class ItemTableView;
 class SheduleProxyModel;
 class SheduleItem;
 class SheduleModel;
+class CsItem;
 
 class CalendarDialog : public QDialog
 {
@@ -20,12 +21,15 @@ public:
 	SheduleItem* getSheduleItem() const;
 	QDate getDate() const;
 
+	void setFilterItem(CsItem* item);
+
 private Q_SLOTS:
 	void activated(QDate date);
 	void okClicked();
 	void exitClicked();
 
 private:
+	CsItem* filterItem;
 	SheduleModel* sModel;
 	CalendarWidget* calendar;
 	ItemTableView* dayWidget;

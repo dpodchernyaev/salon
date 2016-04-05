@@ -10,6 +10,7 @@
 struct SheduleParam
 {
 	int id;
+	int vid_id;
 	int coach_id;
 	int hall_id;
 	int day;
@@ -19,6 +20,7 @@ struct SheduleParam
 	SheduleParam()
 	{
 		id = 0;
+		vid_id = 0;
 		coach_id = 0;
 		hall_id = 0;
 		day = 0;

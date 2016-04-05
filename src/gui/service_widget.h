@@ -33,6 +33,7 @@ private:
 	QLineEdit* nameWidget;
 	QDoubleSpinBox* priceWidget;
 	QComboBox* limitTypeWidget;
+	QComboBox* vidWidget;
 	QSpinBox* limitValueWidget;
 	QSpinBox* limitDaysWidget;
 	QCheckBox* usedWidget;

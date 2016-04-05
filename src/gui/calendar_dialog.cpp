@@ -7,6 +7,8 @@
 #include <model/shedule_model.h>
 #include <model/group_model.h>
 
+#include <model/client_service_item.h>
+
 #include <gui/item_list_view.h>
 
 #include <gui/calendar_widget.h>
@@ -80,6 +82,13 @@ CalendarDialog::~CalendarDialog()
 QDate CalendarDialog::getDate() const
 {
 	return calendar->selectedDate();
+}
+
+void CalendarDialog::setFilterItem(CsItem *item)
+{
+	filterItem = item;
+	sProxy->setFilterVid(item->getParam().vid_id);
+	sProxy->invalidate();
 }
 
 SheduleItem* CalendarDialog::getSheduleItem() const

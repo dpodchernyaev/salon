@@ -15,6 +15,10 @@ public:
 	struct Filter
 	{
 		QString display;
+		Filter()
+		{
+			display = "";
+		}
 	};
 
 	ItemProxyModel(ItemModel* model);
@@ -55,11 +59,13 @@ public:
 	SheduleProxyModel(SheduleModel* model);
 
 	void setFilterDate(const QDate &date);
+	void setFilterVid(int vidId);
 
 protected:
 	virtual  bool filterAcceptsRow(int source_row, const QModelIndex &source_parent) const;
 
 private:
+	int vidId;
 	QDate date;
 };
 

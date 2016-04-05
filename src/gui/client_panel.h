@@ -12,6 +12,7 @@ class ServiceModel;
 class HallModel;
 class CardModel;
 class ClientModel;
+class VidModel;
 class Item;
 class SheduleModel;
 class EmailSender;
@@ -29,6 +30,7 @@ private Q_SLOTS:
 	void modelRestored();
 
 	void newClient();
+	void newVid();
 	void newCoach();
 	void newService();
 	void newHall();
@@ -45,6 +47,7 @@ private:
 	CoachModel* coachModel;
 	ServiceModel* serviceModel;
 	SheduleModel* sheduleModel;
+	VidModel* vidModel;
 	EmailSender* email_sender;
 };
 

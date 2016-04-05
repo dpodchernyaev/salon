@@ -10,6 +10,7 @@
 struct ServiceParam
 {
 	int id;
+	int vid_id;
 	QString name;
 	double price;
 	LimitType limitType;
@@ -20,6 +21,7 @@ struct ServiceParam
 	ServiceParam()
 	{
 		id = 0;
+		vid_id = 0;
 		name = "";
 		limitType = LT_COUNT;
 		price = 0.;

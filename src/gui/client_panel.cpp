@@ -18,6 +18,7 @@
 #include <gui/new_service_dialog.h>
 #include <gui/new_shedule_dialog.h>
 #include <gui/new_card_dialog.h>
+#include <gui/new_vid_dialog.h>
 #include <gui/new_coach_dialog.h>
 #include <gui/new_hall_dialog.h>
 #include <gui/client_info_panel.h>
@@ -37,6 +38,7 @@ ClientPanel::ClientPanel()
 	hallModel = (HallModel*)ModelFactory::getInstance()->getModel(HALL);
 	clientModel = (ClientModel*)ModelFactory::getInstance()->getModel(CLIENT);
 	sheduleModel = (SheduleModel*)ModelFactory::getInstance()->getModel(SHEDULE);
+	vidModel = (VidModel*)ModelFactory::getInstance()->getModel(VID);
 
 	ClientProxyModel* clientProxy = new ClientProxyModel(clientModel);
 	clientProxy->setSortRole(SortRole);
@@ -44,7 +46,7 @@ ClientPanel::ClientPanel()
 	clientProxy->sort(0);
 
 	view = new ItemListWidget(clientModel);
-	view->setMaximumWidth(400);
+	view->setMaximumWidth(300);
 	view->setMinimumWidth(300);
 	view->getView()->setProxyModel(clientProxy);
 
@@ -56,7 +58,7 @@ ClientPanel::ClientPanel()
 	QHBoxLayout* hbox = new QHBoxLayout(this);
 	hbox->addLayout(vbox);
 	hbox->addWidget(infoWidget);
-	hbox->addStretch(1);
+	//hbox->addStretch(1);
 
 	QWidget* mainWidget = new QWidget;
 	mainWidget->setLayout(hbox);
@@ -88,6 +90,10 @@ ClientPanel::ClientPanel()
 	connect(action, SIGNAL(triggered(bool)), this, SLOT(newService()));
 	menu->addAction(action);
 
+	action = new QAction("Виды занятий", menu);
+	connect(action, SIGNAL(triggered(bool)), this, SLOT(newVid()));
+	menu->addAction(action);
+
 	action = new QAction("Залы", menu);
 	connect(action, SIGNAL(triggered(bool)), this, SLOT(newHall()));
 	menu->addAction(action);
@@ -114,6 +120,12 @@ void ClientPanel::modelRestored()
 {
 	QModelIndex first = clientModel->index(0, 0);
 	view->setCurrentIndex(first);
+}
+
+void ClientPanel::newVid()
+{
+	NewVidDialog dlg(vidModel);
+	dlg.exec();
 }
 
 void ClientPanel::newClient()

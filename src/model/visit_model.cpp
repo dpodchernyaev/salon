@@ -37,7 +37,7 @@ void VisitModel::fetch(int id)
 
 int VisitModel::columnCount(const QModelIndex &parent) const
 {
-	// 0 - название
+	// 0 - тип занятий
 	// 1 - времмя
 	// 2 - зал
 	return 3;
@@ -60,7 +60,7 @@ QVariant VisitModel::data(const QModelIndex &index, int role) const
 	{
 		if (index.column() == 0)
 		{
-			res = ModelFactory::getService(param.cs_id);
+			res = param.info;
 		}
 		else if (index.column() == 1)
 		{

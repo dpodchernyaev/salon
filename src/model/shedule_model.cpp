@@ -151,7 +151,7 @@ QVariant SheduleModel::data(const QModelIndex &index, int role) const
 	{
 		if (col == 0)
 		{
-			res =ModelFactory::getDay(p.day);
+			res = ModelFactory::getDay(p.day);
 		}
 		else if (col == 1)
 		{
@@ -185,7 +185,7 @@ QVariant SheduleModel::data(const QModelIndex &index, int role) const
 	}
 	else if (role == SortRole)
 	{
-		res = p.day;
+		res = p.bTime;
 	}
 	else if (role == TimeSortRole)
 	{

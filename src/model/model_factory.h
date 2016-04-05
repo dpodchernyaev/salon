@@ -15,7 +15,8 @@ enum ModelType
 	CS,
 	SHEDULE,
 	GROUP,
-	VISIT
+	VISIT,
+	VID
 };
 
 class ModelFactory
@@ -33,6 +34,7 @@ public:
 	static QString getHallByGroup(int id);
 	static QString getCoach(int id);
 	static QString getService(int id);
+	static QString getVid(int id);
 
 private:
 	static ModelFactory* inst;

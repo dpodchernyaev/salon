@@ -24,6 +24,7 @@ void SheduleFetcher::fetchSlot()
 				", day"
 				", begin_time"
 				", end_time"
+				", vid_id"
 			" FROM shedule"
 			" WHERE id <> 0";
 	DBConn* conn = DBService::getInstance()->getConnection();
@@ -46,6 +47,7 @@ void SheduleFetcher::fetchSlot()
 		p.day = q.value(i++).toInt();
 		p.bTime = q.value(i++).toTime();
 		p.eTime = q.value(i++).toTime();
+		p.vid_id = q.value(i++).toInt();
 		item->setParam(p);
 		items.append(item);
 	}
@@ -70,6 +72,7 @@ bool SheduleFetcher::saveSlot(Item* item, DBConn* conn)
 					", day = ?"
 					", begin_time = ?"
 					", end_time = ?"
+					", vid_id = ?"
 				" WHERE id = ?";
 		q.prepare(sql);
 		q.bindValue(i++, p.coach_id);
@@ -77,6 +80,7 @@ bool SheduleFetcher::saveSlot(Item* item, DBConn* conn)
 		q.bindValue(i++, p.day);
 		q.bindValue(i++, p.bTime);
 		q.bindValue(i++, p.eTime);
+		q.bindValue(i++, p.vid_id);
 		q.bindValue(i++, p.id);
 	}
 	else
@@ -92,8 +96,8 @@ bool SheduleFetcher::saveSlot(Item* item, DBConn* conn)
 		}
 		sql =
 			"INSERT INTO shedule("
-					" id, coach_id, hall_id, day, begin_time, end_time)"
-				" VALUES(?, ?, ?, ?, ?, ?)";
+					" id, coach_id, hall_id, day, begin_time, end_time, vid_id)"
+				" VALUES(?, ?, ?, ?, ?, ?, ?)";
 		q.prepare(sql);
 		q.bindValue(i++, p.id);
 		q.bindValue(i++, p.coach_id);
@@ -101,6 +105,7 @@ bool SheduleFetcher::saveSlot(Item* item, DBConn* conn)
 		q.bindValue(i++, p.day);
 		q.bindValue(i++, p.bTime);
 		q.bindValue(i++, p.eTime);
+		q.bindValue(i++, p.vid_id);
 	}
 
 	return conn->executeQuery(q);
@@ -113,3 +118,4 @@ bool SheduleFetcher::deleteSlot(Item *i, DBConn *conn)
 	QSqlQuery q = conn->executeQuery(sql);
 	return q.isActive();
 }
+

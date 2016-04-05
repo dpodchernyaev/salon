@@ -12,6 +12,8 @@
 #include <QComboBox>
 #include <QDoubleSpinBox>
 
+#include <model/vid_model.h>
+#include <model/model_factory.h>
 #include <model/service_item.h>
 
 #include "service_widget.h"
@@ -23,7 +25,14 @@ ServiceWidget::ServiceWidget()
 	QGridLayout* grid = new QGridLayout;
 
 	int row = 0;
-	QLabel* label = new QLabel("Название: ");
+
+	QLabel* label = new QLabel("Вид: ");
+	vidWidget = new QComboBox;
+	vidWidget->setModel(ModelFactory::getInstance()->getModel(VID));
+	grid->addWidget(label, row, 0);
+	grid->addWidget(vidWidget, row++, 1);
+
+	label = new QLabel("Название: ");
 	nameWidget = new QLineEdit;
 	nameWidget->setMinimumWidth(300);
 	grid->addWidget(label, row, 0);
@@ -102,7 +111,8 @@ void ServiceWidget::set(Item* item)
 		limitValueWidget->setValue(0);
 		limitDaysWidget->setValue(0);
 		usedWidget->setCheckState(Qt::Unchecked);
-		limitTypeWidget->setCurrentIndex(0);
+		limitTypeWidget->setCurrentIndex(-1);
+		vidWidget->setCurrentIndex(-1);
 	}
 	else
 	{
@@ -117,6 +127,8 @@ void ServiceWidget::set(Item* item)
 		limitTypeWidget->setCurrentIndex(
 					limitTypeWidget->findText(
 						ServiceItem::toString(p.limitType)));
+		int ind = vidWidget->findData(p.vid_id, KeyRole);
+		vidWidget->setCurrentIndex(ind);
 	}
 }
 
@@ -144,6 +156,7 @@ void ServiceWidget::apply()
 		p.price = priceWidget->value();
 		p.used = usedWidget->checkState() == Qt::Checked ? true : false;
 		p.value = limitValueWidget->value();
+		p.vid_id = vidWidget->itemData(vidWidget->currentIndex(), KeyRole).toInt();
 		c->set(p);
 	}
 }
@@ -172,6 +185,10 @@ bool ServiceWidget::checkSave() const
 				)
 			&& (limitTypeWidget->currentIndex() == 0)
 			)
+	{
+		res = false;
+	}
+	else if (vidWidget->currentIndex() < 0)
 	{
 		res = false;
 	}

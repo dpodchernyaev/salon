@@ -18,6 +18,7 @@ public:
 	virtual void clear();
 
 private:
+	QComboBox* vidWidget;
 	QComboBox* dayWidget;
 	QComboBox* coachWidget;
 	QComboBox* hallWidget;

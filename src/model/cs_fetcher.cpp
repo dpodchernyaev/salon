@@ -37,6 +37,7 @@ void CsFetcher::fetchSlot()
 				", limit_days"
 				", limit_type"
 				", name"
+				", vid_id"
 			" FROM client_service"
 			" WHERE id <> 0 AND client_id = " + QString::number(lastId);
 	DBConn* conn = DBService::getInstance()->getConnection();
@@ -61,6 +62,7 @@ void CsFetcher::fetchSlot()
 		p.limit_days = q.value(i++).toInt();
 		p.limit_type = (LimitType)q.value(i++).toInt();
 		p.name = q.value(i++).toString();
+		p.vid_id = q.value(i++).toInt();
 		item->setParam(p);
 		items.append(item);
 	}
@@ -87,6 +89,7 @@ bool CsFetcher::saveSlot(Item* item, DBConn* conn)
 					", limit_days = ?"
 					", limit_type = ?"
 					", name = ?"
+					", vid_id = ?"
 				" WHERE id = ?";
 		q.prepare(sql);
 		q.bindValue(i++, p.client_id);
@@ -96,6 +99,7 @@ bool CsFetcher::saveSlot(Item* item, DBConn* conn)
 		q.bindValue(i++, p.limit_days);
 		q.bindValue(i++, p.limit_type);
 		q.bindValue(i++, p.name);
+		q.bindValue(i++, p.vid_id);
 		q.bindValue(i++, p.id);
 	}
 	else
@@ -111,8 +115,8 @@ bool CsFetcher::saveSlot(Item* item, DBConn* conn)
 		}
 		sql =
 			"INSERT INTO client_service("
-					" id, client_id, date, summ, limit_value, limit_days, limit_type, name)"
-				" VALUES(?, ?, ?, ?, ?, ?, ?, ?)";
+					" id, client_id, date, summ, limit_value, limit_days, limit_type, name, vid_id)"
+				" VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?)";
 		q.prepare(sql);
 		q.bindValue(i++, p.id);
 		q.bindValue(i++, p.client_id);
@@ -122,6 +126,7 @@ bool CsFetcher::saveSlot(Item* item, DBConn* conn)
 		q.bindValue(i++, p.limit_days);
 		q.bindValue(i++, p.limit_type);
 		q.bindValue(i++, p.name);
+		q.bindValue(i++, p.vid_id);
 	}
 
 	return conn->executeQuery(q);
