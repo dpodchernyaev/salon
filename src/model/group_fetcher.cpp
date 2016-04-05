@@ -62,12 +62,16 @@ bool GroupFetcher::saveSlot(Item* item, DBConn *conn)
 					", hall_id = ?"
 					", bdtime = ?"
 					", etime = ?"
+					", cnt = ?"
+					", vid_id = ?"
 				" WHERE id = ?";
 		q.prepare(sql);
 		q.bindValue(i++, p.coach_id);
 		q.bindValue(i++, p.hall_id);
 		q.bindValue(i++, p.bdtime);
 		q.bindValue(i++, p.etime);
+		q.bindValue(i++, p.cnt);
+		q.bindValue(i++, p.vid_id);
 		q.bindValue(i++, p.id);
 	}
 	else
@@ -83,14 +87,16 @@ bool GroupFetcher::saveSlot(Item* item, DBConn *conn)
 		}
 		sql =
 			"INSERT INTO vgroup("
-					" id, coach_id, hall_id, bdtime, etime)"
-				" VALUES(?, ?, ?, ?, ?)";
+					" id, coach_id, hall_id, bdtime, etime, cnt, vid_id)"
+				" VALUES(?, ?, ?, ?, ?, ?, ?)";
 		q.prepare(sql);
 		q.bindValue(i++, p.id);
 		q.bindValue(i++, p.coach_id);
 		q.bindValue(i++, p.hall_id);
 		q.bindValue(i++, p.bdtime);
 		q.bindValue(i++, p.etime);
+		q.bindValue(i++, p.cnt);
+		q.bindValue(i++, p.vid_id);
 	}
 
 	bool res = conn->executeQuery(q);
@@ -116,6 +122,8 @@ void GroupFetcher::fetchSlot()
 				", hall_id"
 				", bdtime"
 				", etime"
+				", cnt"
+				", vid_id"
 			" FROM vgroup"
 			" WHERE id <> 0"
 				" AND (bdtime BETWEEN ? AND ?)";
@@ -138,6 +146,8 @@ void GroupFetcher::fetchSlot()
 		param.hall_id = q.value(i++).toInt();
 		param.bdtime = q.value(i++).toDateTime();
 		param.etime = q.value(i++).toTime();
+		param.cnt = q.value(i++).toInt();
+		param.vid_id = q.value(i++).toInt();
 
 		GroupItem* item = new GroupItem;
 		item->setParam(param);

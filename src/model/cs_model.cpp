@@ -152,26 +152,12 @@ QVariant CsModel::headerData(int section, Qt::Orientation orientation, int role)
 	QVariant res = ItemModel::headerData(section, orientation, role);
 	if (orientation == Qt::Horizontal && role == Qt::DisplayRole)
 	{
-		if (section == 0)
-		{
-			res = "Вид";
-		}
-		else if (section == 0)
-		{
-			res = "Название";
-		}
-		else if (section == 1)
-		{
-			res = "Дата покупки";
-		}
-		else if (section == 2)
-		{
-			res = "Истекает (дн.)";
-		}
-		else if (section == 3)
-		{
-			res = "Остаток";
-		}
+		int i = 0;
+		if (section == i++) { res = "Вид"; }
+		else if (section == i++) { res = "Название"; }
+		else if (section == i++) { res = "Дата покупки"; }
+		else if (section == i++) { res = "Истекает (дн.)"; }
+		else if (section == i++) { res = "Остаток"; }
 	}
 	return res;
 }

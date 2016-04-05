@@ -10,6 +10,7 @@ class ClientItem;
 
 class CsModel;
 class VisitModel;
+class GroupModel;
 
 class ItemTableView;
 class Item;
@@ -70,6 +71,7 @@ private:
 	ClientWidget* clientWidget;
 	QLineEdit* summWidget;
 	CsModel* csModel;
+	GroupModel* gModel;
 	VisitModel* visModel;
 
 	QTimer upTimer;

@@ -10,14 +10,18 @@
 struct GroupParam
 {
 	int id;
+	int vid_id;
 	int coach_id;
 	int hall_id;
+	int cnt;
 	QDateTime bdtime;
 	QTime etime;
 
 	GroupParam()
 	{
 		id = 0;
+		vid_id = 0;
+		cnt = 0;
 		coach_id = 0;
 		hall_id = 0;
 		bdtime = MIN_DATE_TIME;

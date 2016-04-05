@@ -22,6 +22,22 @@ SheduleModel::~SheduleModel()
 
 }
 
+QList<SheduleItem*> SheduleModel::getItems(int day, int vidId) const
+{
+	QList<SheduleItem*> res;
+	Q_FOREACH (Item* i, items)
+	{
+		SheduleItem* si = (SheduleItem*)i;
+		if ( (si->getParam().day == day)
+			 && (si->getParam().vid_id == vidId) )
+		{
+			res.append(si);
+		}
+	}
+
+	return res;
+}
+
 QVariant SheduleModel::headerData(int section, Qt::Orientation orientation, int role) const
 {
 	QVariant res = ItemModel::headerData(section, orientation, role);
@@ -104,6 +120,22 @@ bool SheduleModel::isValid(SheduleItem* item) const
 					res = false;
 				}
 			}
+		}
+	}
+	return res;
+}
+
+bool SheduleModel::contains(const QDate &date, int vidId) const
+{
+	bool res = false;
+	Q_FOREACH (Item* i, items)
+	{
+		SheduleItem* s = (SheduleItem*)i;
+		if ( (s->getParam().day == date.dayOfWeek())
+			 && (s->getParam().vid_id == vidId) )
+		{
+			res = true;
+			break;
 		}
 	}
 	return res;

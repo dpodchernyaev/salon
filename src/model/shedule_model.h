@@ -16,7 +16,10 @@ public:
 	int columnCount(const QModelIndex &parent) const;
 	QVariant headerData(int section, Qt::Orientation orientation, int role) const;
 
+	QList<SheduleItem*> getItems(int day, int vidId) const;
+
 	bool contains(const QDate &date) const;
+	bool contains(const QDate &date, int vidId) const;
 
 	bool isValid(SheduleItem* item) const;
 };

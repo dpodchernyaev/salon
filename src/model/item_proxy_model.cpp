@@ -164,6 +164,78 @@ void SheduleProxyModel::setFilterVid(int vidId)
 	this->vidId = vidId;
 }
 
+SheduleProxyModel::Param* SheduleProxyModel::getParam(const QModelIndex& ind) const
+{
+	SheduleProxyModel::Param* res = NULL;
+	QModelIndex sind = mapToSource(ind);
+	Item* i  = sourceModel->getItem(sind);
+	if (i != NULL)
+	{
+		SheduleItem* si = (SheduleItem*)i;
+		SheduleParam sp = si->getParam();
+		Q_FOREACH (SheduleProxyModel::Param* p, params)
+		{
+			if ( (sp.day == p->day) &&
+				 sp.bTime == p->time &&
+				 sp.hall_id == p->hallId)
+			{
+				res = p;
+				break;
+			}
+		}
+	}
+	return res;
+}
+
+void SheduleProxyModel::flushSheduleParam()
+{
+	qDeleteAll(params);
+	params.clear();
+}
+
+QColor SheduleProxyModel::getBackgroundColor(const QModelIndex& ind) const
+{
+	QColor res = Qt::black;
+
+	SheduleProxyModel::Param* p = getParam(ind);
+	if (p != NULL)
+	{
+		res = p->color;
+	}
+	return res;
+}
+
+Qt::ItemFlags SheduleProxyModel::flags(const QModelIndex &index) const
+{
+	Qt::ItemFlags res = ItemProxyModel::flags(index);
+
+	SheduleProxyModel::Param* p = getParam(index);
+	if ( (p != NULL) && (p->disabled == true) )
+	{
+		res = Qt::NoItemFlags;
+	}
+	return res;
+}
+
+QVariant SheduleProxyModel::data(const QModelIndex &index, int role) const
+{
+	QVariant res = ItemProxyModel::data(index, role);
+	if (role == Qt::BackgroundColorRole)
+	{
+		QColor color = getBackgroundColor(index);
+		color.setAlpha(122);
+		res = QBrush(color);
+	}
+	return res;
+}
+
+void SheduleProxyModel::addParam(const SheduleProxyModel::Param &p)
+{
+	SheduleProxyModel::Param *newP = new SheduleProxyModel::Param;
+	*newP = p;
+	params.append(newP);
+}
+
 bool SheduleProxyModel::filterAcceptsRow(int source_row, const QModelIndex &source_parent) const
 {
 	bool res = ItemProxyModel::filterAcceptsRow(source_row, source_parent);

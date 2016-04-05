@@ -45,18 +45,50 @@ bool VisitFetcher::deleteSlot(Item *i, DBConn *conn)
 	if (res == true)
 	{
 		VisitItem* vis = (VisitItem*)i;
+		GroupItem* g = vis->getGroup();
 		CsItem* cs = vis->getCs();
-		if (cs != NULL)
+
+		Q_ASSERT (g != NULL);
+		// вычитаем из группы
+		if (g != NULL)
 		{
-			CsParam csp = cs->getParam();
-			if (csp.limit_type != LT_DATE)
+			GroupParam gp = g->getParam();
+			if (gp.cnt > 0)
 			{
-				csp.limit_value += 1;
-				cs->setParam(csp);
-				res = csModel->getFetcher()->saveItem(cs, conn);
+				gp.cnt -= 1;
+				g->setParam(gp);
+				res = gModel->getFetcher()->saveItem(g, conn);
+
+				if (res == false)
+				{
+					gp.cnt += 1;
+					g->setParam(gp);
+				}
+			}
+		}
+
+		// вычитаем посещение из купленной услуги
+		if (res == true)
+		{
+			if (cs != NULL)
+			{
+				CsParam csp = cs->getParam();
+				if (csp.limit_type != LT_DATE)
+				{
+					csp.limit_value += 1;
+					cs->setParam(csp);
+					res = csModel->getFetcher()->saveItem(cs, conn);
+
+					if (res == false)
+					{
+						csp.limit_value -= 1;
+						cs->setParam(csp);
+					}
+				}
 			}
 		}
 		vis->setCs(NULL);
+		vis->setGroup(NULL);
 	}
 	return res;
 }
@@ -70,22 +102,44 @@ bool VisitFetcher::saveSlot(Item* item, DBConn *conn)
 	VisitParam p = vItem->getParam();
 	QString sql = "";
 	GroupItem* gItem = vItem->getGroup();
+
 	if (gItem != NULL)
 	{
-		res = gModel->getFetcher()->saveSlot(gItem, conn);
-		vItem->setGroup(NULL);
-
-		if (res == false)
+		GroupParam gp = gItem->getParam();
+		// если нет группы, то сохранить
+		if (gp.id == 0)
 		{
-			return res;
+			res = gModel->getFetcher()->saveSlot(gItem, conn);
+			gp = gItem->getParam();
+
+			if (res == false)
+			{
+				return res;
+			}
+			gModel->add(gItem);
+			int gid = gItem->getId();
+			p.vgroup_id = gid;
 		}
-		gModel->add(gItem);
-		int gid = gItem->getId();
-		p.vgroup_id = gid;
+
+		if (p.id == 0)
+		{
+			gp.cnt += 1;
+			gItem->setParam(gp);
+			res = gModel->getFetcher()->saveItem(gItem, conn);
+			if (res == false)
+			{
+				gp.cnt -= 1;
+				gItem->setParam(gp);
+				return false;
+			}
+		}
+
+		vItem->setGroup(NULL);
 	}
 
 	QSqlQuery q(conn->qtDatabase());
 
+	bool ins = false;
 	int i = 0;
 	if (p.id != 0)
 	{
@@ -106,6 +160,7 @@ bool VisitFetcher::saveSlot(Item* item, DBConn *conn)
 	}
 	else
 	{
+		ins = true;
 		sql = "SELECT nextval('visit_id_seq')";
 		QSqlQuery seq(conn->qtDatabase());
 		seq.exec(sql);
@@ -127,17 +182,23 @@ bool VisitFetcher::saveSlot(Item* item, DBConn *conn)
 	}
 
 	res = conn->executeQuery(q);
-	if (res == true)
+	if (res == true && ins == true)
 	{
 		CsItem* cs = vItem->getCs();
-		if (cs != NULL)
+		if ( (res == true) && (cs != NULL) )
 		{
 			CsParam csp = cs->getParam();
 			if (csp.limit_type != LT_DATE)
 			{
-				csp.limit_value = csp.limit_value - 1;
+				csp.limit_value -= 1;
 				cs->setParam(csp);
 				res = csModel->getFetcher()->saveItem(cs, conn);
+
+				if (res == false)
+				{
+					csp.limit_value += 1;
+					cs->setParam(csp);
+				}
 			}
 		}
 	}

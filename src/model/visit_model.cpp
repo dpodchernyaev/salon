@@ -87,7 +87,7 @@ QVariant VisitModel::headerData(int section, Qt::Orientation orientation, int ro
 		{
 			if (section == 0)
 			{
-				res = "Услуга";
+				res = "Вид";
 			}
 			else if (section == 1)
 			{

@@ -7,6 +7,8 @@
 #include <model/shedule_model.h>
 #include <model/group_model.h>
 
+#include <model/group_item.h>
+
 #include <model/client_service_item.h>
 
 #include <gui/item_list_view.h>
@@ -17,7 +19,7 @@
 
 CalendarDialog::CalendarDialog()
 {
-	GroupModel* gModel = (GroupModel*)ModelFactory::getInstance()->getModel(GROUP);
+	gModel = (GroupModel*)ModelFactory::getInstance()->getModel(GROUP);
 
 	sModel = (SheduleModel*)ModelFactory::getInstance()->getModel(SHEDULE);
 	sProxy = new SheduleProxyModel(sModel);
@@ -89,6 +91,8 @@ void CalendarDialog::setFilterItem(CsItem *item)
 	filterItem = item;
 	sProxy->setFilterVid(item->getParam().vid_id);
 	sProxy->invalidate();
+
+	calendar->setVidFilter(item->getParam().vid_id);
 }
 
 SheduleItem* CalendarDialog::getSheduleItem() const
@@ -120,8 +124,38 @@ void CalendarDialog::exitClicked()
 
 void CalendarDialog::activated(QDate date)
 {
+	sProxy->flushSheduleParam();
 	sProxy->setFilterDate(date);
-	sProxy->invalidate();
 	dayWidget->setColumnHidden(0, true);
 	dayWidget->setColumnHidden(5, true);
+
+
+	QList<GroupItem*> items =
+			gModel->getItems(date, filterItem->getParam().vid_id);
+
+	Q_FOREACH (GroupItem* item, items)
+	{
+		GroupParam p = item->getParam();
+		int hallId = p.hall_id;
+		int day = date.dayOfWeek();
+		QTime time = p.bdtime.time();
+
+		SheduleProxyModel::Param sp;
+		sp.day = day;
+		sp.time = time;
+		sp.hallId = hallId;
+		sp.disabled = !gModel->isActive(item);
+
+		if (sp.disabled == true)
+		{
+			sp.color = Qt::red;
+		}
+		else
+		{
+			sp.color = Qt::green;
+		}
+		sProxy->addParam(sp);
+	}
+
+	sProxy->invalidate();
 }

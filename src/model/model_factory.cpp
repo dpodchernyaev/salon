@@ -63,6 +63,33 @@ ItemModel *ModelFactory::getModel(ModelType type) const
 	return models.value(type);
 }
 
+bool ModelFactory::isFull(const QDate &date, int vidId)
+{
+	bool res = true;
+	SheduleModel* smodel = (SheduleModel*)getInstance()->getModel(SHEDULE);
+	GroupModel* gmodel = (GroupModel*)getInstance()->getModel(GROUP);
+
+	QList<GroupItem*> gitems = gmodel->getItems(date, vidId);
+	QList<SheduleItem*> sitems = smodel->getItems(date.dayOfWeek(), vidId);
+
+	if (gitems.size() != sitems.size())
+	{
+		res = false;
+	}
+	else
+	{
+		Q_FOREACH (GroupItem* i, gitems)
+		{
+			if (gmodel->isActive(i) == true)
+			{
+				res = false;
+			}
+		}
+	}
+
+	return res;
+}
+
 QString ModelFactory::getVid(int id)
 {
 	QString res;
@@ -142,6 +169,27 @@ QString ModelFactory::getHallByGroup(int id)
 		res = getHall(g->getParam().hall_id);
 	}
 	return res;
+}
+
+int ModelFactory::getHallCnt(int id)
+{
+	Q_ASSERT (id > 0);
+	if (id <= 0)
+	{
+		return 0;
+	}
+
+	HallModel* model = (HallModel*)ModelFactory::getInstance()->getModel(HALL);
+	Item* item = model->getItem(id);
+	if (item == NULL)
+	{
+		return 0;
+	}
+	else
+	{
+		HallItem* i = (HallItem*)item;
+		return i->getCnt();
+	}
 }
 
 QString ModelFactory::getHall(int id)

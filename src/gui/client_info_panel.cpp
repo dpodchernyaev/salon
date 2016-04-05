@@ -40,7 +40,7 @@ ClientInfoPanel::ClientInfoPanel()
 
 	delBtn = new QPushButton;
 	delBtn->setIcon(QIcon("pics/del.png"));
-	delBtn->setToolTip("Удалить купленное (двойной клик)");
+	delBtn->setToolTip("Отмена покупки");
 	buyBtn = new QPushButton;
 	buyBtn->setIcon(QIcon("pics/buy.png"));
 	buyBtn->setToolTip("Купить новую услугу");
@@ -66,6 +66,7 @@ ClientInfoPanel::ClientInfoPanel()
 	btnbox->addWidget(buyBtn);
 	btnbox->addWidget(useBtn);
 
+	gModel = (GroupModel*)ModelFactory::getInstance()->getModel(GROUP);
 	visModel = (VisitModel*)ModelFactory::getInstance()->getModel(VISIT);
 	csModel = (CsModel*)ModelFactory::getInstance()->getModel(CS);
 	CsProxyModel* csProxy = new CsProxyModel(csModel);
@@ -200,6 +201,7 @@ void ClientInfoPanel::serviceLocked(bool f)
 		CsModel* cs = (CsModel*)ModelFactory::getInstance()->getModel(CS);
 		summWidget->setText(QString::number(cs->getSumm(), 'f', 2) + " руб.");
 		serviceView->hideAnimation();
+		serviceView->resizeColumnsToContents();
 		buyBtn->setEnabled(true);
 	}
 }
@@ -245,15 +247,41 @@ void ClientInfoPanel::buyService()
 
 void ClientInfoPanel::delVisit()
 {
-	Item* item = visitView->getSelected();
-	VisitItem* vi = (VisitItem*)item;
+	QMessageBox msgBox(
+				QMessageBox::Question,
+				"Подтверждение удаления",
+				"Вы действительно хотите удалить запись?",
+				QMessageBox::Yes | QMessageBox::No);
+	msgBox.setButtonText(QMessageBox::Yes, trUtf8("Да"));
+	msgBox.setButtonText(QMessageBox::No, trUtf8("Нет"));
 
-	Item* csitem = csModel->getItem(vi->getParam().cs_id);
-	if (csitem != NULL)
+	int btn = msgBox.exec();
+
+	if (btn == QMessageBox::Yes)
 	{
-		CsItem* cs = (CsItem*)csitem;
-		vi->setCs(cs);
-		visModel->deleteItem(vi);
+		bool ok = false;
+		Item* item = visitView->getSelected();
+		VisitItem* vi = (VisitItem*)item;
+
+		Item* i = ((ItemModel*)(gModel))->getItem(vi->getParam().vgroup_id);
+		if (i > 0)
+		{
+			GroupItem* gi = (GroupItem*)i;
+			Item* csitem = csModel->getItem(vi->getParam().cs_id);
+			if (csitem != NULL)
+			{
+				CsItem* cs = (CsItem*)csitem;
+				vi->setCs(cs);
+				vi->setGroup(gi);
+				visModel->deleteItem(vi);
+				ok = true;
+			}
+		}
+
+		if (ok == false)
+		{
+			QMessageBox::critical(NULL, "Ошибка", "Ошибка удаления посещения");
+		}
 	}
 }
 
@@ -301,9 +329,6 @@ void ClientInfoPanel::useService()
 	wgt.setFilterItem(csi);
 	bool res = wgt.exec();
 
-	GroupModel* gModel = (GroupModel*)
-						 ModelFactory::getInstance()->getModel(GROUP);
-
 	if (res == true)
 	{
 		QDate date = wgt.getDate();
@@ -326,8 +351,8 @@ void ClientInfoPanel::useService()
 			gParam.hall_id = psi.hall_id;
 			gParam.bdtime = dt;
 			gParam.etime = psi.eTime;
+			gParam.vid_id = psi.vid_id;
 			gItem->setParam(gParam);
-			vi->setGroup(gItem);
 		}
 		else
 		{
@@ -346,6 +371,7 @@ void ClientInfoPanel::useService()
 		vp.dtime = dt;
 		vp.info = ModelFactory::getVid(psi.vid_id);
 		vi->setParam(vp);
+		vi->setGroup(gItem);
 		vi->setCs(csi);
 
 		visModel->save(vi);

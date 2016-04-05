@@ -10,6 +10,7 @@ class SheduleProxyModel;
 class SheduleItem;
 class SheduleModel;
 class CsItem;
+class GroupModel;
 
 class CalendarDialog : public QDialog
 {
@@ -31,6 +32,7 @@ private Q_SLOTS:
 private:
 	CsItem* filterItem;
 	SheduleModel* sModel;
+	GroupModel* gModel;
 	CalendarWidget* calendar;
 	ItemTableView* dayWidget;
 	SheduleProxyModel* sProxy;
