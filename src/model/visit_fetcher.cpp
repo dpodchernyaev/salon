@@ -19,16 +19,17 @@ VisitFetcher::VisitFetcher()
 	gModel = (GroupModel*)ModelFactory::getInstance()->getModel(GROUP);
 	csModel = (CsModel*)ModelFactory::getInstance()->getModel(CS);
 
-	minDate = QDate::currentDate();
+	minDate = QDateTime::currentDateTime();
 }
 
 VisitFetcher::~VisitFetcher()
 {
 }
 
-void VisitFetcher::fetchForClient(int id)
+void VisitFetcher::fetchForClient(int id, const QDateTime &dtime)
 {
 	mtx.lock();
+	minDate = dtime;
 	queue.append(id);
 	mtx.unlock();
 

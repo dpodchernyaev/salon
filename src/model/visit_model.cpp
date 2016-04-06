@@ -32,7 +32,7 @@ VisitItem* VisitModel::getItemInGroup(int groupId) const
 void VisitModel::fetch(int id)
 {
 	VisitFetcher* vf = (VisitFetcher*)fetcher;
-	vf->fetchForClient(id);
+	vf->fetchForClient(id, QDateTime::currentDateTime());
 }
 
 int VisitModel::columnCount(const QModelIndex &parent) const

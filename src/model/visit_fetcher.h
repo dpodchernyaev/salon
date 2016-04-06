@@ -22,7 +22,7 @@ public:
 	VisitFetcher();
 	virtual ~VisitFetcher();
 
-	void fetchForClient(int id);
+	void fetchForClient(int id, const QDateTime &dtime);
 
 private:
 	void fetchSlot();
@@ -38,7 +38,7 @@ private:
 	QList<int> queue;
 	QMutex mtx;
 
-	QDate minDate;
+	QDateTime minDate;
 };
 
 #endif // VISITFETCHER_H
