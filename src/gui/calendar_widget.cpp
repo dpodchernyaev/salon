@@ -24,6 +24,7 @@ CalendarWidget::~CalendarWidget()
 void CalendarWidget::setVidFilter(int vid)
 {
 	this->vid = vid;
+	updateCells();
 }
 
 void CalendarWidget::paintCell(QPainter *painter, const QRect &rect, const QDate &date) const
@@ -33,7 +34,7 @@ void CalendarWidget::paintCell(QPainter *painter, const QRect &rect, const QDate
 	SheduleModel* model = (SheduleModel*)ModelFactory::getInstance()->getModel(SHEDULE);
 
 	bool inShedule = model->contains(date, vid);
-	if (inShedule)
+	if (inShedule && date >= minimumDate() && date <= maximumDate())
 	{
 		QColor color = QColor(0, 255, 0, 122);
 		if (ModelFactory::isFull(date, vid) == true)

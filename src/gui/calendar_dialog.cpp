@@ -1,11 +1,13 @@
 
 #include <QVBoxLayout>
 #include <QHBoxLayout>
+#include <QComboBox>
 
 #include <model/item_proxy_model.h>
 #include <model/model_factory.h>
 #include <model/shedule_model.h>
 #include <model/group_model.h>
+#include <model/vid_model.h>
 
 #include <model/group_item.h>
 
@@ -23,7 +25,17 @@ CalendarDialog::CalendarDialog()
 	setWindowFlags(windowFlags() & ~Qt::WindowCloseButtonHint);
 	setWindowFlags(windowFlags() & ~Qt::WindowContextHelpButtonHint);
 
+	vModel = (VidModel*)ModelFactory::getInstance()->getModel(VID);
 	gModel = (GroupModel*)ModelFactory::getInstance()->getModel(GROUP);
+
+	QLabel* label = new QLabel("Вид: ");
+	vidWidget = new QComboBox;
+	vidWidget->setModel(vModel);
+
+	QHBoxLayout* vidBox = new QHBoxLayout;
+	vidBox->addWidget(label);
+	vidBox->addWidget(vidWidget);
+	vidBox->addStretch(1);
 
 	sModel = (SheduleModel*)ModelFactory::getInstance()->getModel(SHEDULE);
 	sProxy = new SheduleProxyModel(sModel);
@@ -71,10 +83,14 @@ CalendarDialog::CalendarDialog()
 	hbox->addWidget(dayWidget);
 
 	QVBoxLayout* vbox = new QVBoxLayout;
+	vbox->addLayout(vidBox);
 	vbox->addLayout(hbox);
 	vbox->addLayout(btnbox);
 	setLayout(vbox);
 
+	vidWidget->setCurrentIndex(-1);
+
+	connect(vidWidget, SIGNAL(currentIndexChanged(int)), this, SLOT(vidChanged(int)));
 	connect(calendar, SIGNAL(clicked(QDate)), this, SLOT(activated(QDate)));
 	connect(okBtn, SIGNAL(clicked(bool)), this, SLOT(okClicked()));
 	connect(exitBtn, SIGNAL(clicked(bool)), this, SLOT(reject()));
@@ -85,6 +101,15 @@ CalendarDialog::~CalendarDialog()
 
 }
 
+void CalendarDialog::vidChanged(int ind)
+{
+	int vidId = vidWidget->itemData(ind, KeyRole).toInt();
+	sProxy->setFilterVid(vidId);
+	sProxy->invalidate();
+
+	calendar->setVidFilter(vidId);
+}
+
 QDate CalendarDialog::getDate() const
 {
 	return calendar->selectedDate();
@@ -92,11 +117,8 @@ QDate CalendarDialog::getDate() const
 
 void CalendarDialog::setFilterItem(CsItem *item)
 {
-	filterItem = item;
-	sProxy->setFilterVid(item->getParam().vid_id);
-	sProxy->invalidate();
-
-	calendar->setVidFilter(item->getParam().vid_id);
+	int indx = vidWidget->findData(item->getParam().vid_id, KeyRole);
+	vidWidget->setCurrentIndex(indx);
 }
 
 SheduleItem* CalendarDialog::getSheduleItem() const
@@ -135,7 +157,8 @@ void CalendarDialog::activated(QDate date)
 
 
 	QList<GroupItem*> items =
-			gModel->getItems(date, filterItem->getParam().vid_id);
+			gModel->getItems(date,
+				vidWidget->itemData(vidWidget->currentIndex(), KeyRole).toInt());
 
 	Q_FOREACH (GroupItem* item, items)
 	{

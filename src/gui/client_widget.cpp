@@ -50,6 +50,7 @@ ClientWidget::ClientWidget()
 	birthdayWidgetEmpty = new QLineEdit;
 	birthdayWidget->setCalendarPopup(true);
 	birthdayWidget->setDate(MIN_DATE);
+	birthdayWidget->setDisplayFormat("dd.MM.yyyy");
 	grid->addWidget(label, row, 0);
 	grid->addWidget(birthdayWidgetEmpty, row, 1);
 	grid->addWidget(birthdayWidget, row++, 1);

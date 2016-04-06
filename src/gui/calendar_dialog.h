@@ -9,8 +9,10 @@ class ItemTableView;
 class SheduleProxyModel;
 class SheduleItem;
 class SheduleModel;
+class VidModel;
 class CsItem;
 class GroupModel;
+class QComboBox;
 
 class CalendarDialog : public QDialog
 {
@@ -25,12 +27,14 @@ public:
 	void setFilterItem(CsItem* item);
 
 private Q_SLOTS:
+	void vidChanged(int ind);
 	void activated(QDate date);
 	void okClicked();
 	void exitClicked();
 
 private:
-	CsItem* filterItem;
+	QComboBox *vidWidget;
+	VidModel* vModel;
 	SheduleModel* sModel;
 	GroupModel* gModel;
 	CalendarWidget* calendar;

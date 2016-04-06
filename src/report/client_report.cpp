@@ -55,7 +55,7 @@ ClientReport::~ClientReport()
 void ClientReport::ok()
 {
 	QString sql = "SELECT client.name, client.surname, client.patronymic, client.birthday"
-						", client_service.name, visit.dtime"
+						", client_service.name, visit.dtime, visit.info"
 				  " FROM client, client_service, visit"
 				  " WHERE client.id = ?"
 						" AND client.id = client_service.client_id"
@@ -113,7 +113,7 @@ void ClientReport::ok()
 			first = false;
 		}
 		stream << endl << "\t" << q.value(5).toDateTime().toString("dd.MM.yyyy hh.mm")
-			   << " - " << q.value(4).toString();
+			   << " - " << q.value(6).toString() << " - (" << q.value(4).toString() << ")";
 	}
 
 	file.close();
