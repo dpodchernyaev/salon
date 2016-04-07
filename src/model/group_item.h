@@ -7,6 +7,18 @@
 #include <variables.h>
 #include <model/item.h>
 
+struct PrivateGroupParam
+{
+	double summ;
+	bool used;
+
+	PrivateGroupParam()
+	{
+		summ = 0;
+		used = false;
+	}
+};
+
 struct GroupParam
 {
 	int id;
@@ -37,10 +49,16 @@ public:
 	GroupParam getParam() const;
 	void setParam(const GroupParam &p);
 
+	PrivateGroupParam getPrivateParam() const;
+	void setPrivateParam(const PrivateGroupParam &p);
+
+	bool isPrivate() const;
+
 	virtual int getId() const;
 
 private:
 	GroupParam param;
+	PrivateGroupParam privateParam;
 };
 
 #endif // GROUPITEM_H

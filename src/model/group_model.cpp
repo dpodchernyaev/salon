@@ -40,12 +40,12 @@ QList<GroupItem*> GroupModel::getItems(const QDate &date, int vidId) const
 	return res;
 }
 
-bool GroupModel::isActive(GroupItem* gi) const
+bool GroupModel::isFull(GroupItem* gi) const
 {
 	bool res = false;
 	GroupParam p = gi->getParam();
 	int max = ModelFactory::getHallCnt(p.hall_id);
-	if (max > p.cnt)
+	if (p.cnt >= max)
 	{
 		res = true;
 	}

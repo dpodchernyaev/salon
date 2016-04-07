@@ -108,33 +108,20 @@ bool VisitFetcher::saveSlot(Item* item, DBConn *conn)
 	{
 		GroupParam gp = gItem->getParam();
 		// если нет группы, то сохранить
-		if (gp.id == 0)
-		{
-			res = gModel->getFetcher()->saveSlot(gItem, conn);
-			gp = gItem->getParam();
+		gp.cnt += 1;
+		gItem->setParam(gp);
 
-			if (res == false)
-			{
-				return res;
-			}
-			gModel->add(gItem);
-			int gid = gItem->getId();
-			p.vgroup_id = gid;
-		}
-
-		if (p.id == 0)
+		res = gModel->getFetcher()->saveSlot(gItem, conn);
+		if (res == false)
 		{
-			gp.cnt += 1;
+			gp.cnt -= 1;
 			gItem->setParam(gp);
-			res = gModel->getFetcher()->saveItem(gItem, conn);
-			if (res == false)
-			{
-				gp.cnt -= 1;
-				gItem->setParam(gp);
-				return false;
-			}
+			return res;
 		}
 
+		gModel->add(gItem);
+		int gid = gItem->getId();
+		p.vgroup_id = gid;
 		vItem->setGroup(NULL);
 	}
 

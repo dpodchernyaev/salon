@@ -171,7 +171,7 @@ void CalendarDialog::activated(QDate date)
 		sp.day = day;
 		sp.time = time;
 		sp.hallId = hallId;
-		sp.disabled = !gModel->isActive(item);
+		sp.disabled = gModel->isFull(item);
 
 		if (sp.disabled == true)
 		{

@@ -13,7 +13,7 @@ public:
 
 	int getCount(const QDate &date, int vidId) const;
 	QList<GroupItem*> getActive(const QDate &date, int vidId) const;
-	bool isActive(GroupItem*) const;
+	bool isFull(GroupItem*) const;
 	QList<GroupItem*> getItems(const QDate &date, int vidId) const;
 	GroupItem* getItem(const QDateTime &dateTime, int hallId) const;
 

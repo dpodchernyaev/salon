@@ -45,6 +45,48 @@ bool GroupFetcher::deleteSlot(Item *i, DBConn *conn)
 	return q.isActive();
 }
 
+bool GroupFetcher::savePrivateGroup(GroupItem* gi, DBConn* conn)
+{
+	bool res = true;
+	int i = 0;
+	int cnt = 0;
+
+	QString sql = "SELECT count(*) FROM private_group WHERE vgroup_id = ?";
+
+	// имеется ли запись с указанным идентификатором
+	QSqlQuery q(conn->qtDatabase());
+	q.prepare(sql);
+	q.bindValue(i++, gi->getId());
+	res = conn->executeQuery(q);
+	if ( (res == true) && q.next())
+	{
+		PrivateGroupParam p = gi->getPrivateParam();
+		cnt = q.value(0).toInt();
+		i = 0;
+
+		if (cnt == 0)
+		{
+			sql = "INSERT INTO private_group(vgroup_id, summ)"
+					" VALUES(?, ?)";
+			q.prepare(sql);
+			q.bindValue(i++, gi->getId());
+			q.bindValue(i++, p.summ);
+		}
+		else
+		{
+			sql = "UPDATE private_group"
+					" SET vgroup_id = ?, summ = ?"
+					" WHERE vgroup_id = ?";
+			q.prepare(sql);
+			q.bindValue(i++, gi->getId());
+			q.bindValue(i++, p.summ);
+			q.bindValue(i++, gi->getId());
+		}
+		res = conn->executeQuery(q);
+	}
+	return res;
+}
+
 bool GroupFetcher::saveSlot(Item* item, DBConn *conn)
 {
 	GroupItem* cItem = (GroupItem*)item;
@@ -100,6 +142,11 @@ bool GroupFetcher::saveSlot(Item* item, DBConn *conn)
 	}
 
 	bool res = conn->executeQuery(q);
+
+	if ( (res == true) && (cItem->isPrivate()) )
+	{
+		res = savePrivateGroup(cItem, conn);
+	}
 	return res;
 }
 
@@ -124,7 +171,9 @@ void GroupFetcher::fetchSlot()
 				", etime"
 				", cnt"
 				", vid_id"
-			" FROM vgroup"
+				", summ"
+			" FROM vgroup LEFT JOIN"
+				" private_group ON vgroup.id = private_group.vgroup_id"
 			" WHERE id <> 0"
 				" AND (bdtime BETWEEN ? AND ?)";
 
@@ -148,6 +197,14 @@ void GroupFetcher::fetchSlot()
 		param.etime = q.value(i++).toTime();
 		param.cnt = q.value(i++).toInt();
 		param.vid_id = q.value(i++).toInt();
+		QVariant summVar = q.value(i++);
+
+		if (!summVar.isNull())
+		{
+			PrivateGroupParam pp;
+			pp.used = true;
+			pp.summ = summVar.toDouble();
+		}
 
 		GroupItem* item = new GroupItem;
 		item->setParam(param);

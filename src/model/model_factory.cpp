@@ -80,7 +80,7 @@ bool ModelFactory::isFull(const QDate &date, int vidId)
 	{
 		Q_FOREACH (GroupItem* i, gitems)
 		{
-			if (gmodel->isActive(i) == true)
+			if (gmodel->isFull(i) == false)
 			{
 				res = false;
 			}

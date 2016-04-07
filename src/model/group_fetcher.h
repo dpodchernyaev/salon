@@ -6,6 +6,7 @@
 #include <model/fetcher.h>
 
 class GroupParam;
+class GroupItem;
 
 class GroupFetcher : public Fetcher
 {
@@ -21,6 +22,8 @@ private:
 	void fetchSlot();
 	bool saveSlot(Item *item, DBConn *conn);
 	bool deleteSlot(Item *i, DBConn *conn);
+
+	bool savePrivateGroup(GroupItem* gi, DBConn *conn);
 
 private:
 	QDateTime btime;

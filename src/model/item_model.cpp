@@ -77,10 +77,13 @@ int ItemModel::indexOf(int id) const
 
 void ItemModel::add(Item* item)
 {
-	beginInsertRows(QModelIndex(), items.size(), items.size());
-	items.append(item);
-	item->setModel(this);
-	endInsertRows();
+	if (!items.contains(item))
+	{
+		beginInsertRows(QModelIndex(), items.size(), items.size());
+		items.append(item);
+		item->setModel(this);
+		endInsertRows();
+	}
 }
 
 void ItemModel::save(Item* item)
