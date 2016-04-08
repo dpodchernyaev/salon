@@ -1,6 +1,7 @@
 
 #include <QDebug>
 
+#include <unistd.h>
 #include <model/group_item.h>
 #include <db/db_service.h>
 
@@ -89,6 +90,7 @@ bool GroupFetcher::savePrivateGroup(GroupItem* gi, DBConn* conn)
 
 bool GroupFetcher::saveSlot(Item* item, DBConn *conn)
 {
+//	usleep(1000000 * 4);
 	GroupItem* cItem = (GroupItem*)item;
 	GroupParam p = cItem->getParam();
 	QString sql = "";
@@ -188,6 +190,7 @@ void GroupFetcher::fetchSlot()
 	while ( (res == true) && q.next())
 	{
 		GroupParam param;
+		PrivateGroupParam pp;
 
 		int i = 0;
 		param.id = q.value(i++).toInt();
@@ -199,15 +202,16 @@ void GroupFetcher::fetchSlot()
 		param.vid_id = q.value(i++).toInt();
 		QVariant summVar = q.value(i++);
 
+
 		if (!summVar.isNull())
 		{
-			PrivateGroupParam pp;
 			pp.used = true;
 			pp.summ = summVar.toDouble();
 		}
 
 		GroupItem* item = new GroupItem;
 		item->setParam(param);
+		item->setPrivateParam(pp);
 		items.append(item);
 	}
 	Q_EMIT fetched(items);

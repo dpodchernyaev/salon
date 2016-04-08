@@ -90,6 +90,42 @@ GroupItem* GroupModel::getItem(const QDateTime &date, int hallId) const
 	return res;
 }
 
+QVariant GroupModel::headerData(int section, Qt::Orientation orientation, int role) const
+{
+	QVariant res = ItemModel::headerData(section, orientation, role);
+
+	if (orientation == Qt::Horizontal && role == Qt::DisplayRole)
+	{
+		if (section == 0)
+		{
+			res = "День";
+		}
+		else if (section == 1)
+		{
+			res = "Начало";
+		}
+		else if (section == 2)
+		{
+			res = "Конец";
+		}
+		else if (section == 3)
+		{
+			res = "Зал";
+		}
+		else if (section == 4)
+		{
+			res = "Тренер";
+		}
+	}
+	return res;
+}
+
+int GroupModel::columnCount(const QModelIndex &parent) const
+{
+	Q_UNUSED(parent);
+	return 5;
+}
+
 QVariant GroupModel::data(const QModelIndex &index, int role) const
 {
 	QVariant res;
@@ -100,9 +136,38 @@ QVariant GroupModel::data(const QModelIndex &index, int role) const
 		return res;
 	}
 
-	if (role == KeyRole)
+	GroupParam gp = item->getParam();
+
+	if (role == Qt::DisplayRole)
+	{
+		if (index.column() == 0)
+		{
+			res = ModelFactory::getDay(gp.bdtime.date().dayOfWeek());
+		}
+		else if (index.column() == 1)
+		{
+			res = gp.bdtime.time();
+		}
+		else if (index.column() == 2)
+		{
+			res = gp.etime;
+		}
+		else if (index.column() == 3)
+		{
+			res = ModelFactory::getHall(gp.hall_id);
+		}
+		else if (index.column() == 4)
+		{
+			res = ModelFactory::getCoach(gp.coach_id);
+		}
+	}
+	else if (role == KeyRole)
 	{
 		res = item->getId();
+	}
+	else if (role == SortRole)
+	{
+		res = gp.bdtime.time();
 	}
 	return res;
 }

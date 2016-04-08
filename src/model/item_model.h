@@ -28,6 +28,7 @@ public:
 
 	int rowCount(const QModelIndex &parent) const;
 	int columnCount(const QModelIndex &parent) const;
+	QList<Item*> getItems() const;
 	Item* getItem(const QModelIndex &ind) const;
 	Item* getItem(int id) const;
 

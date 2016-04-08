@@ -8,8 +8,10 @@
 #include <model/client_model.h>
 #include <model/cs_model.h>
 #include <model/shedule_model.h>
+#include <model/group_model.h>
 
 #include <model/shedule_item.h>
+#include <model/group_item.h>
 #include <model/client_service_item.h>
 
 #include "item_proxy_model.h"
@@ -195,7 +197,7 @@ void SheduleProxyModel::flushSheduleParam()
 
 QColor SheduleProxyModel::getBackgroundColor(const QModelIndex& ind) const
 {
-	QColor res = Qt::black;
+	QColor res;
 
 	SheduleProxyModel::Param* p = getParam(ind);
 	if (p != NULL)
@@ -223,8 +225,11 @@ QVariant SheduleProxyModel::data(const QModelIndex &index, int role) const
 	if (role == Qt::BackgroundColorRole)
 	{
 		QColor color = getBackgroundColor(index);
-		color.setAlpha(122);
-		res = QBrush(color);
+		if (color.isValid())
+		{
+			color.setAlpha(122);
+			res = QBrush(color);
+		}
 	}
 	return res;
 }
@@ -258,5 +263,45 @@ bool SheduleProxyModel::filterAcceptsRow(int source_row, const QModelIndex &sour
 		}
 	}
 
+	return res;
+}
+
+// ============================================
+
+PgProxyModel::PgProxyModel(GroupModel *model) : ItemProxyModel(model)
+{
+
+}
+
+void PgProxyModel::setFilterDate(const QDate &date)
+{
+	filterDate = date;
+}
+
+PgProxyModel::~PgProxyModel()
+{
+
+}
+
+bool PgProxyModel::filterAcceptsRow(int source_row,
+							   const QModelIndex &source_parent) const
+{
+	bool res = ItemProxyModel::filterAcceptsRow(source_row, source_parent);
+
+	Item* item = sourceModel->getItem(sourceModel->index(source_row, 0));
+	if (item != NULL)
+	{
+		GroupItem* cs = (GroupItem*)item;
+		if (!cs->isPrivate())
+		{
+			res = false;
+		}
+
+		QDate date = cs->getParam().bdtime.date();
+		if (!filterDate.isNull() && (res == true) )
+		{
+			res = date == filterDate;
+		}
+	}
 	return res;
 }

@@ -16,6 +16,8 @@
 #include <model/coach_item.h>
 #include <model/vid_item.h>
 #include <model/group_item.h>
+#include <model/igroup_item.h>
+#include <model/shedule_item.h>
 
 #include "model_factory.h"
 
@@ -87,6 +89,66 @@ bool ModelFactory::isFull(const QDate &date, int vidId)
 		}
 	}
 
+	return res;
+}
+
+bool ModelFactory::intersect(IGroupItem* i1, IGroupItem* i2)
+{
+	bool res = true;
+	// если имеется пересечение по времени
+	if ( ! ( (i1->getTime1() < i2->getTime1()) && (i1->getTime2() < i2->getTime1())
+		 || (i1->getTime1() > i2->getTime2()) && (i1->getTime1() > i2->getTime1()) ) )
+	{
+		if (i1->getDay() == i2->getDay())
+		{
+			if (i1->getHallId() == i2->getHallId())
+			{
+				res = false;
+			}
+			else if (i1->getCoachId() == i2->getCoachId())
+			{
+				res = false;
+			}
+		}
+	}
+
+	return !res;
+}
+
+bool ModelFactory::hasIntersect(IGroupItem *item)
+{
+	bool res = false;
+
+	ItemModel* gModel = getInstance()->getModel(GROUP);
+	ItemModel* sModel = getInstance()->getModel(SHEDULE);
+
+	Q_FOREACH (Item* i, gModel->getItems())
+	{
+		GroupItem* gi = (GroupItem*)i;
+		if (gi == item)
+		{
+			continue;
+		}
+		res = intersect(item, gi);
+		if (res == true)
+		{
+			return res;
+		}
+	}
+
+	Q_FOREACH (Item* i, sModel->getItems())
+	{
+		SheduleItem* gi = (SheduleItem*)i;
+		if (gi == item)
+		{
+			continue;
+		}
+		res = intersect(item, gi);
+		if (res == true)
+		{
+			return res;
+		}
+	}
 	return res;
 }
 

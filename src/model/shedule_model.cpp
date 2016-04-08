@@ -67,6 +67,7 @@ QVariant SheduleModel::headerData(int section, Qt::Orientation orientation, int 
 	}
 	return res;
 }
+
 int SheduleModel::columnCount(const QModelIndex &parent) const
 {
 	/*
@@ -95,33 +96,8 @@ bool SheduleModel::isValid(SheduleItem* item) const
 		return false;
 	}
 
-	Q_FOREACH (Item* i, items)
-	{
-		if (item == i)
-		{
-			continue;
-		}
+	res = !ModelFactory::hasIntersect(item);
 
-		SheduleItem* si = (SheduleItem*)i;
-		SheduleParam cp = si->getParam();
-
-		// если имеется пересечение по времени
-		if ( ! ( (p.bTime < cp.bTime) && (p.eTime < cp.bTime)
-			 || (p.bTime > cp.eTime) && (p.bTime > cp.bTime) ) )
-		{
-			if (p.day == cp.day)
-			{
-				if (p.hall_id == cp.hall_id)
-				{
-					res = false;
-				}
-				else if (p.coach_id == cp.coach_id)
-				{
-					res = false;
-				}
-			}
-		}
-	}
 	return res;
 }
 

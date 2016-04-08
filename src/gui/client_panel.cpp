@@ -16,6 +16,7 @@
 #include <model/item_proxy_model.h>
 #include <gui/item_list_widget.h>
 #include <gui/item_list_view.h>
+#include <gui/private_group_dialog.h>
 #include <gui/new_client_dialog.h>
 #include <gui/new_service_dialog.h>
 #include <gui/new_shedule_dialog.h>
@@ -32,6 +33,7 @@
 
 ClientPanel::ClientPanel()
 {
+	setWindowTitle("Monella");
 	email_sender = new EmailSender;
 	email_sender->start();
 
@@ -111,6 +113,10 @@ ClientPanel::ClientPanel()
 	connect(action, SIGNAL(triggered(bool)), this, SLOT(newShedule()));
 	menu->addAction(action);
 
+	action = new QAction("Частная группа", menu);
+	connect(action, SIGNAL(triggered(bool)), this, SLOT(newPrivate()));
+	menu->addAction(action);
+
 	// ============
 
 	action = new QAction("Отчет по клиенту", report);
@@ -141,6 +147,12 @@ void ClientPanel::clientReport()
 		ClientReport rep(i->getId());
 		rep.exec();
 	}
+}
+
+void ClientPanel::newPrivate()
+{
+	PrivateGroupDialog dlg;
+	dlg.exec();
 }
 
 void ClientPanel::newVid()

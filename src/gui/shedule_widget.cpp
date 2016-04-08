@@ -14,6 +14,8 @@
 #include <model/item_model.h>
 #include <model/shedule_model.h>
 
+#include <QSortFilterProxyModel>
+
 #include "shedule_widget.h"
 
 SheduleWidget::SheduleWidget()
@@ -36,9 +38,15 @@ SheduleWidget::SheduleWidget()
 	grid->addWidget(dayWidget, row++, 1);
 
 
+	QSortFilterProxyModel* coachProxy = new QSortFilterProxyModel(this);
+	coachProxy->setSourceModel(ModelFactory::getInstance()->getModel(COACH));
+	coachProxy->setDynamicSortFilter(true);
+	coachProxy->setSortRole(SortRole);
+	coachProxy->sort(0);
+
 	label = new QLabel("Тренер:");
 	coachWidget = new QComboBox;
-	coachWidget->setModel(ModelFactory::getInstance()->getModel(COACH));
+	coachWidget->setModel(coachProxy);
 	grid->addWidget(label, row, 0);
 	grid->addWidget(coachWidget, row++, 1);
 

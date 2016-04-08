@@ -29,6 +29,11 @@ int ItemModel::columnCount(const QModelIndex &parent) const
 	return 1;
 }
 
+QList<Item*> ItemModel::getItems() const
+{
+	return items;
+}
+
 Fetcher* ItemModel::getFetcher() const
 {
 	return fetcher;

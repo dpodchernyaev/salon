@@ -24,7 +24,8 @@ set(app_SOURCES ${app_SOURCES}
 		${current_PROJECT_DIR}/new_item_dialog.cpp
 		${current_PROJECT_DIR}/calendar_dialog.cpp
 		${current_PROJECT_DIR}/calendar_widget.cpp
-		${current_PROJECT_DIR}/animation_list_view.cpp)
+		${current_PROJECT_DIR}/animation_list_view.cpp
+		${current_PROJECT_DIR}/private_group_dialog.cpp)
 
 set(app_HEADERS ${app_HEADERS}
 		${current_PROJECT_DIR}/photo_widget.h
@@ -42,4 +43,5 @@ set(app_HEADERS ${app_HEADERS}
 		${current_PROJECT_DIR}/new_hall_dialog.h
 		${current_PROJECT_DIR}/new_item_dialog.h
 		${current_PROJECT_DIR}/calendar_dialog.h
-		${current_PROJECT_DIR}/new_service_dialog.h)
+		${current_PROJECT_DIR}/new_service_dialog.h
+		${current_PROJECT_DIR}/private_group_dialog.h)

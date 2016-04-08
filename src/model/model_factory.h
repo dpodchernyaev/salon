@@ -5,6 +5,7 @@
 #include <QDate>
 
 class ItemModel;
+class IGroupItem;
 
 enum ModelType
 {
@@ -38,6 +39,11 @@ public:
 	static QString getService(int id);
 	static QString getVid(int id);
 	static bool isFull(const QDate &date, int vidId);
+
+	static bool hasIntersect(IGroupItem* item);
+
+private:
+	static bool intersect(IGroupItem* i1, IGroupItem* i2);
 
 private:
 	static ModelFactory* inst;

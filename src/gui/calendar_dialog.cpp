@@ -21,6 +21,7 @@
 
 CalendarDialog::CalendarDialog()
 {
+	setWindowTitle("Запись на занятие");
 	setWindowFlags(windowFlags() | Qt::CustomizeWindowHint);
 	setWindowFlags(windowFlags() & ~Qt::WindowCloseButtonHint);
 	setWindowFlags(windowFlags() & ~Qt::WindowContextHelpButtonHint);
@@ -98,7 +99,6 @@ CalendarDialog::CalendarDialog()
 
 CalendarDialog::~CalendarDialog()
 {
-
 }
 
 void CalendarDialog::vidChanged(int ind)

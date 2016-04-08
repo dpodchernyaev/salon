@@ -37,6 +37,8 @@ private Q_SLOTS:
 	void newCard();
 	void newShedule();
 
+	void newPrivate();
+
 	void clientReport();
 
 private:

@@ -17,7 +17,10 @@ public:
 	QList<GroupItem*> getItems(const QDate &date, int vidId) const;
 	GroupItem* getItem(const QDateTime &dateTime, int hallId) const;
 
-	QVariant data(const QModelIndex &index, int role) const;
+protected:
+	virtual QVariant data(const QModelIndex &index, int role) const;
+	virtual QVariant headerData(int section, Qt::Orientation orientation, int role) const;
+	virtual int columnCount(const QModelIndex &parent) const;
 };
 
 #endif // GROUPMODEL_H

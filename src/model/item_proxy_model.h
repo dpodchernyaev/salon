@@ -9,6 +9,7 @@
 class ItemModel;
 class CsModel;
 class SheduleModel;
+class GroupModel;
 
 class ItemProxyModel : public QSortFilterProxyModel
 {
@@ -103,4 +104,20 @@ public:
 
 protected:
 	virtual bool lessThan(const QModelIndex &left, const QModelIndex &right) const;
+};
+
+class PgProxyModel : public ItemProxyModel
+{
+public:
+	PgProxyModel(GroupModel *model);
+
+	void setFilterDate(const QDate &date);
+	virtual ~PgProxyModel();
+
+protected:
+	virtual bool filterAcceptsRow(int source_row,
+								   const QModelIndex &source_parent) const;
+
+private:
+	QDate filterDate;
 };
