@@ -120,9 +120,9 @@ PrivateGroupDialog::PrivateGroupDialog()
 	leftBox->addLayout(timeGrid);
 
 	QVBoxLayout* rbox = new QVBoxLayout;
-	rbox->addWidget(new QLabel("Занятия по расписанию:"), 1, Qt::AlignLeft);
+	rbox->addWidget(new QLabel("Занятия по расписанию:"));
 	rbox->addWidget(shView);
-	rbox->addWidget(new QLabel("Частные группы:"), 1, Qt::AlignLeft);
+	rbox->addWidget(new QLabel("Частные группы:"));
 	rbox->addWidget(privateView);
 
 	QHBoxLayout* hbox = new QHBoxLayout;
