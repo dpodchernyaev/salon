@@ -6,7 +6,7 @@
 #include <QHBoxLayout>
 
 #include <model/item.h>
-#include <report/client_report.h>
+#include <report/reports_dialog.h>
 #include <model/model_factory.h>
 #include <model/client_model.h>
 #include <model/card_model.h>
@@ -33,6 +33,7 @@
 
 ClientPanel::ClientPanel()
 {
+	setStyleSheet("QMainWindow { background:rgb(255,253,208); }");
 	setWindowTitle("Monella");
 	email_sender = new EmailSender;
 	email_sender->start();
@@ -123,6 +124,10 @@ ClientPanel::ClientPanel()
 	connect(action, SIGNAL(triggered(bool)), this, SLOT(clientReport()));
 	report->addAction(action);
 
+	action = new QAction("Отчет по частным урокам тренеров", report);
+	connect(action, SIGNAL(triggered(bool)), this, SLOT(coachReport()));
+	report->addAction(action);
+
 
 	connect(clientModel, SIGNAL(modelRestored()),
 			this, SLOT(modelRestored()));
@@ -139,12 +144,18 @@ void ClientPanel::modelRestored()
 	view->setCurrentIndex(first);
 }
 
+void ClientPanel::coachReport()
+{
+	CoachReportDialog rep;
+	rep.exec();
+}
+
 void ClientPanel::clientReport()
 {
 	Item* i = view->getView()->getSelected();
 	if (i != NULL)
 	{
-		ClientReport rep(i->getId());
+		ClientReportDialog rep(i->getId());
 		rep.exec();
 	}
 }

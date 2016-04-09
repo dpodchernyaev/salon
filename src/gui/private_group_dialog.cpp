@@ -25,6 +25,8 @@ PrivateGroupDialog::PrivateGroupDialog()
 	setWindowFlags(windowFlags() | Qt::CustomizeWindowHint);
 	setWindowFlags(windowFlags() & ~Qt::WindowCloseButtonHint);
 	setWindowFlags(windowFlags() & ~Qt::WindowContextHelpButtonHint);
+	setStyleSheet("QDialog { background:rgb(255,253,208); }");
+
 	setWindowTitle("Частные группы");
 	setMinimumSize(900, 400);
 	resize(700, 400);

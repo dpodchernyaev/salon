@@ -20,6 +20,7 @@ NewItemDialog::NewItemDialog(ItemModel *model) : model(model)
 	setWindowFlags(windowFlags() | Qt::CustomizeWindowHint);
 	setWindowFlags(windowFlags() & ~Qt::WindowCloseButtonHint);
 	setWindowFlags(windowFlags() & ~Qt::WindowContextHelpButtonHint);
+	setStyleSheet("QDialog { background:rgb(255,253,208); }");
 
 	item = NULL;
 	view = new ItemListWidget(model);

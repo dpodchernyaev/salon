@@ -40,6 +40,7 @@ private Q_SLOTS:
 	void newPrivate();
 
 	void clientReport();
+	void coachReport();
 
 private:
 	ItemListWidget* view;

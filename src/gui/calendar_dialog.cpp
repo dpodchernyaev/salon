@@ -25,6 +25,7 @@ CalendarDialog::CalendarDialog()
 	setWindowFlags(windowFlags() | Qt::CustomizeWindowHint);
 	setWindowFlags(windowFlags() & ~Qt::WindowCloseButtonHint);
 	setWindowFlags(windowFlags() & ~Qt::WindowContextHelpButtonHint);
+	setStyleSheet("QDialog { background:rgb(255,253,208); }");
 
 	vModel = (VidModel*)ModelFactory::getInstance()->getModel(VID);
 	gModel = (GroupModel*)ModelFactory::getInstance()->getModel(GROUP);

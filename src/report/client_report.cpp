@@ -1,49 +1,13 @@
 
-#include <QDebug>
-#include <QVBoxLayout>
-#include <QHBoxLayout>
-#include <QLabel>
-#include <QPushButton>
-#include <QMessageBox>
-#include <QDir>
-#include <QFileInfo>
-#include <QFile>
-#include <config/config.h>
-#include <db/dbconnection.h>
-#include <db/db_service.h>
+#include <QStringList>
+#include <QVariantList>
+#include <QSqlQuery>
 
 #include "client_report.h"
 
-ClientReport::ClientReport(int clId) : clId(clId)
+ClientReport::ClientReport()
 {
-	setWindowTitle("Отчет по посещениям клиента");
-	QPushButton* okBtn = new QPushButton("Создать");
-	QPushButton* cancelBtn = new QPushButton("Отмена");
 
-	QVBoxLayout* vbox = new QVBoxLayout;
-
-	QLabel* label = new QLabel("Начало:");
-	t1 = new QDateEdit(QDate::currentDate().addMonths(-1));
-	vbox->addWidget(label);
-	vbox->addWidget(t1);
-
-	label = new QLabel("Конец:");
-	t2 = new QDateEdit(QDate::currentDate());
-	vbox->addWidget(label);
-	vbox->addWidget(t2);
-
-	QHBoxLayout* bbox = new QHBoxLayout;
-	bbox->addWidget(okBtn);
-	bbox->addWidget(cancelBtn);
-
-	QVBoxLayout* mb = new QVBoxLayout;
-	mb->addLayout(vbox);
-	mb->addLayout(bbox);
-
-	setLayout(mb);
-
-	connect(cancelBtn, SIGNAL(clicked(bool)), this, SLOT(reject()));
-	connect(okBtn, SIGNAL(clicked(bool)), this, SLOT(ok()));
 }
 
 ClientReport::~ClientReport()
@@ -51,75 +15,69 @@ ClientReport::~ClientReport()
 
 }
 
-
-void ClientReport::ok()
+// ==== IReport =====
+QString ClientReport::getSql() const
 {
-	QString sql = "SELECT client.name, client.surname, client.patronymic, client.birthday"
-						", client_service.name, visit.dtime, visit.info"
-				  " FROM client, client_service, visit"
-				  " WHERE client.id = ?"
-						" AND client.id = client_service.client_id"
-						" AND client_service.id = visit.client_service_id"
-						" AND visit.dtime BETWEEN ? AND ?"
-				  " ORDER BY visit.dtime";
+	return "SELECT"
+				" client.name"
+				", client.surname"
+				", client.patronymic"
+				", client.birthday"
+				", client_service.name"
+				", visit.dtime"
+				", visit.info"
+			" FROM client LEFT JOIN client_service INNER JOIN visit"
+					" ON client_service.id = visit.client_service_id"
+				" ON client.id = client_service.client_id"
+			" WHERE client.id = ?"
+				" AND ( (visit.dtime BETWEEN ? AND ?) OR visit.dtime IS NULL)"
+			" ORDER BY visit.dtime";
+}
 
-	DBConn* conn = DBService::getInstance()->getConnection();
+void ClientReport::setParam(const Param &param)
+{
+	p = param;
+}
 
-	conn->beginTransaction();
+QVariantList ClientReport::getSqlParam() const
+{
+	return QVariantList() << p.clId << p.d1 << p.d2;
+}
 
-	QSqlQuery q(conn->qtDatabase());
-	q.prepare(sql);
-	q.bindValue(0, clId);
-	q.bindValue(1, t1->date());
-	q.bindValue(2, t2->date());
-	bool res = conn->executeQuery(q);
+QList<QString> ClientReport::getResult() const
+{
+	return result;
+}
 
+bool ClientReport::create(QSqlQuery* q)
+{
+	bool res = true;
 
-	if (res == false)
+	if (q == NULL || !q->isActive())
 	{
-		QMessageBox::critical(NULL, "Ошибка", "Ошибка составления отчета");
-		conn->commit();
-		return;
+		res = false;
+		return res;
 	}
 
-	QString dirStr = Config::getInstance()->getValue(REPORT_DIR).toString();
-	QDir dir(dirStr);
-	if (!dir.exists())
-	{
-		QMessageBox::critical(NULL, "Ошибка", "Нет заданного каталога с отчетами");
-		conn->commit();
-		return;
-	}
-
-	QString path = dir.absoluteFilePath("client_report.txt");
-	QFile file(path);
-	if (file.open(QFile::WriteOnly | QFile::Truncate) == false)
-	{
-		QMessageBox::critical(NULL, "Ошибка", "Ошибка открытия файла отчета для записи");
-		conn->commit();
-		return;
-	}
-
-	QTextStream stream(&file);
+	result.clear();
 
 	bool first = true;
-	while (q.next())
+	while (q->next())
 	{
+		QString str = "";
 		if (first == true)
 		{
-			stream << q.value(1).toString() << " " << q.value(0).toString()
-				   << " " << q.value(2).toString()
-				   << " (" << q.value(3).toString() << ")";
+			str = q->value(1).toString() + " " + q->value(0).toString()
+				  + " " + q->value(2).toString()
+				  + " (" + q->value(3).toString() + ")\n";
 			first = false;
 		}
-		stream << endl << "\t" << q.value(5).toDateTime().toString("dd.MM.yyyy hh.mm")
-			   << " - " << q.value(6).toString() << " - (" << q.value(4).toString() << ")";
+		if (!q->value(5).isNull())
+		{
+			str += "\t" + q->value(5).toDateTime().toString("dd.MM.yyyy hh.mm")
+				+ " - " + q->value(6).toString() + " - (" + q->value(4).toString() + ")";
+		}
+		result.append(str);
 	}
-
-	file.close();
-
-	QMessageBox::information(NULL, "Выполнено", "Отчет сформирован - " + path);
-	conn->commit();
-
-	accept();
+	return res;
 }

@@ -1,19 +1,18 @@
-#ifndef CLIENTREPORT_H
-#define CLIENTREPORT_H
+
+#pragma once
 
 #include <QDate>
 
 #include <report/ireport.h>
 
-class ClientReport : public IReport
+class CoachReport : public IReport
 {
 public:
-	ClientReport();
-	virtual ~ClientReport();
+	CoachReport();
+	virtual ~CoachReport();
 
 	struct Param
 	{
-		int clId;
 		QDate d1;
 		QDate d2;
 	};
@@ -30,5 +29,3 @@ private:
 	Param p;
 	QList<QString> result;
 };
-
-#endif // CLIENTREPORT_H

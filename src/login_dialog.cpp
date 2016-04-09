@@ -17,6 +17,7 @@ LoginDialog::LoginDialog()
 	setWindowFlags(windowFlags() | Qt::CustomizeWindowHint);
 	setWindowFlags(windowFlags() & ~Qt::WindowCloseButtonHint);
 	setWindowFlags(windowFlags() & ~Qt::WindowContextHelpButtonHint);
+	setStyleSheet("QDialog { background:rgb(255,253,208); }");
 
 	setFixedSize(250, 150);
 	QPushButton* okBtn = new QPushButton("Ок");

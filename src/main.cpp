@@ -22,6 +22,7 @@ class ClientItem;
 class Item;
 
 #include <QCleanlooksStyle>
+
 class SalonStyle : public QCleanlooksStyle
 {
 public:

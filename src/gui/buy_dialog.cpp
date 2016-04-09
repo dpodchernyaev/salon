@@ -17,6 +17,7 @@ BuyDialog::BuyDialog(ItemModel *model, int disc) : model(model), disc(disc)
 	setWindowFlags(windowFlags() | Qt::CustomizeWindowHint);
 	setWindowFlags(windowFlags() & ~Qt::WindowCloseButtonHint);
 	setWindowFlags(windowFlags() & ~Qt::WindowContextHelpButtonHint);
+	setStyleSheet("QDialog { background:rgb(255,253,208); }");
 	setWindowTitle("Покупка новой услуги");
 
 	view = new ItemListView(model);
