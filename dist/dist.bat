@@ -60,11 +60,14 @@ mkdir %DEPLOY_DIR%\pics
 mkdir %DEPLOY_DIR%\sqldrivers
 
 copy %BUILD_DIR%\salon.exe %DEPLOY_DIR%\salon.exe
+copy %BUILD_DIR%\salon.ini %DEPLOY_DIR%\salon.ini
+copy %BUILD_DIR%\birthday %DEPLOY_DIR%\birthday
 copy %PWD%\..\pics\salon.ico %TMP_DIR%\
 xcopy /s /y %PWD%\..\pics\*.png %DEPLOY_DIR%\pics\
 xcopy /s /y %PWD%\..\pics\*.ico %DEPLOY_DIR%\pics\
 xcopy /s /y %PWD%\..\pics\*.jpg %DEPLOY_DIR%\pics\
 xcopy /s /y %PWD%\win_dist\sqldrivers\* %DEPLOY_DIR%\sqldrivers\
+xcopy /s /y %PWD%\win_dist\*.dll %DEPLOY_DIR%\
 
 rem сборка nsys
 cd %TMP_DIR%
