@@ -66,6 +66,7 @@ copy %PWD%\..\pics\salon.ico %TMP_DIR%\
 xcopy /s /y %PWD%\..\pics\*.png %DEPLOY_DIR%\pics\
 xcopy /s /y %PWD%\..\pics\*.ico %DEPLOY_DIR%\pics\
 xcopy /s /y %PWD%\..\pics\*.jpg %DEPLOY_DIR%\pics\
+xcopy /s /y %PWD%\..\pics\*.gif %DEPLOY_DIR%\pics\
 xcopy /s /y %PWD%\win_dist\sqldrivers\* %DEPLOY_DIR%\sqldrivers\
 xcopy /s /y %PWD%\win_dist\*.dll %DEPLOY_DIR%\
 
