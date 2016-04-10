@@ -49,6 +49,12 @@ EmailSender::~EmailSender()
 void EmailSender::start()
 {
 	Config* cfg = Config::getInstance();
+
+	if (cfg->getValue(EMAIL_SENDER_FLAG).toBool() == false)
+	{
+		return;
+	}
+
 	QString filePath = cfg->getValue(BIRTHDAY_FILE).toString();
 	QFile file(filePath);
 	if (file.exists())
