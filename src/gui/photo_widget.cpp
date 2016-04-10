@@ -60,6 +60,7 @@ void PhotoWidget::mouseReleaseEvent(QMouseEvent *ev)
 	{
 		Config* cfg = Config::getInstance();
 		QString path = cfg->getValue(PHOTO_PATH).toString();
+		path = path.replace("\\", "/");
 
 		while (true)
 		{
@@ -73,7 +74,7 @@ void PhotoWidget::mouseReleaseEvent(QMouseEvent *ev)
 				QDir dir = fi.dir();
 				QDir defDir(path);
 
-				if (dir.absolutePath() != defDir.absolutePath())
+				if (dir != defDir)
 				{
 					QMessageBox::information(this, "Предупреждение",
 											 "Необходимо выбрать файл из каталога "

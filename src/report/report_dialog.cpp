@@ -70,6 +70,7 @@ void ReportDialog::reportCreated(IReport* report, bool res)
 	}
 
 	QString dirStr = Config::getInstance()->getValue(REPORT_DIR).toString();
+	dirStr = dirStr.replace("\\", "/");
 
 	QString path = QFileDialog::getSaveFileName(this, "Сохранение отчета",
 								 dirStr, "Текстовые файлы (*.txt)");
