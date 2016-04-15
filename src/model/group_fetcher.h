@@ -19,7 +19,7 @@ public:
 	void addGroup(const GroupParam &param);
 
 private:
-	void fetchSlot();
+	QList<Item *> fetchSlot(DBConn *conn);
 	bool saveSlot(Item *item, DBConn *conn);
 	bool deleteSlot(Item *i, DBConn *conn);
 

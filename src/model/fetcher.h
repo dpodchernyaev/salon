@@ -21,11 +21,15 @@ public:
 	bool saveItem(Item* item, DBConn* conn);
 	virtual bool saveSlot(Item* item, DBConn* conn) = 0;
 	virtual bool deleteSlot(Item* i, DBConn* conn) = 0;
+	virtual QList<Item*> fetchSlot(DBConn* conn) = 0;
+
+protected Q_SLOTS:
+	virtual void fetchPrivate();
 
 private Q_SLOTS:
 	void savePrivate(Item* item);
 	void deletePrivate(Item* item);
-	virtual void fetchSlot() = 0;
+
 
 Q_SIGNALS:
 	void fetchSignal();

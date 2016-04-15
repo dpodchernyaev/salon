@@ -5,13 +5,14 @@
 
 class SheduleFetcher : public Fetcher
 {
+	Q_OBJECT
 public:
 	SheduleFetcher();
 	virtual ~SheduleFetcher() {}
 
 protected:
 	virtual bool deleteSlot(Item *i, DBConn *conn);
-	virtual void fetchSlot();
+	virtual QList<Item *> fetchSlot(DBConn *conn);
 	virtual bool saveSlot(Item* item, DBConn* conn);
 };
 

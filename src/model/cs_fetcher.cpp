@@ -7,25 +7,13 @@
 
 CsFetcher::CsFetcher()
 {
-	lastId = 0;
 }
 
-//#include <unistd.h>
+#include <unistd.h>
 
-void CsFetcher::fetchSlot()
+QList<Item*> CsFetcher::fetchSlot(DBConn* conn)
 {
-	mtx.lock();
-	if (queue.isEmpty())
-	{
-		mtx.unlock();
-		return;
-	}
-
-	lastId = queue.takeLast();
-	queue.clear();
-	mtx.unlock();
-
-//	usleep(1000000);
+	usleep(1000000 * 3);
 	QList<Item*> items;
 	QString sql =
 			"SELECT"
@@ -39,14 +27,7 @@ void CsFetcher::fetchSlot()
 				", name"
 				", vid_id"
 			" FROM client_service"
-			" WHERE id <> 0 AND client_id = " + QString::number(lastId);
-	DBConn* conn = DBService::getInstance()->getConnection();
-	if (!conn->isConnected())
-	{
-		qCritical() << Q_FUNC_INFO << "Ошибка подключания к БД";
-		Q_EMIT fetched(items);
-		return;
-	}
+			" WHERE id <> 0 AND client_id = " + QString::number(id);
 
 	QSqlQuery q = conn->executeQuery(sql);
 	while (q.next())
@@ -66,11 +47,12 @@ void CsFetcher::fetchSlot()
 		item->setParam(p);
 		items.append(item);
 	}
-	Q_EMIT fetched(items);
+	return items;
 }
 
 bool CsFetcher::saveSlot(Item* item, DBConn* conn)
 {
+//	usleep(1000000 * 3);
 	CsItem* cItem = (CsItem*)item;
 	CsParam p = cItem->getParam();
 	QString sql = "";
@@ -130,15 +112,6 @@ bool CsFetcher::saveSlot(Item* item, DBConn* conn)
 	}
 
 	return conn->executeQuery(q);
-}
-
-void CsFetcher::fetchClient(int clientId)
-{
-	mtx.lock();
-	queue.append(clientId);
-	mtx.unlock();
-
-	fetch();
 }
 
 bool CsFetcher::deleteSlot(Item *i, DBConn *conn)

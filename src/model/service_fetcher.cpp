@@ -24,7 +24,7 @@ bool ServiceFetcher::deleteSlot(Item *i, DBConn *conn)
 	return q.isActive();
 }
 
-void ServiceFetcher::fetchSlot()
+QList<Item*> ServiceFetcher::fetchSlot(DBConn* conn)
 {
 	QList<Item*> items;
 	QString sql =
@@ -39,13 +39,6 @@ void ServiceFetcher::fetchSlot()
 				", service.vid_id"
 			" FROM service"
 			" WHERE id <> 0";
-	DBConn* conn = DBService::getInstance()->getConnection();
-	if (!conn->isConnected())
-	{
-		qCritical() << Q_FUNC_INFO << "Ошибка подключания к БД";
-		Q_EMIT fetched(items);
-		return;
-	}
 
 	QSqlQuery q = conn->executeQuery(sql);
 	while (q.next())
@@ -66,7 +59,7 @@ void ServiceFetcher::fetchSlot()
 		item->set(p);
 		items.append(item);
 	}
-	Q_EMIT fetched(items);
+	return items;
 }
 
 bool ServiceFetcher::saveSlot(Item* item, DBConn *conn)

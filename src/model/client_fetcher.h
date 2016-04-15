@@ -9,11 +9,12 @@ class DBConn;
 
 class ClientFetcher : public Fetcher
 {
+	Q_OBJECT
 public:
 	virtual ~ClientFetcher();
 
 private:
-	void fetchSlot();
+	QList<Item *> fetchSlot(DBConn *conn);
 	bool saveSlot(Item *Item, DBConn* conn);
 	bool deleteSlot(Item *i, DBConn *conn);
 

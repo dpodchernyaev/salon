@@ -12,7 +12,7 @@ SheduleFetcher::SheduleFetcher()
 
 }
 
-void SheduleFetcher::fetchSlot()
+QList<Item*> SheduleFetcher::fetchSlot(DBConn* conn)
 {
 //	usleep(1000000);
 	QList<Item*> items;
@@ -27,14 +27,6 @@ void SheduleFetcher::fetchSlot()
 				", vid_id"
 			" FROM shedule"
 			" WHERE id <> 0";
-	DBConn* conn = DBService::getInstance()->getConnection();
-	if (!conn->isConnected())
-	{
-		qCritical() << Q_FUNC_INFO << "Ошибка подключания к БД";
-		Q_EMIT fetched(items);
-		return;
-	}
-
 	QSqlQuery q = conn->executeQuery(sql);
 	while (q.next())
 	{
@@ -51,7 +43,7 @@ void SheduleFetcher::fetchSlot()
 		item->setParam(p);
 		items.append(item);
 	}
-	Q_EMIT fetched(items);
+	return items;
 }
 
 bool SheduleFetcher::saveSlot(Item* item, DBConn* conn)

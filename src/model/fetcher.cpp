@@ -1,6 +1,7 @@
 
 #include <QDebug>
 #include <QThread>
+#include <QTime>
 
 #include <db/db_service.h>
 
@@ -14,7 +15,7 @@ Fetcher::Fetcher()
 	QThread* th = service->getThread();
 	moveToThread(th);
 
-	connect(this, SIGNAL(fetchSignal()), SLOT(fetchSlot()));
+	connect(this, SIGNAL(fetchSignal()), SLOT(fetchPrivate()));
 	connect(this, SIGNAL(saveSignal(Item*)), SLOT(savePrivate(Item*)));
 	connect(this, SIGNAL(deleteSignal(Item*)), SLOT(deletePrivate(Item*)));
 }
@@ -39,6 +40,34 @@ void Fetcher::deleteItem(Item *item)
 	Q_EMIT deleteSignal(item);
 }
 
+void Fetcher::fetchPrivate()
+{
+	QList<Item*> res;
+
+	DBConn* conn = DBService::getInstance()->getConnection();
+	if (!conn->isConnected())
+	{
+		qCritical() << Q_FUNC_INFO << "Ошибка подключания к БД";
+		Q_EMIT fetched(res);
+		return;
+	}
+
+	QTime t;
+	t.start();
+
+	conn->beginTransaction();
+	res = fetchSlot(conn);
+	conn->commit();
+
+	if (t.elapsed() > (1000 * 2) )
+	{
+		qWarning() << metaObject()->className()
+				   << "Время выполнения запроса данных больше 2 сек = " << t.elapsed();
+	}
+
+	Q_EMIT fetched(res);
+}
+
 void Fetcher::deletePrivate(Item* item)
 {
 	DBConn* conn = DBService::getInstance()->getConnection();
@@ -56,6 +85,9 @@ void Fetcher::deletePrivate(Item* item)
 		return;
 	}
 
+	QTime t;
+	t.start();
+
 	conn->beginTransaction();
 
 	bool res = deleteSlot(item, conn);
@@ -67,6 +99,12 @@ void Fetcher::deletePrivate(Item* item)
 	else
 	{
 		conn->rollback();
+	}
+
+	if (t.elapsed() > (1000 * 2) )
+	{
+		qWarning() << metaObject()->className()
+				   << "Время удаления объекта больше 2 сек = " << t.elapsed();
 	}
 
 	Q_EMIT deleted(res);
@@ -82,6 +120,9 @@ void Fetcher::savePrivate(Item* item)
 		return;
 	}
 
+	QTime t;
+	t.start();
+
 	conn->beginTransaction();
 
 	bool res = saveItem(item, conn);
@@ -93,6 +134,12 @@ void Fetcher::savePrivate(Item* item)
 	else
 	{
 		conn->rollback();
+	}
+
+	if (t.elapsed() > (1000 * 2) )
+	{
+		qWarning() << metaObject()->className()
+				   << "Время сохранения объекта больше 2 сек = " << t.elapsed();
 	}
 }
 

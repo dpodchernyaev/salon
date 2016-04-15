@@ -152,16 +152,9 @@ bool GroupFetcher::saveSlot(Item* item, DBConn *conn)
 	return res;
 }
 
-void GroupFetcher::fetchSlot()
+QList<Item*> GroupFetcher::fetchSlot(DBConn* conn)
 {
 	QList<Item*> items;
-	DBConn* conn = DBService::getInstance()->getConnection();
-	if (!conn->isConnected())
-	{
-		qCritical() << Q_FUNC_INFO << "Ошибка подключания к БД";
-		Q_EMIT fetched(items);
-		return;
-	}
 
 	QSqlQuery q(conn->qtDatabase());
 	QString sql =
@@ -214,5 +207,5 @@ void GroupFetcher::fetchSlot()
 		item->setPrivateParam(pp);
 		items.append(item);
 	}
-	Q_EMIT fetched(items);
+	return items;
 }

@@ -66,7 +66,7 @@ void CsModel::fetchForClient(int id)
 	else
 	{
 		CsFetcher* f = (CsFetcher*)fetcher;
-		f->fetchClient(id);
+		f->fetch(id);
 	}
 	clientId = id;
 }

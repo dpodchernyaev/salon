@@ -10,7 +10,7 @@ CardFetcher::CardFetcher()
 
 }
 
-void CardFetcher::fetchSlot()
+QList<Item*> CardFetcher::fetchSlot(DBConn* conn)
 {
 	QList<Item*> items;
 	QString sql =
@@ -19,13 +19,6 @@ void CardFetcher::fetchSlot()
 				", card.name"
 				", card.discont"
 			" FROM card";
-	DBConn* conn = DBService::getInstance()->getConnection();
-	if (!conn->isConnected())
-	{
-		qCritical() << Q_FUNC_INFO << "Ошибка подключания к БД";
-		Q_EMIT fetched(items);
-		return;
-	}
 
 	QSqlQuery q = conn->executeQuery(sql);
 	while (q.next())
@@ -37,7 +30,7 @@ void CardFetcher::fetchSlot()
 		item->setDiscont(q.value(i++).toDouble());
 		items.append(item);
 	}
-	Q_EMIT fetched(items);
+	return items;
 }
 
 bool CardFetcher::deleteSlot(Item *i, DBConn *conn)

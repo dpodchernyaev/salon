@@ -6,25 +6,19 @@ class DBConn;
 
 #include <QMutex>
 
-#include <model/fetcher.h>
+#include <model/queue_fetcher.h>
 
-class CsFetcher : public Fetcher
+class CsFetcher : public QueueFetcher
 {
+	Q_OBJECT
 public:
 	CsFetcher();
 	virtual ~CsFetcher() {}
 
-	void fetchClient(int clientId);
-
 protected:
 	virtual bool deleteSlot(Item *i, DBConn *conn);
-	virtual void fetchSlot();
+	virtual QList<Item *> fetchSlot(DBConn *conn);
 	virtual bool saveSlot(Item* item, DBConn* conn);
-
-private:
-	QList<int> queue;
-	int lastId;
-	QMutex mtx;
 };
 
 #endif // CSFETCHER_H

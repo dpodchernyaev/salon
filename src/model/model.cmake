@@ -25,6 +25,7 @@ set(app_SOURCES ${app_SOURCES}
 		${current_PROJECT_DIR}/card_fetcher.cpp
 		${current_PROJECT_DIR}/group_fetcher.cpp
 		${current_PROJECT_DIR}/fetcher.cpp
+		${current_PROJECT_DIR}/queue_fetcher.cpp
 
 		${current_PROJECT_DIR}/item.cpp
 		${current_PROJECT_DIR}/vid_item.cpp
@@ -46,7 +47,15 @@ set(app_HEADERS ${app_HEADERS}
 		${current_PROJECT_DIR}/card_model.h
 		${current_PROJECT_DIR}/shedule_model.h
 
-		${current_PROJECT_DIR}/group_fetcher.h
+		${current_PROJECT_DIR}/cs_fetcher.h
+		${current_PROJECT_DIR}/vid_fetcher.h
 		${current_PROJECT_DIR}/visit_fetcher.h
-
-		${current_PROJECT_DIR}/fetcher.h)
+		${current_PROJECT_DIR}/shedule_fetcher.h
+		${current_PROJECT_DIR}/client_fetcher.h
+		${current_PROJECT_DIR}/coach_fetcher.h
+		${current_PROJECT_DIR}/service_fetcher.h
+		${current_PROJECT_DIR}/hall_fetcher.h
+		${current_PROJECT_DIR}/card_fetcher.h
+		${current_PROJECT_DIR}/group_fetcher.h
+		${current_PROJECT_DIR}/fetcher.h
+		${current_PROJECT_DIR}/queue_fetcher.h)

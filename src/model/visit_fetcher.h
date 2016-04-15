@@ -6,7 +6,7 @@
 
 #include <model/visit_item.h>
 
-#include <model/fetcher.h>
+#include <model/queue_fetcher.h>
 
 
 class GroupParam;
@@ -15,7 +15,7 @@ class GroupFetcher;
 class GroupModel;
 class CsModel;
 
-class VisitFetcher : public Fetcher
+class VisitFetcher : public QueueFetcher
 {
 	Q_OBJECT
 public:
@@ -25,7 +25,7 @@ public:
 	void fetchForClient(int id, const QDateTime &dtime);
 
 private:
-	void fetchSlot();
+	QList<Item*> fetchSlot(DBConn* conn);
 	bool saveSlot(Item *item, DBConn* conn);
 	bool deleteSlot(Item *i, DBConn *conn);
 
@@ -35,9 +35,6 @@ private:
 private:
 	GroupModel* gModel;
 	CsModel* csModel;
-	QList<int> queue;
-	QMutex mtx;
-
 	QDateTime minDate;
 };
 

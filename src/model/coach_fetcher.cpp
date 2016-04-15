@@ -10,7 +10,7 @@ CoachFetcher::CoachFetcher()
 
 }
 
-void CoachFetcher::fetchSlot()
+QList<Item*> CoachFetcher::fetchSlot(DBConn* conn)
 {
 	QList<Item*> items;
 	QString sql =
@@ -19,13 +19,6 @@ void CoachFetcher::fetchSlot()
 				", coach.name"
 			" FROM coach"
 			" WHERE id <> 0";
-	DBConn* conn = DBService::getInstance()->getConnection();
-	if (!conn->isConnected())
-	{
-		qCritical() << Q_FUNC_INFO << "Ошибка подключания к БД";
-		Q_EMIT fetched(items);
-		return;
-	}
 
 	QSqlQuery q = conn->executeQuery(sql);
 	while (q.next())
@@ -36,7 +29,7 @@ void CoachFetcher::fetchSlot()
 		item->setName(q.value(i++).toString());
 		items.append(item);
 	}
-	Q_EMIT fetched(items);
+	return items;
 }
 
 bool CoachFetcher::saveSlot(Item* item, DBConn *conn)

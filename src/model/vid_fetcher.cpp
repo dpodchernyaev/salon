@@ -71,7 +71,7 @@ bool VidFetcher::deleteSlot(Item* item, DBConn* conn)
 	return conn->executeQuery(q);
 }
 
-void VidFetcher::fetchSlot()
+QList<Item*> VidFetcher::fetchSlot(DBConn* conn)
 {
 	QList<Item*> items;
 	QString sql =
@@ -80,13 +80,6 @@ void VidFetcher::fetchSlot()
 				", vid.name"
 			" FROM vid"
 			" WHERE id <> 0";
-	DBConn* conn = DBService::getInstance()->getConnection();
-	if (!conn->isConnected())
-	{
-		qCritical() << Q_FUNC_INFO << "Ошибка подключания к БД";
-		Q_EMIT fetched(items);
-		return;
-	}
 
 	QSqlQuery q = conn->executeQuery(sql);
 	while (q.next())
@@ -99,5 +92,5 @@ void VidFetcher::fetchSlot()
 		item->setParam(p);
 		items.append(item);
 	}
-	Q_EMIT fetched(items);
+	return items;
 }

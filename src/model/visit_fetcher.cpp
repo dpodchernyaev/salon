@@ -28,12 +28,8 @@ VisitFetcher::~VisitFetcher()
 
 void VisitFetcher::fetchForClient(int id, const QDateTime &dtime)
 {
-	mtx.lock();
 	minDate = dtime;
-	queue.append(id);
-	mtx.unlock();
-
-	fetch();
+	fetch(id);
 }
 
 bool VisitFetcher::deleteSlot(Item *i, DBConn *conn)
@@ -199,27 +195,9 @@ bool VisitFetcher::saveSlot(Item* item, DBConn *conn)
 	return res;
 }
 
-void VisitFetcher::fetchSlot()
+QList<Item*> VisitFetcher::fetchSlot(DBConn* conn)
 {
-	mtx.lock();
-	if (queue.isEmpty())
-	{
-		return;
-		mtx.unlock();
-	}
-
-	int clientId = queue.takeLast();
-	queue.clear();
-	mtx.unlock();
-
 	QList<Item*> items;
-	DBConn* conn = DBService::getInstance()->getConnection();
-	if (!conn->isConnected())
-	{
-		qCritical() << Q_FUNC_INFO << "Ошибка подключания к БД";
-		Q_EMIT fetched(items);
-		return;
-	}
 
 	QSqlQuery q(conn->qtDatabase());
 	QString sql =
@@ -236,11 +214,11 @@ void VisitFetcher::fetchSlot()
 				" AND client.id = ?";
 
 	q.prepare(sql);
-	qDebug() << "PARAM: " << minDate << clientId;
+	qDebug() << "PARAM: " << minDate << id;
 
 	int i = 0;
 	q.bindValue(i++, minDate);
-	q.bindValue(i++, clientId);
+	q.bindValue(i++, id);
 
 	bool res = conn->executeQuery(q);
 	while ( (res == true) && q.next())
@@ -258,5 +236,5 @@ void VisitFetcher::fetchSlot()
 		item->setParam(param);
 		items.append(item);
 	}
-	Q_EMIT fetched(items);
+	return items;
 }

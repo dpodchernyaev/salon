@@ -5,13 +5,14 @@
 
 class VidFetcher : public Fetcher
 {
+	Q_OBJECT
 public:
 	VidFetcher();
 	virtual ~VidFetcher() {}
 
 	bool saveSlot(Item* item, DBConn* conn);
 	bool deleteSlot(Item* i, DBConn* conn);
-	void fetchSlot();
+	QList<Item *> fetchSlot(DBConn *conn);
 };
 
 #endif // VID_FETCHER_H

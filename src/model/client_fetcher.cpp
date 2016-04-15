@@ -171,7 +171,7 @@ bool ClientFetcher::saveSlot(Item* item, DBConn* conn)
 	return res;
 }
 
-void ClientFetcher::fetchSlot()
+QList<Item*> ClientFetcher::fetchSlot(DBConn* conn)
 {
 	QList<Item*> items;
 	QString sql =
@@ -192,13 +192,6 @@ void ClientFetcher::fetchSlot()
 				" LEFT JOIN client_card"
 				" ON client.id = client_card.client_id"
 			" WHERE id <> 0";
-	DBConn* conn = DBService::getInstance()->getConnection();
-	if (!conn->isConnected())
-	{
-		qCritical() << Q_FUNC_INFO << "Ошибка подключания к БД";
-		Q_EMIT fetched(items);
-		return;
-	}
 
 	QSqlQuery q = conn->executeQuery(sql);
 	while (q.next())
@@ -223,6 +216,6 @@ void ClientFetcher::fetchSlot()
 		item->set(param);
 		items.append(item);
 	}
-	Q_EMIT fetched(items);
+	return items;
 }
 
