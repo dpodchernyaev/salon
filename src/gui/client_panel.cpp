@@ -61,7 +61,7 @@ ClientPanel::ClientPanel()
 	QVBoxLayout* vbox = new QVBoxLayout;
 	vbox->addWidget(view);
 
-	QHBoxLayout* hbox = new QHBoxLayout(this);
+	QHBoxLayout* hbox = new QHBoxLayout;
 	hbox->addLayout(vbox);
 	hbox->addWidget(infoWidget);
 	//hbox->addStretch(1);

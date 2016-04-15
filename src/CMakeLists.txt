@@ -9,34 +9,14 @@ else(NOT DEFINED CMAKE_BUILD_TYPE)
 	message(STATUS "Inherited build type is ${CMAKE_BUILD_TYPE}")
 endif(NOT DEFINED CMAKE_BUILD_TYPE)
 
-
-#option(LIBFSQT_STATIC "Static libfsqt linking" OFF)
-#message(STATUS "Static libfsqt linking: ${LIBFSQT_STATIC}")
-
 project(salon)
 cmake_minimum_required(VERSION 2.4.0)
 if(NOT QT4_FOUND)
 		find_package(Qt4 REQUIRED)
 endif(NOT QT4_FOUND)
 
-#if (NOT LIBFSQT_STATIC)
-#	find_package(FSQt REQUIRED zmq)
-#endif()
-
-#if (NOT ZEROMQ_FOUND)
-	#find_package(ZeroMQ REQUIRED)
-#endif()
-
-if(QT_QTSVG_FOUND)
-	message ( STATUS "SVG FOUND")
-else(QT_QTSVG_FOUND)
-	message ( STATUS "SVG NOT FOUND")
-endif(QT_QTSVG_FOUND)
-
 # show compiler output
 set(CMAKE_VERBOSE_MAKEFILE OFF)
-
-#include(CMakeFSConfig.cmake)
 
 if(${CMAKE_SYSTEM_NAME} MATCHES "Windows")
 	SET(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -Wl,--export-all-symbols")
@@ -85,12 +65,9 @@ macro(INCLUDE_SUBDIR SUBDIR CMAKENAME)
 	include(${SUBDIR}/${CMAKENAME}.cmake)
 endmacro(INCLUDE_SUBDIR SUBDIR)
 
-#INCLUDE_DIRECTORIES( ${ZEROMQ_INCLUDE_DIR} )
-#INCLUDE_LIBFSQT()
 # include build directory to locate and bind generated moc, qrc and ui files
 include_directories(${CMAKE_CURRENT_BINARY_DIR})
 include_directories(${CMAKE_CURRENT_SOURCE_DIR})
-#include_directories(${FSQt_INCLUDES})
 
 set(salon_EXTRALIBS "")
 set(SYSTEM_EXTRALIBS "")
@@ -106,11 +83,7 @@ INCLUDE_SUBDIR ("smtp_client" "smtp_client")
 
 #INCLUDE_SUBDIR ("config/widgets" "widgets")
 
-include_directories(${FSQt_INCLUDES})
-
 if(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
-	#include_directories("/usr/include/fsqt/libfs")
-	#include_directories("/usr/include/fsqt")
 	set(salon_EXTRALIBS odbc)
     set(SYSTEM_EXTRALIBS "X11")
 endif()
@@ -134,10 +107,9 @@ set(QT_USE_QTNETWORK TRUE)
 set(QT_USE_QTXMLPATTERNS TRUE)
 set(QT_USE_QTSQL TRUE)
 set(QT_USE_QTOPENGL TRUE)
-set(QT_USE_QTSVG TRUE)
 
 include(${QT_USE_FILE})
-add_definitions(${QT_DEFINITIONS} ${FSQt_DEFINITIONS})
+add_definitions(${QT_DEFINITIONS})
 add_definitions("-DQT_NO_KEYWORDS")
 add_definitions("-DSMTP_BUILD")
 
@@ -167,4 +139,3 @@ file(COPY "${CMAKE_CURRENT_SOURCE_DIR}/../pics/"
 file(COPY "${CMAKE_CURRENT_SOURCE_DIR}/../pics/"
 	DESTINATION	"${CMAKE_BINARY_DIR}/pics/"
 	FILES_MATCHING PATTERN "*")
-

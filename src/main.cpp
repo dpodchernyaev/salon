@@ -33,7 +33,7 @@ void messageHandler(QtMsgType type, const char *msg)
 		return;
 	}
 
-	QString txt = QString("%1").arg(msg);
+	QString txt = QString::fromUtf8(msg);
 	txt.prepend(") ");
 	txt.prepend(QTime::currentTime().toString("hh:mm:ss.z"));
 	txt.prepend("(");
@@ -93,6 +93,8 @@ launchApp(int argc, char *argv[])
 	QTextCodec *codec = QTextCodec::codecForName("UTF-8");
 	QTextCodec::setCodecForTr(codec);
 	QTextCodec::setCodecForCStrings(codec);
+	QTextCodec::setCodecForLocale(codec);
+
 
 	QLocale::setDefault(QLocale(QLocale::Russian, QLocale::RussianFederation));
 

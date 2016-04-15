@@ -13,7 +13,10 @@ CsFetcher::CsFetcher()
 
 QList<Item*> CsFetcher::fetchSlot(DBConn* conn)
 {
-	usleep(1000000 * 3);
+//	QTime t;
+//	t.start();
+//	while (t.elapsed() < 3000);
+
 	QList<Item*> items;
 	QString sql =
 			"SELECT"
