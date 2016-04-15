@@ -14,6 +14,7 @@
 
 LoginDialog::LoginDialog()
 {
+	setWindowTitle("Программа учета клиентов");
 	setWindowFlags(windowFlags() | Qt::CustomizeWindowHint);
 	setWindowFlags(windowFlags() & ~Qt::WindowCloseButtonHint);
 	setWindowFlags(windowFlags() & ~Qt::WindowContextHelpButtonHint);

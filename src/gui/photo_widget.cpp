@@ -146,7 +146,7 @@ void PhotoLoader::loadSlot()
 	QFileInfo fi(path);
 	if (!fi.exists() || !fi.isFile())
 	{
-		qWarning() << "Файла с фотографией не существует " << path;
+		qDebug() << "Файла с фотографией не существует " << path;
 		localPath = "pics/no_photo.png";
 	}
 	else

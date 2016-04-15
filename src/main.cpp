@@ -8,8 +8,11 @@
 #include <QHash>
 #include <QDir>
 #include <QDebug>
+#include <QDateTime>
 #include <QSqlQuery>
+#include <QCleanlooksStyle>
 
+#include <config/config.h>
 #include <login_dialog.h>
 #include <db/db_service.h>
 #include <gui/client_panel.h>
@@ -21,14 +24,53 @@
 class ClientItem;
 class Item;
 
-#include <QCleanlooksStyle>
+QFile logFile;
+
+void messageHandler(QtMsgType type, const char *msg)
+{
+	if (type < Config::getInstance()->getValue(DEBUG_LEVEL).toInt())
+	{
+		return;
+	}
+
+	QString txt = QString("%1").arg(msg);
+	txt.prepend(") ");
+	txt.prepend(QTime::currentTime().toString("hh:mm:ss.z"));
+	txt.prepend("(");
+
+	switch (type)
+	{
+		case QtDebugMsg:
+			txt.prepend("[D] ");
+			break;
+		case QtWarningMsg:
+			txt.prepend("[W] ");
+		break;
+		case QtCriticalMsg:
+			txt.prepend("[C] ");
+		break;
+		case QtFatalMsg:
+			txt.prepend("[F] ");
+			abort();
+	}
+
+	fprintf(stderr, "%s\n", txt.toLocal8Bit().data());
+	if (logFile.isOpen())
+	{
+		QTextStream ts(&logFile);
+		ts << txt << endl;
+	}
+}
 
 class SalonStyle : public QCleanlooksStyle
 {
 public:
-	int pixelMetric(PixelMetric metric, const QStyleOption * option = 0, const QWidget * widget = 0 ) const {
+	int pixelMetric(PixelMetric metric,
+			const QStyleOption * option = 0, const QWidget * widget = 0 ) const
+	{
 		int s = QCleanlooksStyle::pixelMetric(metric, option, widget);
-		if (metric == QStyle::PM_SmallIconSize) {
+		if (metric == QStyle::PM_SmallIconSize)
+		{
 			s = 40;
 		}
 		return s;
@@ -53,6 +95,14 @@ launchApp(int argc, char *argv[])
 	QTextCodec::setCodecForCStrings(codec);
 
 	QLocale::setDefault(QLocale(QLocale::Russian, QLocale::RussianFederation));
+
+	QDir logDir(QDir::tempPath());
+	if (logDir.exists())
+	{
+		logFile.setFileName(logDir.absolutePath() + QDir::separator() + "salon.log");
+		logFile.open(QIODevice::WriteOnly | QIODevice::Append);
+	}
+	qInstallMsgHandler(messageHandler);
 
 	if (!DBService::getInstance()->getConnection()->isConnected())
 	{

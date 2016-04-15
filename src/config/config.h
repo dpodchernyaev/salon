@@ -17,6 +17,7 @@ static QString EMAIL_SMTP_SSL_PORT = "email_smtp_ssl_port";
 static QString BIRTHDAY_FILE = "birthday_file";
 static QString REPORT_DIR = "report_dir";
 static QString EMAIL_SENDER_FLAG = "email_sender_flag";
+static QString DEBUG_LEVEL = "debug";
 
 class Config
 {
