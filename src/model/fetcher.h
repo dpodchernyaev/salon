@@ -16,6 +16,7 @@ public:
 
 	void fetch();
 	void save(Item* item);
+	bool refetch(DBConn* conn);
 	void deleteItem(Item* item);
 
 	bool saveItem(Item* item, DBConn* conn);

@@ -40,15 +40,20 @@ void Fetcher::deleteItem(Item *item)
 	Q_EMIT deleteSignal(item);
 }
 
+bool Fetcher::refetch(DBConn* conn)
+{
+	QList<Item*> res = fetchSlot(conn);
+	Q_EMIT fetched(res);
+}
+
 void Fetcher::fetchPrivate()
 {
-	QList<Item*> res;
 
 	DBConn* conn = DBService::getInstance()->getConnection();
 	if (!conn->isConnected())
 	{
 		qCritical() << Q_FUNC_INFO << "Ошибка подключания к БД";
-		Q_EMIT fetched(res);
+		Q_EMIT fetched(QList<Item*>());
 		return;
 	}
 
@@ -56,7 +61,7 @@ void Fetcher::fetchPrivate()
 	t.start();
 
 	conn->beginTransaction();
-	res = fetchSlot(conn);
+	refetch(conn);
 	conn->commit();
 
 	if (t.elapsed() > (1000 * 2) )
@@ -64,8 +69,6 @@ void Fetcher::fetchPrivate()
 		qWarning() << metaObject()->className()
 				   << "Время выполнения запроса данных больше 2 сек = " << t.elapsed();
 	}
-
-	Q_EMIT fetched(res);
 }
 
 void Fetcher::deletePrivate(Item* item)

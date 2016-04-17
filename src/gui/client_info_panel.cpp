@@ -36,6 +36,7 @@ ClientInfoPanel::ClientInfoPanel()
 {	
 	waitDialog = new QMessageBox("Ожидайте", "Идет обработка данных...",
 									QMessageBox::Information, 0, 0, 0, this);
+	waitDialog->setStandardButtons(QMessageBox::NoButton);
 	clientWidget = new ClientWidget;
 
 	delBtn = new QPushButton;
@@ -303,8 +304,8 @@ void ClientInfoPanel::delService()
 		if (i != NULL)
 		{
 			csModel->deleteItem(i);
+			waitDialog->exec();
 		}
-		qDebug() << "DEL";
 	}
 }
 

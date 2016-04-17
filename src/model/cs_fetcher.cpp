@@ -2,6 +2,8 @@
 
 #include <model/client_service_item.h>
 #include <db/db_service.h>
+#include <model/model_factory.h>
+#include <model/group_model.h>
 
 #include "cs_fetcher.h"
 
@@ -119,8 +121,33 @@ bool CsFetcher::saveSlot(Item* item, DBConn* conn)
 
 bool CsFetcher::deleteSlot(Item *i, DBConn *conn)
 {
-	QString sql = "DELETE FROM client_service WHERE id = " +
-				  QString::number(i->getId());
-	QSqlQuery q = conn->executeQuery(sql);
-	return q.isActive();
+	QString sql = "UPDATE vgroup SET cnt = cnt - 1"
+					" WHERE id IN"
+						" (SELECT visit.vgroup_id"
+							" FROM visit"""
+							" WHERE visit.client_service_id=?)";
+	QSqlQuery q(conn->qtDatabase());
+	q.prepare(sql);
+	q.bindValue(0, i->getId());
+
+	bool res = conn->executeQuery(q);
+	if (res == true)
+	{
+		sql = "DELETE FROM client_service WHERE id = ?";
+		q.prepare(sql);
+		q.bindValue(0, i->getId());
+		res = conn->executeQuery(q);
+	}
+
+//	QTime t;
+//	t.start();
+//	while (t.elapsed() < 4000);
+
+	if (res == true)
+	{
+		ModelFactory::getInstance()->getModel(GROUP)->getFetcher()->refetch(conn);
+		ModelFactory::getInstance()->getModel(VISIT)->getFetcher()->refetch(conn);
+	}
+
+	return res;
 }
