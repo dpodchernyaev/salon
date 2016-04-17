@@ -35,3 +35,10 @@ void HallItem::setId(int id)
 {
 	this->id = id;
 }
+
+QString HallItem::toString() const
+{
+	return "id: " + str(id) + "\n"
+			"name: " + name + "\n"
+			"cnt: " + str(cnt);
+}

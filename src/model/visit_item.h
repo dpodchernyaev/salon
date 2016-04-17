@@ -43,6 +43,8 @@ public:
 	void setCs(CsItem* cs);
 	CsItem* getCs() const;
 
+	virtual QString toString() const;
+
 private:
 	VisitParam param;
 	GroupItem *group;

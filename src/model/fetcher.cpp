@@ -97,6 +97,11 @@ void Fetcher::deletePrivate(Item* item)
 
 	if (res == true)
 	{
+		qWarning()
+				<< metaObject()->className()
+				<< "\n=== Удаление записи: ===\n"
+				<< item->toString()
+				<< "\n====";
 		conn->commit();
 	}
 	else

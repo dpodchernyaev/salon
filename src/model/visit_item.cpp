@@ -40,3 +40,13 @@ CsItem* VisitItem::getCs() const
 {
 	return csItem;
 }
+
+QString VisitItem::toString() const
+{
+	return
+			"id: " + str(param.id) + "\n"
+			"cs_id: " + str(param.cs_id) + "\n"
+			"vgroup_id: " + str(param.vgroup_id) + "\n"
+			"info: " + param.info + "\n"
+			"dtime: " + param.dtime.toString(DATE_TIME_FORMAT);
+}

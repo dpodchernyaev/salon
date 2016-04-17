@@ -43,6 +43,9 @@ public:
 	ServiceParam get() const;
 
 	static QString toString(LimitType type);
+
+	virtual QString toString() const;
+
 private:
 	ServiceParam param;
 };

@@ -14,6 +14,8 @@ enum LimitType
 	LT_DATE_COUNT
 };
 
+#define str(x) QString::number(x)
+
 class Item
 {
 public:
@@ -22,6 +24,8 @@ public:
 
 	void setModel(ItemModel* model);
 	void save();
+
+	virtual QString toString() const = 0;
 
 	QVariant data(int role);
 

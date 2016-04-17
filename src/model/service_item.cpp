@@ -47,3 +47,16 @@ QString ServiceItem::toString(LimitType type)
 	}
 	return res;
 }
+
+QString ServiceItem::toString() const
+{
+	return
+			"id: " + str(param.id) + "\n"
+			"vid_id: " + str(param.vid_id) + "\n"
+			"name: " + param.name + "\n"
+			"limitType: " + str(param.limitType) + "\n"
+			"price: " + str(param.price) + "\n"
+			"value: " + str(param.value) + "\n"
+			"limitDays: " + str(param.limitDays) + "\n"
+			"used: " + str(param.used);
+}

@@ -20,3 +20,9 @@ VidParam VidItem::getParam() const
 {
 	return param;
 }
+
+QString VidItem::toString() const
+{
+	return "id: " + str(param.id) + "\n"
+			"name: " + param.name;
+}

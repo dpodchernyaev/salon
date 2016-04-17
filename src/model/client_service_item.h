@@ -43,6 +43,8 @@ public:
 	void setParam(const CsParam &p);
 	CsParam getParam() const;
 
+	virtual QString toString() const;
+
 
 private:
 	CsParam param;

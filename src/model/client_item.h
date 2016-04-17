@@ -52,6 +52,8 @@ public:
 	void set(const ClientParam&);
 	ClientParam get() const;
 
+	QString toString() const;
+
 private:
 	ClientParam param;
 };

@@ -46,6 +46,8 @@ public:
 	virtual int getHallId() const { return param.hall_id; }
 	virtual int getCoachId() const { return param.coach_id; }
 
+	virtual QString toString() const;
+
 private:
 	SheduleParam param;
 };

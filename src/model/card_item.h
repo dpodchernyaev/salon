@@ -17,6 +17,8 @@ public:
 	void setName(const QString &value);
 	void setId(int id);
 
+	virtual QString toString() const;
+
 private:
 	int id;
 	QString name;

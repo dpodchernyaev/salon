@@ -37,3 +37,10 @@ void CoachItem::setId(int id)
 {
 	this->id = id;
 }
+
+QString CoachItem::toString() const
+{
+	return "id: " + str(id) + "\n"
+			"name: " + name + "\n"
+			"phone: " + phone;
+}

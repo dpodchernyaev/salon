@@ -36,3 +36,10 @@ void CardItem::setId(int id)
 {
 	this->id = id;
 }
+
+QString CardItem::toString() const
+{
+	return "id: " + str(id) + "\n"
+			"name: " + name + "\n"
+			"cnt: " + str(discont);
+}

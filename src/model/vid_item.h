@@ -26,6 +26,8 @@ public:
 	void setParam(const VidParam &p);
 	VidParam getParam() const;
 
+	virtual QString toString() const;
+
 private:
 	VidParam param;
 };
