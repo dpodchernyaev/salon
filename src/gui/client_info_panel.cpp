@@ -214,6 +214,11 @@ void ClientInfoPanel::buyService()
 
 	ClientItem* clientItem = (ClientItem*)clientWidget->get();
 
+	if (clientItem == NULL)
+	{
+		return;
+	}
+
 	int disc = 0;
 	int cardId = clientItem->get().card_id;
 	if (cardId > 0)
@@ -263,6 +268,11 @@ void ClientInfoPanel::delVisit()
 		bool ok = false;
 		Item* item = visitView->getSelected();
 		VisitItem* vi = (VisitItem*)item;
+
+		if (vi == NULL)
+		{
+			return;
+		}
 
 		Item* i = ((ItemModel*)(gModel))->getItem(vi->getParam().vgroup_id);
 		if (i > 0)
