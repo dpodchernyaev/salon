@@ -16,6 +16,7 @@ class VidModel;
 class Item;
 class SheduleModel;
 class EmailSender;
+class StatisticEmailSender;
 
 class ClientPanel : public QMainWindow
 {
@@ -54,6 +55,7 @@ private:
 	SheduleModel* sheduleModel;
 	VidModel* vidModel;
 	EmailSender* email_sender;
+	StatisticEmailSender* email_st;
 };
 
 #endif // CLIENTPANEL_H

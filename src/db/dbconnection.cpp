@@ -121,7 +121,6 @@ void DBConn::disconnect()
 	if (QThread::currentThread() != this->thread())
 	{
 		printThreadWarning(Q_FUNC_INFO);
-		qFatal("DB thread ERROR");
 	}
 
 	QString connection;
@@ -139,7 +138,6 @@ void DBConn::beginTransaction()
 	if (QThread::currentThread() != this->thread())
 	{
 		printThreadWarning(Q_FUNC_INFO);
-		qFatal("DB thread ERROR");
 	}
 
 	m_database.transaction();
@@ -592,7 +590,7 @@ bool DBConn::isInTransaction()
 void
 DBConn::printThreadWarning(const QString &func)
 {
-	qCritical() << "DBConn: Trying to" << func << "from a different thread!";
+	qDebug() << "DBConn: Trying to" << func << "from a different thread!";
 	QThread *current = QThread::currentThread();
 
 	QString connMsg;

@@ -112,9 +112,10 @@ bool EmailSender::check(Item* item) const
 		QSqlQuery q(conn->qtDatabase());
 		q.prepare("SELECT count(*)"
 				  " FROM email_history"
-				  " WHERE client_id = ? AND ddate >= ?");
+				  " WHERE client_id = ? AND ddate >= ? AND type = ?");
 		q.bindValue(0, ci->getId());
 		q.bindValue(1, currDate);
+		q.bindValue(2, 0);
 
 		if (q.exec() && q.next())
 		{
@@ -227,11 +228,12 @@ void EmailSender::send()
 	conn->beginTransaction();
 
 	QSqlQuery q(conn->qtDatabase());
-	q.prepare("INSERT INTO email_history(client_id, email, ddate)"
-			  " VALUES(?, ?, ?)");
+	q.prepare("INSERT INTO email_history(client_id, email, ddate, type)"
+			  " VALUES(?, ?, ?, ?)");
 	q.bindValue(0, ci->getId());
 	q.bindValue(1, ci->get().email);
 	q.bindValue(2, QDate::currentDate());
+	q.bindValue(3, 0);
 
 	if (q.exec() && q.isActive())
 	{

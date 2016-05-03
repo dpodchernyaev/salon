@@ -28,6 +28,7 @@
 #include <gui/item_list_view.h>
 
 #include <smtp_client/email_sender.h>
+#include <smtp_client/statistic_email_sender.h>
 
 #include "client_panel.h"
 
@@ -37,6 +38,9 @@ ClientPanel::ClientPanel()
 	setWindowTitle("Monella");
 	email_sender = new EmailSender;
 	email_sender->start();
+
+	email_st = new StatisticEmailSender;
+	email_st->init();
 
 	serviceModel = (ServiceModel*)ModelFactory::getInstance()->getModel(SERVICE);
 	cardModel = (CardModel*)ModelFactory::getInstance()->getModel(CARD);
@@ -135,7 +139,8 @@ ClientPanel::ClientPanel()
 
 ClientPanel::~ClientPanel()
 {
-	delete email_sender;
+	email_sender->deleteLater();
+	email_st->deleteLater();
 }
 
 void ClientPanel::modelRestored()
